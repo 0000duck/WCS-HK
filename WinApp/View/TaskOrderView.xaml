@@ -1,0 +1,78 @@
+﻿<Page x:Class="iFactoryApp.View.TaskOrderView"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:pu="clr-namespace:Panuon.UI.Silver;assembly=Panuon.UI.Silver"
+      xmlns:comLib="clr-namespace:iFactory.CommonLibrary;assembly=CommonLibrary"
+      xmlns:local="clr-namespace:iFactoryApp.View"
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="800" Title="原料作业任务" Background="LightGray">
+    <Page.ContextMenu>
+        <ContextMenu Width="200" FontSize="14" pu:ContextMenuHelper.CornerRadius="15"
+                     pu:ContextMenuHelper.HoverBackground="DarkGray" MenuItem.Click="ContextMenu_Click">
+            <MenuItem Name="New" Header="新建" Height="35" Icon="&#xf0fe;" />
+            <Separator></Separator>
+            <MenuItem Name="Edit" Header="编辑" Height="35" Icon="&#xf14b;" />
+            <Separator></Separator>
+            <MenuItem Name="Delete" Header="删除" Height="35" Icon="&#xf1f8;"/>
+            <Separator></Separator>
+            <MenuItem Name="Save" Header="保存顺序" Height="35" Icon="&#xf0c7;"/>
+        </ContextMenu>
+    </Page.ContextMenu>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="50"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <!--<WindowsFormsHost x:Name="windowsFormsHost1" Margin="2" Grid.Column="0">
+                <ky:LiveviewForm x:Name="liveviewForm1" />
+            </WindowsFormsHost>-->
+        </Grid>
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="120"/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <Label Grid.Column="0" Content="包装作业任务记录" VerticalAlignment="Center" FontSize="16" FontStyle="Italic" Grid.ColumnSpan="2" Margin="0,10,633,10"/>
+            <StackPanel Orientation="Horizontal" FlowDirection="RightToLeft" Margin="5" Grid.Column="1">
+                <Button x:Name="button1" Content="删除" Command="{x:Static comLib:MyCommands.Delete}" Width="80" Margin="5" ToolTip="需要勾选确认后再删除，不可以删除正在进行中的订单，进行的订单可以取消"/>
+                <Button x:Name="button2" Content="取消" Command="{x:Static comLib:MyCommands.Cancel}" Width="80" Margin="5"  ToolTip="已经启动后的进行取消中止，每次只能取消一个"/>
+                <Button x:Name="button3" Content="重启" Command="{x:Static comLib:MyCommands.Restart}" Width="80" Margin="5" ToolTip="重新下发启动命令到PLC，仅一个有效"/>
+                <Button x:Name="button4" Content="完成" Command="{x:Static comLib:MyCommands.Stop}" Width="80" Margin="5" ToolTip="完成当前选择的订单，仅一个有效"/>
+                <Button x:Name="button5" Content="启动" Command="{x:Static comLib:MyCommands.Start}" Width="80" Margin="5" ToolTip="启动当前选择的订单，仅一个有效"/>
+            </StackPanel>
+        </Grid>
+        <DataGrid x:Name="datagrid1" Grid.Row="2" ItemsSource="{Binding ModelViewList}" AutoGenerateColumns="False" CanUserAddRows="False"
+                  AlternatingRowBackground="#EAEAEA" AlternationCount="2" HorizontalGridLinesBrush="#7A7A7A" SelectionMode="Single"
+                  VerticalGridLinesBrush="#7A7A7A" AllowDrop="True"
+                  pu:DataGridHelper.SelectedBackground="#1C86EE"
+                  pu:DataGridHelper.HeaderPadding="5,0"
+                  pu:DataGridHelper.ColumnHorizontalContentAlignment="Center"
+                  pu:DataGridHelper.ColumnVerticalContentAlignment="Center"
+                  pu:DataGridHelper.HeaderBackground="#7A7A7A"
+                  pu:DataGridHelper.HeaderForeground="White"
+                  pu:DataGridHelper.CellPadding="5,0" SelectionChanged="datagrid1_SelectionChanged">
+            <DataGrid.Columns>
+                <!--<DataGridCheckBoxColumn Header="选择" Binding="{Binding Path=IsChecked,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" Width="*" IsReadOnly="False" />-->
+                <DataGridTextColumn Header="产品名称" Binding="{Binding product_name}" Width="2*" IsReadOnly="True" FontFamily="Consolas" Foreground="Black" />
+                <DataGridTextColumn Header="最小包装尺寸" Binding="{Binding min_pakage_size}" Width="3*" IsReadOnly="True" Foreground="Black" />
+                <DataGridTextColumn Header="纸箱尺寸" Binding="{Binding carton_size}" Width="3*" IsReadOnly="True" Foreground="Black" />
+                <DataGridTextColumn Header="托盘数量" Binding="{Binding pallet_num}" Width="3*" IsReadOnly="True" Foreground="Black" />
+                <DataGridTextColumn Header="夹具编号"  Binding="{Binding gripper_no}" Width="3*" IsReadOnly="True" Foreground="Black" />
+                <DataGridTextColumn Header="模板名称"  Binding="{Binding barcode_template}" Width="3*" IsReadOnly="True" Foreground="Black" />
+                <DataGridTextColumn Header="启用条码"  Binding="{Binding enable_barcode}" Width="2*" IsReadOnly="True" Foreground="Black" />
+                <DataGridTextColumn Header="任务状态"  Binding="{Binding order_status,Converter={StaticResource OrderStatus}}" Width="2*" IsReadOnly="True" Foreground="Black" />
+                <DataGridTextColumn Header="完成数量" Binding="{Binding product_count}" Width="2*" IsReadOnly="True" Foreground="Black" />
+                <DataGridTextColumn Header="开始时间"  Binding="{Binding start_time, Converter={StaticResource datetTimeConverter}}" Width="4*" IsReadOnly="True" Foreground="Black" />
+                <DataGridTextColumn Header="创建时间"  Binding="{Binding insert_time, StringFormat=yyyy/MM/dd HH:mm:ss}" Width="4*" IsReadOnly="True" Foreground="Black" />
+            </DataGrid.Columns>
+        </DataGrid>
+    </Grid>
+</Page>

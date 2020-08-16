@@ -1,0 +1,160 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema id="WinBaseDataSet" targetNamespace="http://tempuri.org/WinBaseDataSet.xsd" xmlns:mstns="http://tempuri.org/WinBaseDataSet.xsd" xmlns="http://tempuri.org/WinBaseDataSet.xsd" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" xmlns:msprop="urn:schemas-microsoft-com:xml-msprop" attributeFormDefault="qualified" elementFormDefault="qualified">
+  <xs:annotation>
+    <xs:appinfo source="urn:schemas-microsoft-com:xml-msdatasource">
+      <DataSource DefaultConnectionIndex="0" FunctionsComponentName="QueriesTableAdapter" Modifier="AutoLayout, AnsiClass, Class, Public" SchemaSerializationMode="IncludeSchema" xmlns="urn:schemas-microsoft-com:xml-msdatasource">
+        <Connections>
+          <Connection ConnectionStringObject="Data Source=RNFY07VJWONLQC8;Initial Catalog=WinBase;Integrated Security=True" IsAppSettingsProperty="false" Modifier="Assembly" Name="rnfy07vjwonlqc8.WinBase.dbo" ParameterPrefix="@" Provider="System.Data.SqlClient" />
+        </Connections>
+        <Tables>
+          <TableAdapter BaseClass="System.ComponentModel.Component" DataAccessorModifier="AutoLayout, AnsiClass, Class, Public" DataAccessorName="batching_order_dataTableAdapter" GeneratorDataComponentClassName="batching_order_dataTableAdapter" Name="batching_order_data" UserDataComponentName="batching_order_dataTableAdapter">
+            <MainSource>
+              <DbSource ConnectionRef="rnfy07vjwonlqc8.WinBase.dbo" DbObjectName="WinBase.dbo.batching_order_data" DbObjectType="View" FillMethodModifier="Public" FillMethodName="Fill" GenerateMethods="Both" GenerateShortCommands="false" GeneratorGetMethodName="GetData" GeneratorSourceName="Fill" GetMethodModifier="Public" GetMethodName="GetData" QueryType="Rowset" ScalarCallRetval="System.Object, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" UseOptimisticConcurrency="true" UserGetMethodName="GetData" UserSourceName="Fill">
+                <SelectCommand>
+                  <DbCommand CommandType="Text" ModifiedByUser="false">
+                    <CommandText>SELECT id, end_time, line_code, order_index, order_number, FormulaType, FormulaNO, route_dest, order_status, batch_weight, batches, amount, actual_batches, actual_amount, start_time, create_time, description, MatID, MatName, SetValue, actual_weight, err_weight, ScaleNO, cancel_bit, bin_code, weight_time, batch FROM dbo.batching_order_data</CommandText>
+                    <Parameters />
+                  </DbCommand>
+                </SelectCommand>
+              </DbSource>
+            </MainSource>
+            <Mappings>
+              <Mapping SourceColumn="id" DataSetColumn="id" />
+              <Mapping SourceColumn="end_time" DataSetColumn="end_time" />
+              <Mapping SourceColumn="line_code" DataSetColumn="line_code" />
+              <Mapping SourceColumn="order_index" DataSetColumn="order_index" />
+              <Mapping SourceColumn="order_number" DataSetColumn="order_number" />
+              <Mapping SourceColumn="FormulaType" DataSetColumn="FormulaType" />
+              <Mapping SourceColumn="FormulaNO" DataSetColumn="FormulaNO" />
+              <Mapping SourceColumn="route_dest" DataSetColumn="route_dest" />
+              <Mapping SourceColumn="order_status" DataSetColumn="order_status" />
+              <Mapping SourceColumn="batch_weight" DataSetColumn="batch_weight" />
+              <Mapping SourceColumn="batches" DataSetColumn="batches" />
+              <Mapping SourceColumn="amount" DataSetColumn="amount" />
+              <Mapping SourceColumn="actual_batches" DataSetColumn="actual_batches" />
+              <Mapping SourceColumn="actual_amount" DataSetColumn="actual_amount" />
+              <Mapping SourceColumn="start_time" DataSetColumn="start_time" />
+              <Mapping SourceColumn="create_time" DataSetColumn="create_time" />
+              <Mapping SourceColumn="description" DataSetColumn="description" />
+              <Mapping SourceColumn="MatID" DataSetColumn="MatID" />
+              <Mapping SourceColumn="MatName" DataSetColumn="MatName" />
+              <Mapping SourceColumn="SetValue" DataSetColumn="SetValue" />
+              <Mapping SourceColumn="actual_weight" DataSetColumn="actual_weight" />
+              <Mapping SourceColumn="err_weight" DataSetColumn="err_weight" />
+              <Mapping SourceColumn="ScaleNO" DataSetColumn="ScaleNO" />
+              <Mapping SourceColumn="cancel_bit" DataSetColumn="cancel_bit" />
+              <Mapping SourceColumn="bin_code" DataSetColumn="bin_code" />
+              <Mapping SourceColumn="weight_time" DataSetColumn="weight_time" />
+              <Mapping SourceColumn="batch" DataSetColumn="batch" />
+            </Mappings>
+            <Sources />
+          </TableAdapter>
+        </Tables>
+        <Sources />
+      </DataSource>
+    </xs:appinfo>
+  </xs:annotation>
+  <xs:element name="WinBaseDataSet" msdata:IsDataSet="true" msdata:UseCurrentLocale="true" msprop:EnableTableAdapterManager="True" msprop:Generator_DataSetName="WinBaseDataSet" msprop:Generator_UserDSName="WinBaseDataSet">
+    <xs:complexType>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element name="batching_order_data" msprop:Generator_TableClassName="batching_order_dataDataTable" msprop:Generator_TableVarName="tablebatching_order_data" msprop:Generator_TablePropName="batching_order_data" msprop:Generator_RowDeletingName="batching_order_dataRowDeleting" msprop:Generator_RowChangingName="batching_order_dataRowChanging" msprop:Generator_RowEvHandlerName="batching_order_dataRowChangeEventHandler" msprop:Generator_RowDeletedName="batching_order_dataRowDeleted" msprop:Generator_UserTableName="batching_order_data" msprop:Generator_RowChangedName="batching_order_dataRowChanged" msprop:Generator_RowEvArgName="batching_order_dataRowChangeEvent" msprop:Generator_RowClassName="batching_order_dataRow">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="id" msprop:Generator_ColumnVarNameInTable="columnid" msprop:Generator_ColumnPropNameInRow="id" msprop:Generator_ColumnPropNameInTable="idColumn" msprop:Generator_UserColumnName="id" type="xs:int" />
+              <xs:element name="end_time" msprop:Generator_ColumnVarNameInTable="columnend_time" msprop:Generator_ColumnPropNameInRow="end_time" msprop:Generator_ColumnPropNameInTable="end_timeColumn" msprop:Generator_UserColumnName="end_time" type="xs:dateTime" />
+              <xs:element name="line_code" msprop:Generator_ColumnVarNameInTable="columnline_code" msprop:Generator_ColumnPropNameInRow="line_code" msprop:Generator_ColumnPropNameInTable="line_codeColumn" msprop:Generator_UserColumnName="line_code">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="255" />
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="order_index" msprop:Generator_ColumnVarNameInTable="columnorder_index" msprop:Generator_ColumnPropNameInRow="order_index" msprop:Generator_ColumnPropNameInTable="order_indexColumn" msprop:Generator_UserColumnName="order_index" type="xs:int" />
+              <xs:element name="order_number" msprop:Generator_ColumnVarNameInTable="columnorder_number" msprop:Generator_ColumnPropNameInRow="order_number" msprop:Generator_ColumnPropNameInTable="order_numberColumn" msprop:Generator_UserColumnName="order_number" minOccurs="0">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="50" />
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="FormulaType" msprop:Generator_ColumnVarNameInTable="columnFormulaType" msprop:Generator_ColumnPropNameInRow="FormulaType" msprop:Generator_ColumnPropNameInTable="FormulaTypeColumn" msprop:Generator_UserColumnName="FormulaType" minOccurs="0">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="255" />
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="FormulaNO" msprop:Generator_ColumnVarNameInTable="columnFormulaNO" msprop:Generator_ColumnPropNameInRow="FormulaNO" msprop:Generator_ColumnPropNameInTable="FormulaNOColumn" msprop:Generator_UserColumnName="FormulaNO" minOccurs="0">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="255" />
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="route_dest" msprop:Generator_ColumnVarNameInTable="columnroute_dest" msprop:Generator_ColumnPropNameInRow="route_dest" msprop:Generator_ColumnPropNameInTable="route_destColumn" msprop:Generator_UserColumnName="route_dest" minOccurs="0">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="255" />
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="order_status" msprop:Generator_ColumnVarNameInTable="columnorder_status" msprop:Generator_ColumnPropNameInRow="order_status" msprop:Generator_ColumnPropNameInTable="order_statusColumn" msprop:Generator_UserColumnName="order_status" type="xs:int" minOccurs="0" />
+              <xs:element name="batch_weight" msprop:Generator_ColumnVarNameInTable="columnbatch_weight" msprop:Generator_ColumnPropNameInRow="batch_weight" msprop:Generator_ColumnPropNameInTable="batch_weightColumn" msprop:Generator_UserColumnName="batch_weight" type="xs:double" minOccurs="0" />
+              <xs:element name="batches" msprop:Generator_ColumnVarNameInTable="columnbatches" msprop:Generator_ColumnPropNameInRow="batches" msprop:Generator_ColumnPropNameInTable="batchesColumn" msprop:Generator_UserColumnName="batches" type="xs:int" minOccurs="0" />
+              <xs:element name="amount" msprop:Generator_ColumnVarNameInTable="columnamount" msprop:Generator_ColumnPropNameInRow="amount" msprop:Generator_ColumnPropNameInTable="amountColumn" msprop:Generator_UserColumnName="amount" type="xs:double" />
+              <xs:element name="actual_batches" msprop:Generator_ColumnVarNameInTable="columnactual_batches" msprop:Generator_ColumnPropNameInRow="actual_batches" msprop:Generator_ColumnPropNameInTable="actual_batchesColumn" msprop:Generator_UserColumnName="actual_batches" type="xs:int" minOccurs="0" />
+              <xs:element name="actual_amount" msprop:Generator_ColumnVarNameInTable="columnactual_amount" msprop:Generator_ColumnPropNameInRow="actual_amount" msprop:Generator_ColumnPropNameInTable="actual_amountColumn" msprop:Generator_UserColumnName="actual_amount" type="xs:double" minOccurs="0" />
+              <xs:element name="start_time" msprop:Generator_ColumnVarNameInTable="columnstart_time" msprop:Generator_ColumnPropNameInRow="start_time" msprop:Generator_ColumnPropNameInTable="start_timeColumn" msprop:Generator_UserColumnName="start_time" type="xs:dateTime" minOccurs="0" />
+              <xs:element name="create_time" msprop:Generator_ColumnVarNameInTable="columncreate_time" msprop:Generator_ColumnPropNameInRow="create_time" msprop:Generator_ColumnPropNameInTable="create_timeColumn" msprop:Generator_UserColumnName="create_time" type="xs:dateTime" minOccurs="0" />
+              <xs:element name="description" msprop:Generator_ColumnVarNameInTable="columndescription" msprop:Generator_ColumnPropNameInRow="description" msprop:Generator_ColumnPropNameInTable="descriptionColumn" msprop:Generator_UserColumnName="description" minOccurs="0">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="255" />
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="MatID" msprop:Generator_ColumnVarNameInTable="columnMatID" msprop:Generator_ColumnPropNameInRow="MatID" msprop:Generator_ColumnPropNameInTable="MatIDColumn" msprop:Generator_UserColumnName="MatID" minOccurs="0">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="255" />
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="MatName" msprop:Generator_ColumnVarNameInTable="columnMatName" msprop:Generator_ColumnPropNameInRow="MatName" msprop:Generator_ColumnPropNameInTable="MatNameColumn" msprop:Generator_UserColumnName="MatName" minOccurs="0">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="255" />
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="SetValue" msprop:Generator_ColumnVarNameInTable="columnSetValue" msprop:Generator_ColumnPropNameInRow="SetValue" msprop:Generator_ColumnPropNameInTable="SetValueColumn" msprop:Generator_UserColumnName="SetValue" type="xs:double" minOccurs="0" />
+              <xs:element name="actual_weight" msprop:Generator_ColumnVarNameInTable="columnactual_weight" msprop:Generator_ColumnPropNameInRow="actual_weight" msprop:Generator_ColumnPropNameInTable="actual_weightColumn" msprop:Generator_UserColumnName="actual_weight" type="xs:double" minOccurs="0" />
+              <xs:element name="err_weight" msprop:Generator_ColumnVarNameInTable="columnerr_weight" msprop:Generator_ColumnPropNameInRow="err_weight" msprop:Generator_ColumnPropNameInTable="err_weightColumn" msprop:Generator_UserColumnName="err_weight" type="xs:double" minOccurs="0" />
+              <xs:element name="ScaleNO" msprop:Generator_ColumnVarNameInTable="columnScaleNO" msprop:Generator_ColumnPropNameInRow="ScaleNO" msprop:Generator_ColumnPropNameInTable="ScaleNOColumn" msprop:Generator_UserColumnName="ScaleNO" minOccurs="0">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="255" />
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="cancel_bit" msprop:Generator_ColumnVarNameInTable="columncancel_bit" msprop:Generator_ColumnPropNameInRow="cancel_bit" msprop:Generator_ColumnPropNameInTable="cancel_bitColumn" msprop:Generator_UserColumnName="cancel_bit" type="xs:boolean" minOccurs="0" />
+              <xs:element name="bin_code" msprop:Generator_ColumnVarNameInTable="columnbin_code" msprop:Generator_ColumnPropNameInRow="bin_code" msprop:Generator_ColumnPropNameInTable="bin_codeColumn" msprop:Generator_UserColumnName="bin_code" minOccurs="0">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="255" />
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="weight_time" msprop:Generator_ColumnVarNameInTable="columnweight_time" msprop:Generator_ColumnPropNameInRow="weight_time" msprop:Generator_ColumnPropNameInTable="weight_timeColumn" msprop:Generator_UserColumnName="weight_time" type="xs:dateTime" minOccurs="0" />
+              <xs:element name="batch" msprop:Generator_ColumnVarNameInTable="columnbatch" msprop:Generator_ColumnPropNameInRow="batch" msprop:Generator_ColumnPropNameInTable="batchColumn" msprop:Generator_UserColumnName="batch" type="xs:int" minOccurs="0" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+      </xs:choice>
+    </xs:complexType>
+    <xs:unique name="Constraint1" msdata:PrimaryKey="true">
+      <xs:selector xpath=".//mstns:batching_order_data" />
+      <xs:field xpath="mstns:id" />
+    </xs:unique>
+  </xs:element>
+</xs:schema>

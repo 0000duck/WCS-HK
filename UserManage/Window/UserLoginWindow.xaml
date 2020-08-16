@@ -1,0 +1,26 @@
+﻿<Window x:Class="iFactory.UserManage.UserLoginWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        xmlns:local="clr-namespace:iFactory.UserManage"
+        mc:Ignorable="d"
+        Height="308"  Width="277" WindowStyle="None" 
+        WindowStartupLocation="CenterScreen"  AllowsTransparency="True" ResizeMode="NoResize"
+        Title="系统登录" MouseLeftButtonDown="Window_MouseLeftButtonDown" >
+    <Window.Effect>
+        <DropShadowEffect BlurRadius="10" Color="#FF858484" Direction="90" ShadowDepth="1"/>
+    </Window.Effect>
+    <Canvas>
+
+        <Button Canvas.Left="33" Canvas.Top="237" Content="登录" Height="42" Name="btnLogin" Width="95" IsDefault="True" Background="DarkGreen" Foreground="White" Click="BtnLogin_Click"/>
+        <Button Canvas.Left="154" Canvas.Top="237" Content="退出" Height="42" Name="btnQuit" Width="93" IsCancel="True"  Background="DarkRed" Foreground="White" ToolTip="退出程序" Click="BtnQuit_Click"/>
+        <TextBlock Canvas.Left="85" Canvas.Top="34" Height="43" x:Name="textBlock2" Width="130" FontSize="28"><Run Text="系统"/><Run Text="登录"/></TextBlock>
+        <TextBlock Canvas.Left="27" Canvas.Top="110"  Height="26" x:Name="textBlock3" Width="72" VerticalAlignment="Center" ><Run Text="用户"/><Run Text="名称"/><Run Text="："/></TextBlock>
+        <TextBox Canvas.Left="106" Canvas.Top="110" FontSize="14" Height="26" Name="txtUser" Width="140" Text="op" ToolTip="请输入用户名称信息"/>
+        <TextBlock Canvas.Left="27" Canvas.Top="169"  Height="26" x:Name="textBlock4" Width="72" ><Run Text="用户"/><Run Text="密码："/></TextBlock>
+        <PasswordBox Canvas.Left="106" Canvas.Top="168" FontSize="14" Height="26" Name="txtPassword" Width="140" Password="1" ToolTip="用户密码"/>
+        <TextBlock Canvas.Left="15" Canvas.Top="70" Height="23" Name="txterr" Foreground="Red"/>
+    </Canvas>
+</Window>
