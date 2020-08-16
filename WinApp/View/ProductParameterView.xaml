@@ -69,9 +69,9 @@
                     <ComboBox Grid.Row="4" Grid.Column="0"  Text="{Binding EditModel.open_machine_mode}" pu:ComboBoxHelper.Header="开盒设备"  pu:ComboBoxHelper.HeaderWidth="80" pu:ComboBoxHelper.CornerRadius="5" VerticalAlignment="Center" Height="32" Margin="5,0,0,0" Padding="0"/>
                     <ComboBox Grid.Row="4" Grid.Column="1" Text="{Binding EditModel.barcode_machine_mode}" pu:ComboBoxHelper.Header="贴标设备" pu:ComboBoxHelper.HeaderWidth="80" pu:ComboBoxHelper.CornerRadius="5" VerticalAlignment="Center" Height="32" Margin="5,0,0,0" Padding="0"/>
                     <StackPanel Grid.Row="5" Grid.ColumnSpan="2" Orientation="Horizontal">
-                        <CheckBox Checked="{Binding EditModel.sn_barcode_enable}" pu:CheckBoxHelper.CheckBoxStyle="Standard" pu:CheckBoxHelper.Header="SN标签检测功能" pu:CheckBoxHelper.HeaderWidth="auto" pu:CheckBoxHelper.CornerRadius="5" VerticalAlignment="Center" Height="32" Margin="5,0,10,0" Padding="0"/>
-                        <CheckBox Checked="{Binding EditModel.card_machine_enable}" pu:CheckBoxHelper.Header="发卡机启用" pu:CheckBoxHelper.HeaderWidth="auto" pu:TextBoxHelper.CornerRadius="5" VerticalAlignment="Center" Height="32" Margin="15,0" Padding="0"/>
-                        <CheckBox Checked="{Binding EditModel.plate_enable}" pu:CheckBoxHelper.Header="隔板启用" pu:CheckBoxHelper.HeaderWidth="auto" pu:CheckBoxHelper.CornerRadius="5" VerticalAlignment="Center" Height="32" Margin="15,0" Padding="0"/>
+                        <CheckBox IsChecked="{Binding EditModel.sn_barcode_enable}" pu:CheckBoxHelper.CheckBoxStyle="Standard" pu:CheckBoxHelper.Header="SN标签检测功能" pu:CheckBoxHelper.HeaderWidth="auto" pu:CheckBoxHelper.CornerRadius="5" VerticalAlignment="Center" Height="32" Margin="5,0,10,0" Padding="0"/>
+                        <CheckBox IsChecked="{Binding EditModel.card_machine_enable}" pu:CheckBoxHelper.Header="发卡机启用" pu:CheckBoxHelper.HeaderWidth="auto" pu:TextBoxHelper.CornerRadius="5" VerticalAlignment="Center" Height="32" Margin="15,0" Padding="0"/>
+                        <CheckBox IsChecked="{Binding EditModel.plate_enable}" pu:CheckBoxHelper.Header="隔板启用" pu:CheckBoxHelper.HeaderWidth="auto" pu:CheckBoxHelper.CornerRadius="5" VerticalAlignment="Center" Height="32" Margin="15,0" Padding="0"/>
                     </StackPanel>
                 </Grid>
             </GroupBox>

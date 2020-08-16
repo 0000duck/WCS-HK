@@ -15,7 +15,6 @@ namespace iFactoryApp.ViewModel
         public ObservableCollection<NodeData> trees = new ObservableCollection<NodeData>();
         public ObservableCollection<ProductParameter> ModelList { set; get; } = new ObservableCollection<ProductParameter>();
         public ProductParameter EditModel { set; get; }
-        public ProductParameter SelectedModel { set; get; }
 
         /// <summary>
         /// Initializes a new instance of the MainViewModel class.
@@ -28,13 +27,21 @@ namespace iFactoryApp.ViewModel
         public void LoadAllInfos()
         {
             var list = _productParameterService.QueryableToList(x => x.id > 0).OrderBy(x=>x.product_name).ToList();
-            foreach (var item in list)
+            if(list !=null && list.Count>0)
             {
-                ModelList.Add(item);
+                foreach (var item in list)
+                {
+                    ModelList.Add(item);
 
-                NodeData n = new NodeData();
-                n.Name = item.product_name;//device_id
-                trees.Add(n);
+                    NodeData n = new NodeData();
+                    n.Name = item.product_name;//device_id
+                    trees.Add(n);
+                }
+                EditModel = list[0];
+            }
+            else
+            {
+                EditModel = new ProductParameter();
             }
         }
         #region 对象操作
@@ -55,11 +62,17 @@ namespace iFactoryApp.ViewModel
         /// <returns></returns>
         public bool Update(ProductParameter model, bool IsUpdateDetails = true)
         {
-            if (_productParameterService.UpdateEntity(model))
+            if(model.id>0)
             {
-                return true;
+                if (_productParameterService.UpdateEntity(model))
+                {
+                    return true;
+                }
             }
-            return false;
+            else
+            {
+                return Insert(model);
+            }
         }
         public bool Remove(ProductParameter model, bool RemoveListOnly = false)
         {

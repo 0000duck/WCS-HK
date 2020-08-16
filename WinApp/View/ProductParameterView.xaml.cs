@@ -49,15 +49,30 @@ namespace iFactoryApp.View
             MenuItem contextMenu = e.Source as MenuItem;
             if (contextMenu.Name == "New")//新建
             {
-                ContextMenu_Click(contextMenu.Name);
+                viewModel.EditModel = new TaskOrder();
             }
-            else if (contextMenu.Name == "Edit")//编辑
+            else if (contextMenu.Name == "Save")//编辑
             {
-                ContextMenu_Click(contextMenu.Name);
+                if (string.IsNullOrEmpty(viewModel.EditModel.product_name))
+                {
+                    MessageBoxX.Show($"请输入产品名称", "警告", Application.Current.MainWindow, MessageBoxButton.OK);
+                    return;
+                }
+                if(viewModel.Update(viewModel.EditModel)==false)
+                {
+                    MessageBoxX.Show($"保存参数失败", "警告", Application.Current.MainWindow, MessageBoxButton.OK);
+                }
             }
             else if (contextMenu.Name == "Delete")//删除
             {
-                ContextMenu_Click(contextMenu.Name);
+                if(viewModel.EditModel !=null)
+                {
+                    var res= MessageBoxX.Show($"确定删除参数{viewModel.EditModel.product_name}吗？", "警告", Application.Current.MainWindow, MessageBoxButton.YesNo);
+                    if(res== MessageBoxResult.Yes)
+                    {
+                        viewModel.Remove(viewModel.EditModel);
+                    }
+                }
             }
         }
         //编辑窗体关闭刷新
@@ -66,27 +81,6 @@ namespace iFactoryApp.View
             this.DataContext = null;
             viewModel.LoadAllInfos();
             this.DataContext = viewModel;
-        }
-
-
-        public void ContextMenu_Click(string click_name)
-        {
-            if (click_name == "New")//新建
-            {
-                viewModel.EditModel = new TaskOrder();
-                //TaskOrderEditView editView = new TaskOrderEditView(viewModel);
-                //editView.Topmost = true;
-                //editView.Show();
-                //editView.Closed += EditView_Closed;
-            }
-            else if (click_name == "Edit")//编辑
-            {
-               
-            }
-            else if (click_name == "Delete")//删除
-            {
-                
-            }
         }
     }
 }
