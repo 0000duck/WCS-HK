@@ -77,7 +77,7 @@
             </GroupBox>
         </Grid>
 
-        <TreeView Grid.RowSpan="2" ItemsSource="{Binding trees}" Height="Auto" HorizontalAlignment="Stretch" Margin="0,0,0,0" Name="treeView1" VerticalAlignment="Stretch" Width="Auto" FontSize="12" ToolTip="参数编号以产品id为唯一标识" Background="#FFBDD0E4">
+        <TreeView x:Name="treeview1" Grid.RowSpan="2" ItemsSource="{Binding trees}" Height="Auto" HorizontalAlignment="Stretch" Margin="0,0,0,0" VerticalAlignment="Stretch" Width="Auto" FontSize="12" ToolTip="参数编号以产品id为唯一标识" Background="#FFBDD0E4">
             <TreeView.ItemTemplate>
                 <HierarchicalDataTemplate ItemsSource="{Binding Path=ChildNodes}">
                     <TextBlock Text="{Binding Path=Name}"/>

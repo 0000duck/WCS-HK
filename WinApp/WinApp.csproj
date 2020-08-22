@@ -139,6 +139,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>Lib\VncClientControlCommon.dll</HintPath>
     </Reference>
+    <Reference Include="VncClientControlCommonLib, Version=6.49.0.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Lib\VncClientControlCommonLib.dll</HintPath>
+    </Reference>
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
@@ -285,10 +289,10 @@
   <ItemGroup />
   <ItemGroup>
     <Content Include="Lib\Communication.dll" />
-    <Content Include="Lib\iFactory.EncryptLib.dll" />
     <Content Include="Lib\Keyence.AutoID.SDK.dll" />
     <Content Include="Lib\Microsoft.ReportViewer.WinForms.dll" />
     <Content Include="Lib\VncClientControlCommon.dll" />
+    <Content Include="Lib\VncClientControlCommonLib.dll" />
     <Content Include="Lib\WPFToolkit.Extended.dll" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -31,8 +31,6 @@ namespace iFactoryApp.View
         public TaskOrderView()
         {
             InitializeComponent();
-            ProductParameterView productParameterView = new ProductParameterView();
-            productParameterView.ShowDialog();
             viewModel = IoC.GetViewModel<TaskOrderViewModel>(this);
             systemLogViewModel = IoC.Get<ISystemLogViewModel>();
             this.DataContext = viewModel;

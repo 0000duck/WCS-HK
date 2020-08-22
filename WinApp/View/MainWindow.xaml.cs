@@ -68,33 +68,6 @@ namespace iFactoryApp.View
                     break;
             }
         }
-        private void LoadExe()
-        {
-            string path = ConfigurationManager.AppSettings["Wincc_Report"];
-            ProcessStartInfo procInfo = new ProcessStartInfo(path);
-            procInfo.WorkingDirectory = System.IO.Path.GetDirectoryName(path);
-            procInfo.WindowStyle = ProcessWindowStyle.Normal;
-            Process.Start(procInfo);
-        }
-        private void TabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (e.AddedItems.Count == 0) return;
-            TabItem tabItem = e.AddedItems[0] as TabItem;
-            if (tabItem == null) return;
-            Point point = new Point() { X = 0, Y = gridLayout.Height + tabItem.ActualHeight }; ;
-            switch(tabItem.Tag)
-            {
-                case "Formula":
-                    //LoadExe(LayoutFormula, point,"");
-                    break;
-                case "Material":
-                    //LoadExe(LayoutMaterial, point,"");
-                    break;
-                case "Parmeter":
-                    //LoadExe(LayoutParmeter, point,"");
-                    break;
-            }
-        }
 
         private void ButtonLoginOut_Click(object sender, RoutedEventArgs e)
         {

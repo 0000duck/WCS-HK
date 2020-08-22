@@ -3,6 +3,7 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:ky ="clr-namespace:Keyence.AutoID.SDK;assembly=Keyence.AutoID.SDK"
       xmlns:pu="clr-namespace:Panuon.UI.Silver;assembly=Panuon.UI.Silver"
       xmlns:comLib="clr-namespace:iFactory.CommonLibrary;assembly=CommonLibrary"
       xmlns:local="clr-namespace:iFactoryApp.View"
@@ -31,9 +32,9 @@
                 <ColumnDefinition/>
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
-            <!--<WindowsFormsHost x:Name="windowsFormsHost1" Margin="2" Grid.Column="0">
+            <WindowsFormsHost x:Name="windowsFormsHost1" Margin="2" Grid.Column="0">
                 <ky:LiveviewForm x:Name="liveviewForm1" />
-            </WindowsFormsHost>-->
+            </WindowsFormsHost>
         </Grid>
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>

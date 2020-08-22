@@ -1,4 +1,5 @@
-﻿using iFactory.DataService.Model;
+﻿using iFactory.CommonLibrary;
+using iFactory.DataService.Model;
 using iFactory.DevComServer;
 using iFactoryApp.ViewModel;
 using Panuon.UI.Silver;
@@ -33,6 +34,58 @@ namespace iFactoryApp.View
             viewModel = IoC.GetViewModel<ProductParameterViewModel>(this);
             systemLogViewModel = IoC.Get<ISystemLogViewModel>();
             this.DataContext = viewModel;
+
+            #region 新建
+            CommandBindings.Add(new CommandBinding(MyCommands.Add,
+               (s, e) =>
+               {
+                   viewModel.EditModel = new ProductParameter();
+                },
+               (s, e) =>
+               {
+                   e.CanExecute = true;
+               }));
+            #endregion
+            #region 保存
+            CommandBindings.Add(new CommandBinding(MyCommands.Save,
+               (s, e) =>
+               {
+                   MessageBoxResult result = MessageBoxX.Show($"确定删除该参数吗？", "确认", Application.Current.MainWindow, MessageBoxButton.YesNo);
+                   if (result == MessageBoxResult.Yes)
+                   {
+                       if(string.IsNullOrEmpty(viewModel.EditModel.product_name) || string.IsNullOrEmpty(viewModel.EditModel.graphic_carton_size) ||
+                          string.IsNullOrEmpty(viewModel.EditModel.noraml_carton_size) || string.IsNullOrEmpty(viewModel.EditModel.outer_carton_size))
+                       {
+                           MessageBoxX.Show($"请输入完整参数", "错误", Application.Current.MainWindow, MessageBoxButton.OK);
+                           return;
+                       }
+                       viewModel.Update(viewModel.EditModel);
+                   }
+               },
+               (s, e) =>
+               {
+                   e.CanExecute = viewModel.EditModel !=null;
+               }));
+            #endregion
+            #region 删除
+            CommandBindings.Add(new CommandBinding(MyCommands.Delete,
+               (s, e) =>
+               {
+                   MessageBoxResult result = MessageBoxX.Show($"确定删除该参数吗？", "确认", Application.Current.MainWindow, MessageBoxButton.YesNo);
+                   if(result == MessageBoxResult.Yes)
+                   {
+                       NodeData node = treeview1.SelectedItem as NodeData;
+                       if(node !=null)
+                       {
+                           viewModel.Remove(node.id);
+                       }
+                   }
+               },
+               (s, e) =>
+               {
+                   e.CanExecute = viewModel.EditModel != null && treeview1.SelectedItem !=null;
+               }));
+            #endregion
         }
 
         private void Datagrid1_PreviewMouseDoubleClick(object sender, MouseButtonEventArgs e)

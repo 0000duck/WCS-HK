@@ -33,8 +33,7 @@ namespace iFactoryApp.ViewModel
                 {
                     ModelList.Add(item);
 
-                    NodeData n = new NodeData();
-                    n.Name = item.product_name;//device_id
+                    NodeData n = new NodeData() {  id=item.id,Name=item.product_name};
                     trees.Add(n);
                 }
                 EditModel = list[0];
@@ -73,6 +72,7 @@ namespace iFactoryApp.ViewModel
             {
                 return Insert(model);
             }
+            return false;
         }
         public bool Remove(ProductParameter model, bool RemoveListOnly = false)
         {
@@ -96,11 +96,35 @@ namespace iFactoryApp.ViewModel
 
             return false;
         }
+        public bool Remove(int ModelId)
+        {
+            var model = _productParameterService.QueryableToEntity(x=>x.id== ModelId);
+            if(model !=null)
+            {
+                if (_productParameterService.Delete(x => x.id == ModelId))
+                {
+                    model = ModelList.FirstOrDefault(x => x.id == ModelId);
+                    if(model !=null)
+                    {
+                        ModelList.Remove(model);//本地队列删除
+                    }
+                    if(trees.Any(x=>x.id == ModelId))
+                    {
+                        var node= trees.FirstOrDefault(x => x.id == ModelId);
+                        trees.Remove(node);//删除左侧树形
+                    }
+                    return true;
+                }
+            }
+
+            return false;
+        }
         #endregion
     }
 
     public class NodeData
     {
+        public int id { get; set; }
         public string Name { get; set; }
         public string Root { get; set; }
         public string DisplayName { get; set; }
