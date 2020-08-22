@@ -7,7 +7,7 @@
       xmlns:comLib="clr-namespace:iFactory.CommonLibrary;assembly=CommonLibrary"
       xmlns:local="clr-namespace:iFactoryApp.View"
       mc:Ignorable="d" 
-      d:DesignHeight="450" d:DesignWidth="800" Title="原料作业任务" Background="LightGray">
+      d:DesignHeight="450" d:DesignWidth="800" Title="产品参数管理" Background="LightGray" ResizeMode="NoResize">
     <Window.ContextMenu>
         <ContextMenu Width="200" FontSize="14" pu:ContextMenuHelper.CornerRadius="15"
                      pu:ContextMenuHelper.HoverBackground="DarkGray" MenuItem.Click="ContextMenu_Click">
@@ -23,7 +23,19 @@
             <ColumnDefinition Width="120"/>
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
-
+        <TreeView x:Name="treeview1" Grid.RowSpan="2" ItemsSource="{Binding ModelTrees}" Height="Auto" 
+                  HorizontalAlignment="Stretch" Margin="0,0,0,0" VerticalAlignment="Stretch" Width="Auto" 
+                  FontSize="12"  SelectedItemChanged="treeView1_SelectedItemChanged" 
+                  ToolTip="参数编号以产品为唯一标识" Background="#FFBDD0E4"
+                  pu:TreeViewHelper.SelectedBackground="LightGray"
+                  pu:TreeViewHelper.SelectMode="Any"
+                  pu:TreeViewHelper.SelectedForeground="Red">
+            <TreeView.ItemTemplate>
+                <HierarchicalDataTemplate ItemsSource="{Binding Path=ChildNodes}">
+                    <TextBlock Text="{Binding Path=Name}"/>
+                </HierarchicalDataTemplate>
+            </TreeView.ItemTemplate>
+        </TreeView>
         <Grid  Grid.Column="1">
             <Grid.RowDefinitions>
                 <RowDefinition Height="40"/>
@@ -32,18 +44,18 @@
             <ToolBar Grid.Row="0" Background="#FFAAB7C5">
                 <Button Command="{x:Static comLib:MyCommands.Add}"  ToolTip="增加参数" IsCancel="False" HorizontalAlignment="Center" Content="新建" HorizontalContentAlignment="Center" />
                 <Separator Margin="5,13,5,14"/>
-                <Button Command="{x:Static ApplicationCommands.Save}"  ToolTip="保存参数" HorizontalAlignment="Center" Content="保存" HorizontalContentAlignment="Center" />
+                <Button Command="{x:Static comLib:MyCommands.Save}"  ToolTip="保存参数" HorizontalAlignment="Center" Content="保存" HorizontalContentAlignment="Center" />
                 <Separator Margin="5,13,5,12"/>
-                <Button Command="{x:Static ApplicationCommands.Delete}" ToolTip="删除参数" HorizontalAlignment="Center" Content="删除" HorizontalContentAlignment="Center" />
+                <Button Command="{x:Static comLib:MyCommands.Delete}" ToolTip="删除参数" HorizontalAlignment="Center" Content="删除" HorizontalContentAlignment="Center" />
                 <Separator/>
                 <TextBox x:Name="txtProId" TextAlignment="Center" Margin="20,7,0,7" Width="123" ToolTip="请输入需要检索的产品名称，输入完毕按下回车键确定" HorizontalContentAlignment="Center"/>
-                <Button Command="{x:Static ApplicationCommands.Delete}" ToolTip="删除参数" HorizontalAlignment="Center" Content="查找" HorizontalContentAlignment="Center" Margin="5,7,0,7" Width="66" >
+                <Button Command="{x:Static comLib:MyCommands.Query}" ToolTip="快速查找" HorizontalAlignment="Center" Content="查找" HorizontalContentAlignment="Center" Margin="5,7,0,7" Width="66" >
                     <Button.Background>
                         <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.InfoColorKey}}"/>
                     </Button.Background>
                 </Button>
             </ToolBar>
-            <GroupBox Grid.Row="1" Header="参数信息" Background="WhiteSmoke" pu:GroupBoxHelper.HeaderPadding="2,5" pu:GroupBoxHelper.HeaderBackground="DarkGray" 
+            <GroupBox x:Name="group1" Grid.Row="1" Header="参数信息" Background="WhiteSmoke" pu:GroupBoxHelper.HeaderPadding="2,5" pu:GroupBoxHelper.HeaderBackground="DarkGray" 
                       pu:GroupBoxHelper.CornerRadius="5" Margin="0">
                 <Grid Margin="0,0,5,0">
                     <Grid.RowDefinitions>
@@ -58,31 +70,31 @@
                         <ColumnDefinition/>
                         <ColumnDefinition/>
                     </Grid.ColumnDefinitions>
-                    <TextBox Grid.Row="0" Grid.Column="0" Text="{Binding EditModel.product_name}" pu:TextBoxHelper.Header="产品名称" pu:TextBoxHelper.Watermark="产品名称信息" pu:TextBoxHelper.HeaderWidth="80" pu:TextBoxHelper.CornerRadius="5" VerticalAlignment="Center" Height="32" Margin="5,0,0,0" Padding="0"/>
-                    <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding EditModel.product_size}" pu:TextBoxHelper.Header="产品尺寸" pu:TextBoxHelper.Watermark="格式为：200*300" pu:TextBoxHelper.HeaderWidth="80" pu:TextBoxHelper.CornerRadius="5" VerticalAlignment="Center" Height="32" Margin="5,0,0,0" Padding="0"/>
-                    <TextBox Grid.Row="1" Grid.Column="0" Text="{Binding EditModel.graphic_carton_size}" pu:TextBoxHelper.Header="彩盒尺寸" pu:TextBoxHelper.HeaderWidth="80" pu:TextBoxHelper.Watermark="格式为：200*300*200.码垛使用" pu:TextBoxHelper.CornerRadius="5" VerticalAlignment="Center" Height="32" Margin="5,0,0,0" Padding="0"/>
-                    <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding EditModel.noraml_carton_size}" pu:TextBoxHelper.Header="普通箱尺寸" pu:TextBoxHelper.HeaderWidth="80" pu:TextBoxHelper.Watermark="格式为：200*300*200.码垛使用" pu:TextBoxHelper.CornerRadius="5" VerticalAlignment="Center" Height="32" Margin="5,0,0,0" Padding="0"/>
-                    <TextBox Grid.Row="2" Grid.Column="0" Text="{Binding EditModel.outer_carton_size}" pu:TextBoxHelper.Header="外箱尺寸" pu:TextBoxHelper.HeaderWidth="80" pu:TextBoxHelper.Watermark="格式为：200*300*200" pu:TextBoxHelper.CornerRadius="5" VerticalAlignment="Center" Height="32" Margin="5,0,0,0" Padding="0"/>
-                    <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding EditModel.pallet_size}" pu:TextBoxHelper.Header="托盘尺寸" pu:TextBoxHelper.HeaderWidth="80" pu:TextBoxHelper.Watermark="格式为：200*300*200" pu:TextBoxHelper.CornerRadius="5" VerticalAlignment="Center" Height="32" Margin="5,0,0,0" Padding="0"/>
-                    <TextBox Grid.Row="3" Grid.Column="0" Text="{Binding EditModel.robot_pg_no}" pu:TextBoxHelper.Header="垛型" pu:TextBoxHelper.HeaderWidth="80" pu:TextBoxHelper.Watermark="请输入机械手里面的垛型编号" pu:TextBoxHelper.CornerRadius="5" VerticalAlignment="Center" Height="32" Margin="5,0,0,0" Padding="0"/>
-                    <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding EditModel.pallet_num}" pu:TextBoxHelper.Header="码垛数量" pu:TextBoxHelper.HeaderWidth="80" pu:TextBoxHelper.Watermark="码垛的总共数量" pu:TextBoxHelper.CornerRadius="5" VerticalAlignment="Center" Height="32" Margin="5,0,0,0" Padding="0"/>
-                    <ComboBox Grid.Row="4" Grid.Column="0"  Text="{Binding EditModel.open_machine_mode}" pu:ComboBoxHelper.Header="开盒设备"  pu:ComboBoxHelper.HeaderWidth="80" pu:ComboBoxHelper.CornerRadius="5" VerticalAlignment="Center" Height="32" Margin="5,0,0,0" Padding="0"/>
-                    <ComboBox Grid.Row="4" Grid.Column="1" Text="{Binding EditModel.barcode_machine_mode}" pu:ComboBoxHelper.Header="贴标设备" pu:ComboBoxHelper.HeaderWidth="80" pu:ComboBoxHelper.CornerRadius="5" VerticalAlignment="Center" Height="32" Margin="5,0,0,0" Padding="0"/>
+                    <TextBox Grid.Row="0" Grid.Column="0" Text="{Binding product_name}" pu:TextBoxHelper.Header="产品名称" pu:TextBoxHelper.Watermark="产品名称信息" pu:TextBoxHelper.HeaderWidth="80" pu:TextBoxHelper.CornerRadius="5" VerticalAlignment="Center" Height="32" Margin="5,0" Padding="0"/>
+                    <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding product_size}" pu:TextBoxHelper.Header="产品尺寸" pu:TextBoxHelper.Watermark="格式为：200*300" pu:TextBoxHelper.HeaderWidth="80" pu:TextBoxHelper.CornerRadius="5" VerticalAlignment="Center" Height="32" Margin="5,0" Padding="0"/>
+                    <TextBox Grid.Row="1" Grid.Column="0" Text="{Binding graphic_carton_size}" pu:TextBoxHelper.Header="彩盒尺寸" pu:TextBoxHelper.HeaderWidth="80" pu:TextBoxHelper.Watermark="格式为：200*300*200.码垛使用" pu:TextBoxHelper.CornerRadius="5" VerticalAlignment="Center" Height="32" Margin="5,0" Padding="0"/>
+                    <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding noraml_carton_size}" pu:TextBoxHelper.Header="普通箱尺寸" pu:TextBoxHelper.HeaderWidth="80" pu:TextBoxHelper.Watermark="格式为：200*300*200.码垛使用" pu:TextBoxHelper.CornerRadius="5" VerticalAlignment="Center" Height="32" Margin="5,0" Padding="0"/>
+                    <TextBox Grid.Row="2" Grid.Column="0" Text="{Binding outer_carton_size}" pu:TextBoxHelper.Header="外箱尺寸" pu:TextBoxHelper.HeaderWidth="80" pu:TextBoxHelper.Watermark="格式为：200*300*200" pu:TextBoxHelper.CornerRadius="5" VerticalAlignment="Center" Height="32" Margin="5,0" Padding="0"/>
+                    <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding pallet_size}" pu:TextBoxHelper.Header="托盘尺寸" pu:TextBoxHelper.HeaderWidth="80" pu:TextBoxHelper.Watermark="格式为：200*300*200" pu:TextBoxHelper.CornerRadius="5" VerticalAlignment="Center" Height="32" Margin="5,0" Padding="0"/>
+                    <TextBox Grid.Row="3" Grid.Column="0" Text="{Binding robot_pg_no}" pu:TextBoxHelper.Header="垛型" pu:TextBoxHelper.HeaderWidth="80" pu:TextBoxHelper.Watermark="请输入机械手里面的垛型编号" pu:TextBoxHelper.CornerRadius="5" VerticalAlignment="Center" Height="32" Margin="5,0" Padding="0"/>
+                    <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding pallet_num}" pu:TextBoxHelper.Header="码垛数量" pu:TextBoxHelper.HeaderWidth="80" pu:TextBoxHelper.Watermark="码垛的总共数量" pu:TextBoxHelper.CornerRadius="5" VerticalAlignment="Center" Height="32" Margin="5,0" Padding="0"/>
+                    <ComboBox Grid.Row="4" Grid.Column="0"  SelectedIndex="{Binding open_machine_mode}" pu:ComboBoxHelper.Header="开盒设备"  pu:ComboBoxHelper.HeaderWidth="80" pu:ComboBoxHelper.CornerRadius="5" VerticalAlignment="Center" Height="32" Margin="5,0" Padding="0">
+                        <ComboBoxItem Content="都不使用"/>
+                        <ComboBoxItem Content="普通箱"/>
+                        <ComboBoxItem Content="彩箱"/>
+                    </ComboBox>
+                    <ComboBox Grid.Row="4" Grid.Column="1" SelectedIndex="{Binding barcode_machine_mode}" pu:ComboBoxHelper.Header="贴标设备" pu:ComboBoxHelper.HeaderWidth="80" pu:ComboBoxHelper.CornerRadius="5" VerticalAlignment="Center" Height="32" Margin="5,0" Padding="0">
+                        <ComboBoxItem Content="都不使用"/>
+                        <ComboBoxItem Content="1#彩盒贴标"/>
+                        <ComboBoxItem Content="2#彩盒贴标"/>
+                    </ComboBox>
                     <StackPanel Grid.Row="5" Grid.ColumnSpan="2" Orientation="Horizontal">
-                        <CheckBox IsChecked="{Binding EditModel.sn_barcode_enable}" pu:CheckBoxHelper.CheckBoxStyle="Standard" pu:CheckBoxHelper.Header="SN标签检测功能" pu:CheckBoxHelper.HeaderWidth="auto" pu:CheckBoxHelper.CornerRadius="5" VerticalAlignment="Center" Height="32" Margin="5,0,10,0" Padding="0"/>
-                        <CheckBox IsChecked="{Binding EditModel.card_machine_enable}" pu:CheckBoxHelper.Header="发卡机启用" pu:CheckBoxHelper.HeaderWidth="auto" pu:TextBoxHelper.CornerRadius="5" VerticalAlignment="Center" Height="32" Margin="15,0" Padding="0"/>
-                        <CheckBox IsChecked="{Binding EditModel.plate_enable}" pu:CheckBoxHelper.Header="隔板启用" pu:CheckBoxHelper.HeaderWidth="auto" pu:CheckBoxHelper.CornerRadius="5" VerticalAlignment="Center" Height="32" Margin="15,0" Padding="0"/>
+                        <CheckBox IsChecked="{Binding sn_barcode_enable}" pu:CheckBoxHelper.CheckBoxStyle="Switch" pu:CheckBoxHelper.CheckedBackground="LimeGreen" pu:CheckBoxHelper.Header="SN标签检测功能" pu:CheckBoxHelper.HeaderWidth="auto" pu:CheckBoxHelper.CornerRadius="5" VerticalAlignment="Center" Height="32" Margin="5,0,10,0" Padding="0"/>
+                        <CheckBox IsChecked="{Binding card_machine_enable}" pu:CheckBoxHelper.CheckBoxStyle="Switch"  pu:CheckBoxHelper.CheckedBackground="LimeGreen" pu:CheckBoxHelper.Header="发卡机启用" pu:CheckBoxHelper.HeaderWidth="auto" pu:TextBoxHelper.CornerRadius="5" VerticalAlignment="Center" Height="32" Margin="15,0" Padding="0"/>
+                        <CheckBox IsChecked="{Binding plate_enable}" pu:CheckBoxHelper.CheckBoxStyle="Switch"  pu:CheckBoxHelper.CheckedBackground="LimeGreen" pu:CheckBoxHelper.Header="隔板启用" pu:CheckBoxHelper.HeaderWidth="auto" pu:CheckBoxHelper.CornerRadius="5" VerticalAlignment="Center" Height="32" Margin="15,0" Padding="0"/>
                     </StackPanel>
                 </Grid>
             </GroupBox>
         </Grid>
-
-        <TreeView x:Name="treeview1" Grid.RowSpan="2" ItemsSource="{Binding trees}" Height="Auto" HorizontalAlignment="Stretch" Margin="0,0,0,0" VerticalAlignment="Stretch" Width="Auto" FontSize="12" ToolTip="参数编号以产品id为唯一标识" Background="#FFBDD0E4">
-            <TreeView.ItemTemplate>
-                <HierarchicalDataTemplate ItemsSource="{Binding Path=ChildNodes}">
-                    <TextBlock Text="{Binding Path=Name}"/>
-                </HierarchicalDataTemplate>
-            </TreeView.ItemTemplate>
-        </TreeView>
     </Grid>
 </Window>

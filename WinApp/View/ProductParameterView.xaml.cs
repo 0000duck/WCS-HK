@@ -33,13 +33,15 @@ namespace iFactoryApp.View
             InitializeComponent();
             viewModel = IoC.GetViewModel<ProductParameterViewModel>(this);
             systemLogViewModel = IoC.Get<ISystemLogViewModel>();
+            viewModel.LoadAllInfos();
             this.DataContext = viewModel;
-
+            LoadNewParameters();
             #region 新建
             CommandBindings.Add(new CommandBinding(MyCommands.Add,
                (s, e) =>
                {
                    viewModel.EditModel = new ProductParameter();
+                   LoadNewParameters();
                 },
                (s, e) =>
                {
@@ -88,14 +90,18 @@ namespace iFactoryApp.View
             #endregion
         }
 
-        private void Datagrid1_PreviewMouseDoubleClick(object sender, MouseButtonEventArgs e)
+        private void treeView1_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
         {
-            e.Handled = true;
+            NodeData nodeData = treeview1.SelectedItem as NodeData;
+            if (nodeData != null)
+            {
+                viewModel.EditModel = viewModel.ModelList.FirstOrDefault(x => x.id == nodeData.id);
+                LoadNewParameters();
+            }
         }
-
-        private void datagrid1_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void LoadNewParameters()
         {
-           
+            group1.DataContext = viewModel.EditModel;
         }
         private void ContextMenu_Click(object sender, RoutedEventArgs e)
         {
@@ -128,12 +134,6 @@ namespace iFactoryApp.View
                 }
             }
         }
-        //编辑窗体关闭刷新
-        private void EditView_Closed(object sender, EventArgs e)
-        {
-            this.DataContext = null;
-            viewModel.LoadAllInfos();
-            this.DataContext = viewModel;
-        }
+        
     }
 }

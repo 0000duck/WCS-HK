@@ -53,6 +53,7 @@ namespace iFactoryApp
 
             Container.RegisterSingleton<ProductParameterViewModel>();
             Container.RegisterSingleton<TaskOrderViewModel>();
+            Container.RegisterSingleton<WatchViewModel>();
 
             //用户权限
             Container.RegisterSingleton<UserManageViewModel>();

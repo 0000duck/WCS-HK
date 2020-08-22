@@ -11,10 +11,11 @@ namespace iFactoryApp.ViewModel
 {
     public class ProductParameterViewModel
     {
-        private readonly IProductParameterService _productParameterService;
-        public ObservableCollection<NodeData> trees = new ObservableCollection<NodeData>();
+        public ObservableCollection<NodeData> ModelTrees { set; get; } = new ObservableCollection<NodeData>();
         public ObservableCollection<ProductParameter> ModelList { set; get; } = new ObservableCollection<ProductParameter>();
         public ProductParameter EditModel { set; get; }
+
+        private readonly IProductParameterService _productParameterService;
 
         /// <summary>
         /// Initializes a new instance of the MainViewModel class.
@@ -26,15 +27,15 @@ namespace iFactoryApp.ViewModel
         }
         public void LoadAllInfos()
         {
+            ModelTrees.Clear();
+            ModelList.Clear();
             var list = _productParameterService.QueryableToList(x => x.id > 0).OrderBy(x=>x.product_name).ToList();
             if(list !=null && list.Count>0)
             {
                 foreach (var item in list)
                 {
                     ModelList.Add(item);
-
-                    NodeData n = new NodeData() {  id=item.id,Name=item.product_name};
-                    trees.Add(n);
+                    AddTreeNode(item);
                 }
                 EditModel = list[0];
             }
@@ -49,6 +50,9 @@ namespace iFactoryApp.ViewModel
             long id = _productParameterService.InsertBigIdentity(model);
             if (id > 0)
             {
+                model.id = (int)id;
+                ModelList.Add(model);
+                AddTreeNode(model);
                 return true;
             }
             return false;
@@ -107,11 +111,7 @@ namespace iFactoryApp.ViewModel
                     if(model !=null)
                     {
                         ModelList.Remove(model);//本地队列删除
-                    }
-                    if(trees.Any(x=>x.id == ModelId))
-                    {
-                        var node= trees.FirstOrDefault(x => x.id == ModelId);
-                        trees.Remove(node);//删除左侧树形
+                        RemoveTreeNode(model);
                     }
                     return true;
                 }
@@ -120,6 +120,20 @@ namespace iFactoryApp.ViewModel
             return false;
         }
         #endregion
+
+        private void AddTreeNode(ProductParameter model)
+        {
+            NodeData n = new NodeData() { id = model.id, Name = model.product_name,DisplayName= model.product_name };
+            ModelTrees.Add(n);
+        }
+        private void RemoveTreeNode(ProductParameter model)
+        {
+            if (ModelTrees.Any(x => x.id == model.id))
+            {
+                var node = ModelTrees.FirstOrDefault(x => x.id == model.id);
+                ModelTrees.Remove(node);//删除左侧树形
+            }
+        }
     }
 
     public class NodeData

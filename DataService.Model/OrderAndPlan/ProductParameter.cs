@@ -11,10 +11,6 @@ namespace iFactory.DataService.Model
     public class ProductParameter : BaseNotifyModel
     {
         /// <summary>
-        /// 装彩箱 装普通箱 不装箱
-        /// </summary>
-        public int mode { set; get; }
-        /// <summary>
         /// 产品名称
         /// </summary>
         private string _product_name ;

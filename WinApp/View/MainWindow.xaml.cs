@@ -1,24 +1,10 @@
 ﻿using iFactory.CommonLibrary;
-using iFactory.DataService.IService;
 using iFactory.UserManage;
 using iFactoryApp.ViewModel;
 using Panuon.UI.Silver;
-using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace iFactoryApp.View
 {
@@ -28,14 +14,16 @@ namespace iFactoryApp.View
     public partial class MainWindow : WindowX
     {
         private readonly MainViewModel viewModel;
-        private IContextMenuView lastView=null;
+        private readonly WatchView watchView = new WatchView();
+        private readonly TaskOrderView taskOrderView = new TaskOrderView();
+        private IContextMenuView lastView;
 
         public MainWindow()
         {
             InitializeComponent();
             viewModel = IoC.GetViewModel<MainViewModel>(this);
             this.DataContext = viewModel;
-          
+            lastView = taskOrderView;
         }
 
         private void MenuItem_Click(object sender, RoutedEventArgs e)
@@ -44,6 +32,14 @@ namespace iFactoryApp.View
             if (control == null || control.Tag == null) return;
             switch (control.Tag.ToString())
             {
+                case "Main":
+                    frame1.NavigateToPage(watchView, false);
+                    lastView = watchView;
+                    break;
+                case "TaskOrder":
+                    frame1.NavigateToPage(taskOrderView, false);
+                    lastView = taskOrderView;
+                    break;
                 case "Product":
                     ProductParameterView productParameterView = new ProductParameterView();
                     productParameterView.ShowDialog();
@@ -61,6 +57,7 @@ namespace iFactoryApp.View
                 case "New":
                 case "Edit":
                 case "Delete":
+                case "Finish":
                     if (lastView != null)
                     {
                         lastView.ContextMenu_Click(control.Tag.ToString());

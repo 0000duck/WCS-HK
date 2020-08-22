@@ -11,7 +11,18 @@ namespace iFactory.DataService.Model
     [SugarTable("task_order")]
     public class TaskOrder: ProductParameter
     {
-        private DateTime _insert_time;
+        private int _pack_mode = 0;
+        [SugarColumn]
+        public int pack_mode
+        {
+            set
+            {
+                _pack_mode = value;
+                NotifyPropertyChanged("pack_mode");
+            }
+            get { return _pack_mode; }
+        }
+        private DateTime _insert_time=DateTime.Now;
         /// <summary>
         /// 数据插入时间
         /// </summary>
@@ -39,7 +50,7 @@ namespace iFactory.DataService.Model
             }
             get { return _start_time; }
         }
-        private int _order_status;
+        private int _order_status=0;
         /// <summary>
         /// 任务状态
         /// </summary>
@@ -53,7 +64,7 @@ namespace iFactory.DataService.Model
             }
             get { return _order_status; }
         }
-        private int _product_count;
+        private int _product_count=0;
         /// <summary>
         /// 完成数量
         /// </summary>

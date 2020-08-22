@@ -165,11 +165,15 @@
     <Compile Include="Common\IContextMenuView.cs" />
     <Compile Include="IoC.cs" />
     <Compile Include="Service\UserViewService.cs" />
+    <Compile Include="ViewModel\WatchViewModel.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="ViewModel\ProductParameterViewModel.cs" />
     <Compile Include="ViewModel\SystemLogViewModel.cs" />
     <Compile Include="ViewModel\TaskOrderViewModel.cs" />
     <Compile Include="ViewModel\ViewModelLocator.cs" />
+    <Compile Include="View\WatchView.xaml.cs">
+      <DependentUpon>WatchView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\ProductParameterView.xaml.cs">
       <DependentUpon>ProductParameterView.xaml</DependentUpon>
     </Compile>
@@ -182,15 +186,17 @@
     <Compile Include="View\SystemLogView.xaml.cs">
       <DependentUpon>SystemLogView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="View\TaskOrderEditView.xaml.cs">
+      <DependentUpon>TaskOrderEditView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\TaskOrderView.xaml.cs">
       <DependentUpon>TaskOrderView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="WinBaseDataSet.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>WinBaseDataSet.xsd</DependentUpon>
-    </Compile>
     <Page Include="Resources\Styles.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\WatchView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -207,6 +213,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="View\SystemLogView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\TaskOrderEditView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -244,17 +254,6 @@
     </None>
     <None Include="Report\Report1.rdlc">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="WinBaseDataSet.xsc">
-      <DependentUpon>WinBaseDataSet.xsd</DependentUpon>
-    </None>
-    <None Include="WinBaseDataSet.xsd">
-      <Generator>MSDataSetGenerator</Generator>
-      <LastGenOutput>WinBaseDataSet.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="WinBaseDataSet.xss">
-      <DependentUpon>WinBaseDataSet.xsd</DependentUpon>
     </None>
     <Resource Include="Resources\NeteaseExample\iconfont.ttf" />
   </ItemGroup>

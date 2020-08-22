@@ -14,12 +14,16 @@
     <comLib:StatusColorConverter x:Key="StatusColor"></comLib:StatusColorConverter>
     <!--任务单状态转换器定义-->
     <comLib:OrderStatusConverter x:Key="OrderStatus"></comLib:OrderStatusConverter>
-    <!--设备类别转换器定义-->
-    <comLib:DeviceTypeConverter x:Key="deviceTypeConverter"></comLib:DeviceTypeConverter>
-    <!--路径类别转换器定义-->
-    <comLib:RouteTypeConverter x:Key="routeTypeConverter"></comLib:RouteTypeConverter>
     <!--时间转换器定义-->
     <comLib:DatetTimeConverter x:Key="datetTimeConverter"></comLib:DatetTimeConverter>
+    <!--开箱设备类别转换器定义-->
+    <comLib:OpenMachineModeConverter x:Key="openMachineModeConverter"></comLib:OpenMachineModeConverter>
+    <!--标签转换器定义-->
+    <comLib:BarcodeMachineModeConverter x:Key="barcodeMachineModeConverter"></comLib:BarcodeMachineModeConverter>
+    <!--包装模式转换器定义-->
+    <comLib:PackModeConverter x:Key="packModeConverter"></comLib:PackModeConverter>
+    <!--包装模式转换器定义-->
+    <comLib:EnableModeConverter x:Key="enableModeConverter"></comLib:EnableModeConverter>
 
     <DrawingBrush x:Key="GridBrush"
                   Viewport="0,0,12,12"

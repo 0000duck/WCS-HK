@@ -109,7 +109,7 @@
     <Compile Include="Convert\RowToIndexConverter.cs" />
     <Compile Include="Convert\WpfViewConverter.cs" />
     <Compile Include="Define\LogTypeEnum.cs" />
-    <Compile Include="Define\DeviceType.cs" />
+    <Compile Include="Define\Enums.cs" />
     <Compile Include="Http\HttpRequestHelper.cs" />
     <Compile Include="Interface\IDependency.cs" />
     <Compile Include="Interface\IHttpRequest.cs" />
