@@ -2,6 +2,7 @@
 using iFactory.DataService.IService;
 using iFactory.DataService.Model;
 using iFactory.DevComServer;
+using iFactoryApp.Service;
 using iFactoryApp.ViewModel;
 using Panuon.UI.Silver;
 using System;
@@ -26,6 +27,7 @@ namespace iFactoryApp.View
     /// </summary>
     public partial class TaskOrderEditView : Window
     {
+        private readonly TaskOrderManager _taskOrderManager;
         private readonly TaskOrderViewModel _viewModel;
         private readonly IProductParameterService _productParameterService;
 
@@ -34,8 +36,17 @@ namespace iFactoryApp.View
             InitializeComponent();
             _viewModel = IoC.GetViewModel<TaskOrderViewModel>(this);
             _productParameterService = IoC.Get<IProductParameterService>();
+            _taskOrderManager= IoC.Get<TaskOrderManager>();
             _viewModel.LoadParameters();
             this.DataContext = _viewModel;
+            if (_viewModel.EditModel.pack_mode == (int)PackMode.Pack)//装箱模式
+            {
+                radioButton1.IsChecked = true;
+            }
+            else
+            {
+                radioButton2.IsChecked = true;
+            }
         }
         private void Button_Click(object sender, RoutedEventArgs e)
         {
@@ -61,18 +72,34 @@ namespace iFactoryApp.View
                 _viewModel.EditModel.robot_pg_no = parameter.robot_pg_no;
                 _viewModel.EditModel.sn_barcode_enable = parameter.sn_barcode_enable;
             }
-            _viewModel.EditModel.pack_mode = (int)PackMode.Pack;
-            if (radioButton1.IsChecked==true)
+            _viewModel.EditModel.order_status =(int) OrderStatusEnum.Running;
+            _viewModel.EditModel.start_time = DateTime.Now;
+            _viewModel.EditModel.pack_mode = (int)PackMode.None;
+            if (radioButton1.IsChecked==true)//装箱模式
             {
-                _viewModel.EditModel.pack_mode = (int)PackMode.None;
+                _viewModel.EditModel.pack_mode = (int)PackMode.Pack;
             }
             if (_viewModel.EditModel.id > 0)
             {
-                _viewModel.Update(_viewModel.EditModel);
+                if(!_viewModel.Update(_viewModel.EditModel))
+                {
+                    MessageBoxX.Show("任务单信息保存失败", "错误", Application.Current.MainWindow);
+                }
+                else
+                {
+                    _taskOrderManager.StartToDownloadParamter(_viewModel.EditModel);
+                }
             }
             else
             {
-                _viewModel.Insert(_viewModel.EditModel);
+                if(!_viewModel.Insert(_viewModel.EditModel))
+                {
+                    MessageBoxX.Show("任务单信息保存失败", "错误", Application.Current.MainWindow);
+                }
+                else
+                {
+                    _taskOrderManager.StartToDownloadParamter(_viewModel.EditModel);
+                }
             }
 
             this.Close();

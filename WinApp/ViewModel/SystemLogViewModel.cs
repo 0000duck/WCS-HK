@@ -1,6 +1,7 @@
 ﻿using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using iFactory.CommonLibrary;
+using iFactory.CommonLibrary.Interface;
 using iFactory.DataService.Model;
 using System;
 using System.Collections.Generic;
@@ -13,13 +14,15 @@ namespace iFactoryApp.ViewModel
 {
     public interface ISystemLogViewModel
     {
-        void AddMewStatus(string Content, bool IsRecordToFile = true);
+        void AddMewStatus(string Content, LogTypeEnum logTypeEnum = LogTypeEnum.Info, bool IsRecordToFile = true);
     }
     public class SystemLogViewModel : ViewModelBase, ISystemLogViewModel
     {
-        public SystemLogViewModel()
-        {
+        private readonly ILogWrite _log;
 
+        public SystemLogViewModel(ILogWrite log)
+        {
+            _log = log;
         }
 
         private ObservableCollection<OperateStatus> operatesCollection = new ObservableCollection<OperateStatus>();
@@ -70,14 +73,18 @@ namespace iFactoryApp.ViewModel
             return true;
         }
 
-        public void AddMewStatus(string Content, bool IsRecordToFile = true)
+        public void AddMewStatus(string Content, LogTypeEnum logTypeEnum = LogTypeEnum.Info, bool IsRecordToFile = true)
         {
             if (operatesCollection.Count >= 500)
             {
                 ObservableCollectionHelper.ClearItem<OperateStatus>(operatesCollection);
             }
-            OperateStatus operateStatus = new OperateStatus(Content);
+            OperateStatus operateStatus = new OperateStatus(Content, logTypeEnum);
             ObservableCollectionHelper.InsertItem<OperateStatus>(operatesCollection, operateStatus);//增加记录
+            if (IsRecordToFile)
+            {
+                _log.WriteLog(Content);
+            }
         }
         #endregion
     }

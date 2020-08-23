@@ -7,7 +7,7 @@
     <!--行号转换器定义-->
     <comLib:RowIndexConverter x:Key="RowIndexConv"></comLib:RowIndexConverter>
     <!--日志类型转换器定义-->
-    <comLib:LogTypeConverter x:Key="LogType"></comLib:LogTypeConverter>
+    <comLib:LogTypeConverter x:Key="logTypeConverter"></comLib:LogTypeConverter>
     <!--日志错误单元格颜色转换器定义-->
     <comLib:CellColorConverter x:Key="CellColor"></comLib:CellColorConverter>
     <!--状态颜色转换器定义-->

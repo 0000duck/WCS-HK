@@ -162,8 +162,11 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Common\DatagridDropHelper.cs" />
+    <Compile Include="Common\GlobalSettings.cs" />
     <Compile Include="Common\IContextMenuView.cs" />
+    <Compile Include="Common\KeyenceCameraHelper.cs" />
     <Compile Include="IoC.cs" />
+    <Compile Include="Service\TaskOrderManager.cs" />
     <Compile Include="Service\UserViewService.cs" />
     <Compile Include="ViewModel\WatchViewModel.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />

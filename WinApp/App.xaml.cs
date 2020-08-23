@@ -2,6 +2,7 @@
 using iFactory.CommonLibrary.Interface;
 using iFactory.DataService.IService;
 using iFactory.DevComServer;
+using iFactoryApp.Common;
 using iFactoryApp.View;
 using System;
 using System.Collections.Generic;
@@ -21,6 +22,7 @@ namespace iFactoryApp
     {
         private void Application_Startup(object sender, StartupEventArgs e)
         {
+            GlobalSettings.LoadSettings();//加载参数
             IoC.SetupIoC();//IoC容器启用
             var log = IoC.Get<ILogWrite>();
             var service1 = IoC.Get<IDatabaseTagGroupService>();

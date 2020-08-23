@@ -21,6 +21,7 @@ namespace iFactoryApp.ViewModel
         public ObservableCollection<TaskOrder> ModelList { set; get; } = new ObservableCollection<TaskOrder>();
         public TaskOrder EditModel { set; get; }
         public TaskOrder SelectedModel { set; get; }
+        public CameraBarcode cameraBarcode { set; get; } = new CameraBarcode();
 
         /// <summary>
         /// Initializes a new instance of the MainViewModel class.
@@ -162,5 +163,35 @@ namespace iFactoryApp.ViewModel
 
         }
         #endregion
+    }
+
+    public class CameraBarcode : BaseNotifyModel
+    {
+        /// <summary>
+        /// 产品条码
+        /// </summary>
+        private string _product_barcode;
+        public string product_barcode
+        {
+            set
+            {
+                _product_barcode = value;
+                NotifyPropertyChanged("product_barcode");
+            }
+            get { return _product_barcode; }
+        }
+        /// <summary>
+        /// 彩箱条码
+        /// </summary>
+        private string _graphic_barcode;
+        public string graphic_barcode
+        {
+            set
+            {
+                _graphic_barcode = value;
+                NotifyPropertyChanged("graphic_barcode");
+            }
+            get { return _graphic_barcode; }
+        }
     }
 }

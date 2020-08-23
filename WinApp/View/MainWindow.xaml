@@ -6,7 +6,7 @@
         xmlns:pu="clr-namespace:Panuon.UI.Silver;assembly=Panuon.UI.Silver"
         xmlns:local="clr-namespace:iFactoryApp.View"
         mc:Ignorable="d"
-        Title="思辟德WCS控制系统" Height="900" Width="1400" WindowStartupLocation="CenterScreen" Background="WhiteSmoke" Closing="Window_ClosingAsync" MouseDoubleClick="WindowX_MouseDoubleClick" >
+        Title="WCS设备管理系统" Height="900" Width="1400" WindowStartupLocation="CenterScreen" Background="WhiteSmoke" Closing="Window_ClosingAsync" MouseDoubleClick="WindowX_MouseDoubleClick" >
     <pu:WindowXCaption.Header>
         <Grid>
             <Grid.ColumnDefinitions>
@@ -18,9 +18,9 @@
                        VerticalAlignment="Center"
                        Margin="15,0,30,0"
                        Foreground="Black"
-                       Text="思辟德输送控制系统" />
+                       Text="WCS设备管理系统" />
             <StackPanel Orientation="Horizontal" FlowDirection="RightToLeft" Grid.Column="1">
-                <TextBlock Text="思辟德包装设备有限公司" FontSize="14" FontWeight="Light" VerticalAlignment="Center"  Margin="15,0,30,0" Foreground="Black"  />
+                <TextBlock Text="思辟德智能科技江苏有限公司" FontSize="14" FontWeight="Light" VerticalAlignment="Center"  Margin="15,0,30,0" Foreground="Black"  />
                 <Rectangle Height="12" Width="12" Fill="{Binding DevStatus.IsConnected,Converter={StaticResource StatusColor}}" Margin="0,0,5,0" ToolTip="设备plc连接状态。当为红色时为故障，当为绿色时表示连接正常"></Rectangle>
                 <Rectangle Height="12" Visibility="Hidden" Width="12" Fill="LimeGreen" Margin="0,0,5,0" ToolTip="设备plc连接状态。当为红色时为故障，当为绿色时表示连接正常"></Rectangle>
             </StackPanel>

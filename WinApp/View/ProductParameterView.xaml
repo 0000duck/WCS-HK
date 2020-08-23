@@ -7,7 +7,7 @@
       xmlns:comLib="clr-namespace:iFactory.CommonLibrary;assembly=CommonLibrary"
       xmlns:local="clr-namespace:iFactoryApp.View"
       mc:Ignorable="d" 
-      d:DesignHeight="450" d:DesignWidth="800" Title="产品参数管理" Background="LightGray" ResizeMode="NoResize">
+      d:DesignHeight="300" d:DesignWidth="600" Title="产品参数管理" Background="LightGray" ResizeMode="NoResize">
     <Window.ContextMenu>
         <ContextMenu Width="200" FontSize="14" pu:ContextMenuHelper.CornerRadius="15"
                      pu:ContextMenuHelper.HoverBackground="DarkGray" MenuItem.Click="ContextMenu_Click">
@@ -70,14 +70,14 @@
                         <ColumnDefinition/>
                         <ColumnDefinition/>
                     </Grid.ColumnDefinitions>
-                    <TextBox Grid.Row="0" Grid.Column="0" Text="{Binding product_name}" pu:TextBoxHelper.Header="产品名称" pu:TextBoxHelper.Watermark="产品名称信息" pu:TextBoxHelper.HeaderWidth="80" pu:TextBoxHelper.CornerRadius="5" VerticalAlignment="Center" Height="32" Margin="5,0" Padding="0"/>
-                    <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding product_size}" pu:TextBoxHelper.Header="产品尺寸" pu:TextBoxHelper.Watermark="格式为：200*300" pu:TextBoxHelper.HeaderWidth="80" pu:TextBoxHelper.CornerRadius="5" VerticalAlignment="Center" Height="32" Margin="5,0" Padding="0"/>
-                    <TextBox Grid.Row="1" Grid.Column="0" Text="{Binding graphic_carton_size}" pu:TextBoxHelper.Header="彩盒尺寸" pu:TextBoxHelper.HeaderWidth="80" pu:TextBoxHelper.Watermark="格式为：200*300*200.码垛使用" pu:TextBoxHelper.CornerRadius="5" VerticalAlignment="Center" Height="32" Margin="5,0" Padding="0"/>
-                    <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding noraml_carton_size}" pu:TextBoxHelper.Header="普通箱尺寸" pu:TextBoxHelper.HeaderWidth="80" pu:TextBoxHelper.Watermark="格式为：200*300*200.码垛使用" pu:TextBoxHelper.CornerRadius="5" VerticalAlignment="Center" Height="32" Margin="5,0" Padding="0"/>
-                    <TextBox Grid.Row="2" Grid.Column="0" Text="{Binding outer_carton_size}" pu:TextBoxHelper.Header="外箱尺寸" pu:TextBoxHelper.HeaderWidth="80" pu:TextBoxHelper.Watermark="格式为：200*300*200" pu:TextBoxHelper.CornerRadius="5" VerticalAlignment="Center" Height="32" Margin="5,0" Padding="0"/>
-                    <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding pallet_size}" pu:TextBoxHelper.Header="托盘尺寸" pu:TextBoxHelper.HeaderWidth="80" pu:TextBoxHelper.Watermark="格式为：200*300*200" pu:TextBoxHelper.CornerRadius="5" VerticalAlignment="Center" Height="32" Margin="5,0" Padding="0"/>
-                    <TextBox Grid.Row="3" Grid.Column="0" Text="{Binding robot_pg_no}" pu:TextBoxHelper.Header="垛型" pu:TextBoxHelper.HeaderWidth="80" pu:TextBoxHelper.Watermark="请输入机械手里面的垛型编号" pu:TextBoxHelper.CornerRadius="5" VerticalAlignment="Center" Height="32" Margin="5,0" Padding="0"/>
-                    <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding pallet_num}" pu:TextBoxHelper.Header="码垛数量" pu:TextBoxHelper.HeaderWidth="80" pu:TextBoxHelper.Watermark="码垛的总共数量" pu:TextBoxHelper.CornerRadius="5" VerticalAlignment="Center" Height="32" Margin="5,0" Padding="0"/>
+                    <TextBox Grid.Row="0" Grid.Column="0" Text="{Binding product_name,UpdateSourceTrigger=PropertyChanged}" pu:TextBoxHelper.Header="产品名称" pu:TextBoxHelper.Watermark="产品名称信息" pu:TextBoxHelper.HeaderWidth="80" pu:TextBoxHelper.CornerRadius="5" VerticalAlignment="Center" Height="32" Margin="5,0" Padding="0"/>
+                    <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding product_size,UpdateSourceTrigger=PropertyChanged}" pu:TextBoxHelper.Header="产品尺寸" pu:TextBoxHelper.Watermark="格式为：200*300" pu:TextBoxHelper.HeaderWidth="80" pu:TextBoxHelper.CornerRadius="5" VerticalAlignment="Center" Height="32" Margin="5,0" Padding="0"/>
+                    <TextBox Grid.Row="1" Grid.Column="0" Text="{Binding graphic_carton_size,UpdateSourceTrigger=PropertyChanged}" pu:TextBoxHelper.Header="彩盒尺寸" pu:TextBoxHelper.HeaderWidth="80" pu:TextBoxHelper.Watermark="格式为：200*300*200.码垛使用" pu:TextBoxHelper.CornerRadius="5" VerticalAlignment="Center" Height="32" Margin="5,0" Padding="0"/>
+                    <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding noraml_carton_size,UpdateSourceTrigger=PropertyChanged}" pu:TextBoxHelper.Header="普通箱尺寸" pu:TextBoxHelper.HeaderWidth="80" pu:TextBoxHelper.Watermark="格式为：200*300*200.码垛使用" pu:TextBoxHelper.CornerRadius="5" VerticalAlignment="Center" Height="32" Margin="5,0" Padding="0"/>
+                    <TextBox Grid.Row="2" Grid.Column="0" Text="{Binding outer_carton_size,UpdateSourceTrigger=PropertyChanged}" pu:TextBoxHelper.Header="外箱尺寸" pu:TextBoxHelper.HeaderWidth="80" pu:TextBoxHelper.Watermark="格式为：200*300*200" pu:TextBoxHelper.CornerRadius="5" VerticalAlignment="Center" Height="32" Margin="5,0" Padding="0"/>
+                    <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding pallet_size,UpdateSourceTrigger=PropertyChanged}" pu:TextBoxHelper.Header="托盘尺寸" pu:TextBoxHelper.HeaderWidth="80" pu:TextBoxHelper.Watermark="格式为：200*300*200" pu:TextBoxHelper.CornerRadius="5" VerticalAlignment="Center" Height="32" Margin="5,0" Padding="0"/>
+                    <TextBox Grid.Row="3" Grid.Column="0" Text="{Binding robot_pg_no,UpdateSourceTrigger=PropertyChanged}" pu:TextBoxHelper.Header="垛型" pu:TextBoxHelper.HeaderWidth="80" pu:TextBoxHelper.Watermark="请输入机械手里面的垛型编号" pu:TextBoxHelper.CornerRadius="5" VerticalAlignment="Center" Height="32" Margin="5,0" Padding="0"/>
+                    <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding pallet_num,UpdateSourceTrigger=PropertyChanged}" pu:TextBoxHelper.Header="码垛数量" pu:TextBoxHelper.HeaderWidth="80" pu:TextBoxHelper.Watermark="码垛的总共数量" pu:TextBoxHelper.CornerRadius="5" VerticalAlignment="Center" Height="32" Margin="5,0" Padding="0"/>
                     <ComboBox Grid.Row="4" Grid.Column="0"  SelectedIndex="{Binding open_machine_mode}" pu:ComboBoxHelper.Header="开盒设备"  pu:ComboBoxHelper.HeaderWidth="80" pu:ComboBoxHelper.CornerRadius="5" VerticalAlignment="Center" Height="32" Margin="5,0" Padding="0">
                         <ComboBoxItem Content="都不使用"/>
                         <ComboBoxItem Content="普通箱"/>

@@ -16,6 +16,7 @@
             </i:Interaction.Triggers>
             <DataGrid.Columns>
                 <DataGridTextColumn Header="时间" Binding="{Binding Dt,StringFormat=yyyy/MM/dd HH:mm:ss}" Width="3*"/>
+                <DataGridTextColumn Header="类别" Binding="{Binding Type,Converter={StaticResource logTypeConverter}}" Width="2*"/>
                 <DataGridTextColumn Header="内容" Binding="{Binding Content}" Width="7*" />
             </DataGrid.Columns>
         </DataGrid>

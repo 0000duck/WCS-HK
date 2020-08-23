@@ -1,6 +1,7 @@
 ﻿using iFactory.CommonLibrary;
 using iFactory.DataService.Model;
 using iFactory.DevComServer;
+using iFactoryApp.Service;
 using iFactoryApp.ViewModel;
 using Panuon.UI.Silver;
 using System;
@@ -27,16 +28,26 @@ namespace iFactoryApp.View
     {
         public readonly TaskOrderViewModel viewModel;
         private readonly ISystemLogViewModel systemLogViewModel;
-
+        private readonly TaskOrderManager _taskOrderManager;
         public TaskOrderView()
         {
             InitializeComponent();
             viewModel = IoC.GetViewModel<TaskOrderViewModel>(this);
             systemLogViewModel = IoC.Get<ISystemLogViewModel>();
+            _taskOrderManager= IoC.Get<TaskOrderManager>();
             this.DataContext = viewModel;
             viewModel.LoadAllInfos();
+            _taskOrderManager.InitialCamera(liveviewForm1, 1);
+            _taskOrderManager.InitialCamera(liveviewForm1, 2);
         }
 
+        private void Page_Loaded(object sender, RoutedEventArgs e)
+        {
+            for (int i = 0; i < _taskOrderManager.cameraList.Count; i++)
+            {
+                _taskOrderManager.cameraList[i].ExecCommandLon();//触发相机
+            }
+        }
         private void Datagrid1_PreviewMouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             e.Handled = true;
@@ -45,7 +56,7 @@ namespace iFactoryApp.View
         private void datagrid1_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             viewModel.SelectedModel = null;
-            if (datagrid1.SelectedItem !=null)
+            if (datagrid1.SelectedItem != null)
             {
                 viewModel.SelectedModel = datagrid1.SelectedItem as TaskOrder;
             }
@@ -82,9 +93,9 @@ namespace iFactoryApp.View
             }
             else if (click_name == "Edit")//编辑
             {
-                if (datagrid1.SelectedItem as TaskOrder != null)
+                if (viewModel.SelectedModel != null)
                 {
-                    viewModel.EditModel = datagrid1.SelectedItem as TaskOrder;//当前编辑对象
+                    viewModel.EditModel = viewModel.SelectedModel;//当前编辑对象
                     if (viewModel.EditModel.product_count <= 0)
                     {
                         TaskOrderEditView editView = new TaskOrderEditView();
@@ -96,6 +107,10 @@ namespace iFactoryApp.View
                     {
                         MessageBoxX.Show("任务单仅在未生产前进行编辑！", "错误", Application.Current.MainWindow);
                     }
+                }
+                else
+                {
+                    MessageBoxX.Show("请先选择一个任务单进行操作！", "错误", Application.Current.MainWindow);
                 }
             }
             else if (click_name == "Delete")//删除
@@ -111,10 +126,14 @@ namespace iFactoryApp.View
                         }
                     }
                 }
+                else
+                {
+                    MessageBoxX.Show("请先选择一个任务单进行操作！", "错误", Application.Current.MainWindow);
+                }
             }
             else if (click_name == "Finish")//删除
             {
-                if (viewModel.SelectedModel !=null)
+                if (viewModel.SelectedModel != null)
                 {
                     MessageBoxResult result = MessageBoxX.Show($"确定完成任务吗？", "确认", Application.Current.MainWindow, MessageBoxButton.YesNo);
                     if (result == MessageBoxResult.Yes)
@@ -124,6 +143,10 @@ namespace iFactoryApp.View
                             MessageBoxX.Show("任务完成失败！", "错误", Application.Current.MainWindow);
                         }
                     }
+                }
+                else
+                {
+                    MessageBoxX.Show("请先选择一个任务单进行操作！", "错误", Application.Current.MainWindow);
                 }
             }
         }

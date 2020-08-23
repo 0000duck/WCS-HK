@@ -76,7 +76,7 @@ namespace iFactoryApp.View
                    MessageBoxResult result = MessageBoxX.Show($"确定删除该参数吗？", "确认", Application.Current.MainWindow, MessageBoxButton.YesNo);
                    if(result == MessageBoxResult.Yes)
                    {
-                       NodeData node = treeview1.SelectedItem as NodeData;
+                       TreeNodeData node = treeview1.SelectedItem as TreeNodeData;
                        if(node !=null)
                        {
                            viewModel.Remove(node.id);
@@ -92,7 +92,7 @@ namespace iFactoryApp.View
 
         private void treeView1_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
         {
-            NodeData nodeData = treeview1.SelectedItem as NodeData;
+            TreeNodeData nodeData = treeview1.SelectedItem as TreeNodeData;
             if (nodeData != null)
             {
                 viewModel.EditModel = viewModel.ModelList.FirstOrDefault(x => x.id == nodeData.id);

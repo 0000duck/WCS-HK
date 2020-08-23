@@ -11,7 +11,7 @@ namespace iFactoryApp.ViewModel
 {
     public class ProductParameterViewModel
     {
-        public ObservableCollection<NodeData> ModelTrees { set; get; } = new ObservableCollection<NodeData>();
+        public ObservableCollection<TreeNodeData> ModelTrees { set; get; } = new ObservableCollection<TreeNodeData>();
         public ObservableCollection<ProductParameter> ModelList { set; get; } = new ObservableCollection<ProductParameter>();
         public ProductParameter EditModel { set; get; }
 
@@ -69,6 +69,7 @@ namespace iFactoryApp.ViewModel
             {
                 if (_productParameterService.UpdateEntity(model))
                 {
+                    UpdateTreeNode(model);//更新树形菜单
                     return true;
                 }
             }
@@ -123,8 +124,17 @@ namespace iFactoryApp.ViewModel
 
         private void AddTreeNode(ProductParameter model)
         {
-            NodeData n = new NodeData() { id = model.id, Name = model.product_name,DisplayName= model.product_name };
+            TreeNodeData n = new TreeNodeData() { id = model.id, Name = model.product_name,DisplayName= model.product_name };
             ModelTrees.Add(n);
+        }
+        private void UpdateTreeNode(ProductParameter model)
+        {
+            if (ModelTrees.Any(x => x.id == model.id))
+            {
+                var node = ModelTrees.FirstOrDefault(x => x.id == model.id);
+                node.Name = model.product_name;
+                node.DisplayName = model.product_name;
+            }
         }
         private void RemoveTreeNode(ProductParameter model)
         {
@@ -133,21 +143,6 @@ namespace iFactoryApp.ViewModel
                 var node = ModelTrees.FirstOrDefault(x => x.id == model.id);
                 ModelTrees.Remove(node);//删除左侧树形
             }
-        }
-    }
-
-    public class NodeData
-    {
-        public int id { get; set; }
-        public string Name { get; set; }
-        public string Root { get; set; }
-        public string DisplayName { get; set; }
-
-        public List<NodeData> ChildNodes { get; set; }
-
-        public NodeData()
-        {
-            ChildNodes = new List<NodeData>();
         }
     }
 }

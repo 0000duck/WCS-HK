@@ -12,6 +12,9 @@ namespace iFactory.DataService.Model
     public class TaskOrder: ProductParameter
     {
         private int _pack_mode = 0;
+        /// <summary>
+        /// 包装模式
+        /// </summary>
         [SugarColumn]
         public int pack_mode
         {
@@ -77,6 +80,20 @@ namespace iFactory.DataService.Model
                 NotifyPropertyChanged("product_count");
             }
             get { return _product_count; }
+        }
+        private int _defective_count = 0;
+        /// <summary>
+        /// 不良品数量
+        /// </summary>
+        [SugarColumn(IsNullable = true)]
+        public int defective_count
+        {
+            set
+            {
+                _defective_count = value;
+                NotifyPropertyChanged("defective_count");
+            }
+            get { return _defective_count; }
         }
     }
 }

@@ -8,7 +8,7 @@
       xmlns:comLib="clr-namespace:iFactory.CommonLibrary;assembly=CommonLibrary"
       xmlns:local="clr-namespace:iFactoryApp.View"
       mc:Ignorable="d" 
-      d:DesignHeight="450" d:DesignWidth="800" Title="包装作业任务" Background="LightGray">
+      d:DesignHeight="450" d:DesignWidth="800" Title="包装作业任务" Background="LightGray" Loaded="Page_Loaded" >
     <Page.ContextMenu>
         <ContextMenu Width="200" FontSize="14" pu:ContextMenuHelper.CornerRadius="15"
                      pu:ContextMenuHelper.HoverBackground="DarkGray" MenuItem.Click="ContextMenu_Click">
@@ -17,6 +17,8 @@
             <MenuItem Name="Edit" Header="编辑" Height="35" Icon="&#xf14b;" />
             <Separator></Separator>
             <MenuItem Name="Delete" Header="删除" Height="35" Icon="&#xf1f8;"/>
+            <Separator></Separator>
+            <MenuItem Name="Finish" Header="完成" Height="35" Icon="&#xf14a;"/>
         </ContextMenu>
     </Page.ContextMenu>
     <Grid>
@@ -28,6 +30,7 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition/>
                 <ColumnDefinition/>
+                <ColumnDefinition/>
             </Grid.ColumnDefinitions>
             <WindowsFormsHost x:Name="windowsFormsHost1" Margin="2" Grid.Column="0">
                 <ky:LiveviewForm x:Name="liveviewForm1" />
@@ -35,6 +38,27 @@
             <WindowsFormsHost x:Name="windowsFormsHost2" Margin="2" Grid.Column="1">
                 <ky:LiveviewForm x:Name="liveviewForm2" />
             </WindowsFormsHost>
+            <Grid Grid.Column="2">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="70"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <GroupBox x:Name="group1" Grid.Row="0" Header="条码比对" Background="WhiteSmoke" pu:GroupBoxHelper.HeaderPadding="2,5" pu:GroupBoxHelper.HeaderBackground="DarkGray" 
+                      pu:GroupBoxHelper.CornerRadius="5" Margin="0">
+                    <Grid Margin="5,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+                        <TextBox Grid.Column="0" Text="{Binding cameraBarcode.product_barcode}" Margin="0" pu:TextBoxHelper.Header="条码1" />
+                        <TextBox Grid.Column="1" Text="{Binding cameraBarcode.graphic_barcode}" Margin="0" pu:TextBoxHelper.Header="条码2" />
+                    </Grid>
+                </GroupBox>
+                <GroupBox x:Name="group2" Grid.Row="1" Header="扫描" Background="WhiteSmoke" pu:GroupBoxHelper.HeaderPadding="2,5" pu:GroupBoxHelper.HeaderBackground="DarkGray" 
+                      pu:GroupBoxHelper.CornerRadius="5" Margin="0">
+                    
+                </GroupBox>
+            </Grid>
         </Grid>
         <DataGrid x:Name="datagrid1" Grid.Row="1" ItemsSource="{Binding ModelList}" AutoGenerateColumns="False" CanUserAddRows="False"
                   AlternatingRowBackground="#EAEAEA" AlternationCount="2" HorizontalGridLinesBrush="#7A7A7A" SelectionMode="Single"
@@ -50,19 +74,20 @@
                 <!--<DataGridCheckBoxColumn Header="选择" Binding="{Binding Path=IsChecked,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" Width="*" IsReadOnly="False" />-->
                 <DataGridTextColumn Header="模式" Binding="{Binding pack_mode, Converter={StaticResource packModeConverter}}" Width="3*" IsReadOnly="True" Foreground="Black" />
                 <DataGridTextColumn Header="产品名称" Binding="{Binding product_name}" Width="2*" IsReadOnly="True" FontFamily="Consolas" Foreground="Black" />
-                <DataGridTextColumn Header="产品尺寸" Binding="{Binding product_size}" Width="3*" IsReadOnly="True" Foreground="Black" />
+                <!--<DataGridTextColumn Header="产品尺寸" Binding="{Binding product_size}" Width="3*" IsReadOnly="True" Foreground="Black" />
                 <DataGridTextColumn Header="彩盒尺寸" Binding="{Binding graphic_carton_size}" Width="3*" IsReadOnly="True" Foreground="Black" />
                 <DataGridTextColumn Header="普通箱尺寸" Binding="{Binding noraml_carton_size}" Width="3*" IsReadOnly="True" Foreground="Black" />
                 <DataGridTextColumn Header="外箱尺寸"  Binding="{Binding outer_carton_size}" Width="3*" IsReadOnly="True" Foreground="Black" />
                 <DataGridTextColumn Header="托盘尺寸"  Binding="{Binding pallet_size}" Width="3*" IsReadOnly="True" Foreground="Black" />
                 <DataGridTextColumn Header="垛型"  Binding="{Binding robot_pg_no}" Width="2*" IsReadOnly="True" Foreground="Black" />
-                <DataGridTextColumn Header="码垛数量"  Binding="{Binding pallet_num}" Width="2*" IsReadOnly="True" Foreground="Black" />
+                <DataGridTextColumn Header="码垛数量"  Binding="{Binding pallet_num}" Width="2*" IsReadOnly="True" Foreground="Black" />-->
                 <DataGridTextColumn Header="开盒设备"  Binding="{Binding open_machine_mode,Converter={StaticResource openMachineModeConverter}}" Width="2*" IsReadOnly="True" Foreground="Black" />
                 <DataGridTextColumn Header="贴标设备"  Binding="{Binding barcode_machine_mode,Converter={StaticResource barcodeMachineModeConverter}}" Width="2*" IsReadOnly="True" Foreground="Black" />
                 <DataGridTextColumn Header="SN标签检测"  Binding="{Binding sn_barcode_enable,Converter={StaticResource enableModeConverter}}" Width="2*" IsReadOnly="True" Foreground="Black" />
                 <DataGridTextColumn Header="发卡机"  Binding="{Binding card_machine_enable,Converter={StaticResource enableModeConverter}}" Width="2*" IsReadOnly="True" Foreground="Black" />
                 <DataGridTextColumn Header="隔板"  Binding="{Binding plate_enable,Converter={StaticResource enableModeConverter}}" Width="2*" IsReadOnly="True" Foreground="Black" />
-                <DataGridTextColumn Header="完成数量" Binding="{Binding product_count}" Width="2*" IsReadOnly="True" Foreground="Black" />
+                <DataGridTextColumn Header="不良品" Binding="{Binding defective_count}" Width="2*" IsReadOnly="True" Foreground="Black" />
+                <DataGridTextColumn Header="完成数" Binding="{Binding product_count}" Width="2*" IsReadOnly="True" Foreground="Black" />
                 <DataGridTextColumn Header="开始时间"  Binding="{Binding start_time, Converter={StaticResource datetTimeConverter}}" Width="4*" IsReadOnly="True" Foreground="Black" />
                 <DataGridTextColumn Header="创建时间"  Binding="{Binding insert_time, StringFormat=yyyy/MM/dd HH:mm:ss}" Width="4*" IsReadOnly="True" Foreground="Black" />
             </DataGrid.Columns>
