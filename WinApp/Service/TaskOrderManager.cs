@@ -90,12 +90,14 @@ namespace iFactoryApp.Service
             Tag<short> tag1, tag2;
             if (!string.IsNullOrEmpty(lastBarcode1) && !string.IsNullOrEmpty(lastBarcode2))
             {
-                if (lastBarcode1 == lastBarcode2)//已经在计时，进行比较
+                TagList.GetTag("graphic_sn", out tag1);
+                TagList.GetTag("product_sn", out tag2);
+
+                if (lastBarcode1 == lastBarcode2)//条码一致
                 {
                     lastBarcode1 = string.Empty;
                     lastBarcode2 = string.Empty;
-                    TagList.GetTag("graphic_sn", out tag1);
-                    TagList.GetTag("product_sn", out tag2);
+                   
                     if(tag1 !=null)
                     {
                         tag1.Write(0);
@@ -107,7 +109,24 @@ namespace iFactoryApp.Service
                     _systemLogViewModel.AddMewStatus("sn标签核对成功，复位PLC标识");
                     return;
                 }
+                else
+                {
+                    lastBarcode1 = string.Empty;
+                    lastBarcode2 = string.Empty;
+
+                    if (tag1 != null)
+                    {
+                        tag1.Write(2);//对比失败
+                    }
+                    if (tag2 != null)
+                    {
+                        tag2.Write(2);//对比失败
+                    }
+                    _systemLogViewModel.AddMewStatus("sn标签核对失败");
+                    return;
+                }
             }
+
             if (!barcodeCheckTimer.IsEnabled)//未开始计时
             {
                 barcodeCheckTimer.Start();
@@ -121,7 +140,7 @@ namespace iFactoryApp.Service
             barcodeCheckTimer.Stop();
             if (!string.IsNullOrEmpty(lastBarcode1) && !string.IsNullOrEmpty(lastBarcode2))
             {
-                if (lastBarcode1 == lastBarcode2)//已经在计时，进行比较
+                if (lastBarcode1 == lastBarcode2)//进行比较
                 {
                     lastBarcode1 = string.Empty;
                     lastBarcode2 = string.Empty;
@@ -133,9 +152,11 @@ namespace iFactoryApp.Service
                     {
                         tag2.Write(0);
                     }
+                    _systemLogViewModel.AddMewStatus("时间到达，sn标签核对成功，复位PLC标识");
                     return;
                 }
             }
+
             _systemLogViewModel.AddMewStatus("sn标签核对超时错误，写入PLC错误信息", LogTypeEnum.Error);
             if (tag1 != null)
             {
