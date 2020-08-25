@@ -89,6 +89,7 @@
     <Compile Include="Tag\TagDataType.cs" />
     <Compile Include="Tag\TagGroup.cs" />
     <Compile Include="Tag\TagList.cs" />
+    <Compile Include="Tcp\RobotModbus.cs" />
     <Compile Include="Tcp\TcpSocketClient.cs" />
   </ItemGroup>
   <ItemGroup>

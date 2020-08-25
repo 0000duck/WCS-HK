@@ -21,8 +21,8 @@
 
                 </Grid.RowDefinitions>
                 <TextBox Grid.Row="0" Text="V1.1.0" pu:TextBoxHelper.Header="系统版本"  pu:TextBoxHelper.HeaderWidth="80" pu:TextBoxHelper.CornerRadius="5" VerticalAlignment="Center" Height="32" Margin="5,0,0,0" Padding="0" IsReadOnly="True"/>
-                <TextBox Grid.Row="1" Text="饲料生产生产数据管理中心" pu:TextBoxHelper.Header="描述信息" pu:TextBoxHelper.HeaderWidth="80" pu:TextBoxHelper.CornerRadius="5" VerticalAlignment="Center" Height="32" Margin="5,0,0,0" Padding="0" IsReadOnly="True"/>
-                <TextBox Grid.Row="2" Text="常州索韬自动化科技有限公司" pu:TextBoxHelper.Header="版权所有" pu:TextBoxHelper.HeaderWidth="80" pu:TextBoxHelper.CornerRadius="5" VerticalAlignment="Center" Height="32" Margin="5,0,0,0" Padding="0" IsReadOnly="True"/>
+                <TextBox Grid.Row="1" Text="WCS设备管理系统" pu:TextBoxHelper.Header="描述信息" pu:TextBoxHelper.HeaderWidth="80" pu:TextBoxHelper.CornerRadius="5" VerticalAlignment="Center" Height="32" Margin="5,0,0,0" Padding="0" IsReadOnly="True"/>
+                <TextBox Grid.Row="2" Text="思辟德智能科技江苏有限公司" pu:TextBoxHelper.Header="版权所有" pu:TextBoxHelper.HeaderWidth="80" pu:TextBoxHelper.CornerRadius="5" VerticalAlignment="Center" Height="32" Margin="5,0,0,0" Padding="0" IsReadOnly="True"/>
             </Grid>
         </GroupBox>
 
