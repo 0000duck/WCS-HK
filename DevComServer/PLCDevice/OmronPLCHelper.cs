@@ -20,18 +20,27 @@ namespace iFactory.DevComServer
         {
             _log = logWrite;
         }
+        public void ConnectToPlc(string Address)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void ConnectToPlc(string Address, int Port, PLCType plcType)
+        {
+            throw new NotImplementedException();
+        }
         /// <summary>
         /// 连接PLC
         /// </summary>
-        public void ConnectToPlc(string Addr = null, int Port = 0)
+        public void ConnectToPlc(string Address = null, int Port = 0)
         {
             string[] ipArray;
             byte[] values;
             try
             {
-                if(!string.IsNullOrEmpty(Addr))
+                if(!string.IsNullOrEmpty(Address))
                 {
-                    PLCAddr = Addr;
+                    PLCAddr = Address;
                 }
                 if(Port>0)
                 {
@@ -58,6 +67,10 @@ namespace iFactory.DevComServer
             {
                 _log.WriteLog(ex.Message);
             }
+        }
+        public void ConnectToPlc(string Address, int port, byte station = 0)
+        {
+            throw new NotImplementedException();
         }
         /// <summary>
         /// 检查是否连接成功,通过读取PLC的M0.0固定地址来判断
@@ -86,13 +99,13 @@ namespace iFactory.DevComServer
         /// <param name="Addr">PLC地址</param>
         /// <param name="value">写入值</param>
         /// <returns></returns>
-        public bool WriteValue(string address, bool value)
+        public bool WriteValue(string Address, bool value)
         {
             try
             {
                 lock (obj)
                 {
-                    OperateResult res = omronTcpNet.Write(address, value);
+                    OperateResult res = omronTcpNet.Write(Address, value);
                     return res.IsSuccess;
                 }
             }
@@ -108,13 +121,13 @@ namespace iFactory.DevComServer
         /// <param name="Addr">PLC地址</param>
         /// <param name="value">写入值</param>
         /// <returns></returns>
-        public bool WriteValue(string address, short value)
+        public bool WriteValue(string Address, short value)
         {
             try
             {
                 lock (obj)
                 {
-                    OperateResult res = omronTcpNet.Write(address, value);
+                    OperateResult res = omronTcpNet.Write(Address, value);
                     return res.IsSuccess;
                 }
             }
@@ -130,13 +143,13 @@ namespace iFactory.DevComServer
         /// <param name="Addr">PLC地址</param>
         /// <param name="value">写入值</param>
         /// <returns></returns>
-        public bool WriteValue(string address, int value)
+        public bool WriteValue(string Address, int value)
         {
             try
             {
                 lock (obj)
                 {
-                    OperateResult res = omronTcpNet.Write(address, value);
+                    OperateResult res = omronTcpNet.Write(Address, value);
                     return res.IsSuccess;
                 }
             }
@@ -152,13 +165,13 @@ namespace iFactory.DevComServer
         /// <param name="Addr">PLC地址</param>
         /// <param name="value">写入值</param>
         /// <returns></returns>
-        public bool WriteValue(string address, float value)
+        public bool WriteValue(string Address, float value)
         {
             try
             {
                 lock (obj)
                 {
-                    OperateResult res = omronTcpNet.Write(address, value);
+                    OperateResult res = omronTcpNet.Write(Address, value);
                     return res.IsSuccess;
                 }
             }
@@ -273,19 +286,16 @@ namespace iFactory.DevComServer
             }
         }
 
-        public void ConnectToPlc(string Addr)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void ConnectToPlc(string Addr, int Port, PLCType plcType)
-        {
-            throw new NotImplementedException();
-        }
-
         public void ReConnectToPlc()
         {
             throw new NotImplementedException();
         }
+
+        public bool BatchWriteValue(string Address, short[] value)
+        {
+            throw new NotImplementedException();
+        }
+
+       
     }
 }

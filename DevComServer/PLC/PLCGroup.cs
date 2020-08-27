@@ -5,10 +5,13 @@ using System.Linq;
 
 namespace iFactory.DevComServer
 {
-    public class PLCGroup : INotifyPropertyChanged
+    /// <summary>
+    /// 一个plc访问对象
+    /// </summary>
+    public class PLCDevice : INotifyPropertyChanged
     {
         /// <summary>
-        /// 名称
+        /// PLC访问对象的名称
         /// </summary>
         public string Name { set; get; }
         /// <summary>

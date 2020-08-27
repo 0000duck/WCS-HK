@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace iFactory.DevComServer
 {
@@ -36,9 +32,9 @@ namespace iFactory.DevComServer
         /// </summary>
         Fx = 6,
         /// <summary>
-        /// 
+        /// 机器人modbus连接
         /// </summary>
-        Undefined1 = 7,
+        Modbus = 7,
         /// <summary>
         /// 
         /// </summary>

@@ -49,12 +49,12 @@ namespace iFactoryApp.ViewModel
         /// <summary>
         /// plcÁ¬½Ó×´Ì¬
         /// </summary>
-        public PLCGroup DevStatus
+        public PLCDevice DevStatus
         {
             get 
             { 
                 if(TagList.PLCGroups !=null && TagList.PLCGroups.Count>0)
-                     return TagList.PLCGroups[0].PLCGroupObj;
+                     return TagList.PLCGroups[0].PlcDevice;
                 return null;
             }
         }

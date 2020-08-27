@@ -8,17 +8,18 @@ namespace iFactory.DevComServer
 {
     public interface IPLCHelper:IDisposable
     {
-        void ConnectToPlc(string Addr);
-        void ConnectToPlc(string Addr, int Port);
-        void ConnectToPlc(string Addr, int Port, PLCType plcType);
+        void ConnectToPlc(string Address);
+        void ConnectToPlc(string Address, int Port);
+        void ConnectToPlc(string Address, int Port, PLCType plcType);
+        void ConnectToPlc(string Address, int port, byte station =0);
         void ReConnectToPlc();
 
         bool CheckConnect();
 
-        bool WriteValue(string address, bool value);
-        bool WriteValue(string address, short value);
-        bool WriteValue(string address, int value);
-        bool WriteValue(string address, float value);
+        bool WriteValue(string Address, bool value);
+        bool WriteValue(string Address, short value);
+        bool WriteValue(string Address, int value);
+        bool WriteValue(string Address, float value);
         // bool WriteValue(string address, string value, bool WCharMode = true, int Length = -1);
 
         bool ReadValue(string Address, out bool value);
@@ -31,5 +32,7 @@ namespace iFactory.DevComServer
         bool BatchReadValue(string Address, ushort length, out int[] value);
         bool BatchReadValue(string Address, ushort length, out float[] value);
         bool BatchReadValue(string Address, ushort length, out string[] value);
+
+        bool BatchWriteValue(string Address, short[] value);
     }
 }

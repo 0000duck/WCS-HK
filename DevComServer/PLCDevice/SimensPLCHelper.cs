@@ -32,24 +32,24 @@ namespace iFactory.DevComServer
         {
             _log = logWrite;
         }
-        public void ConnectToPlc(string Addr)
+        public void ConnectToPlc(string Address)
         {
             throw new NotImplementedException();
         }
         /// <summary>
         /// 连接PLC
         /// </summary>
-        public void ConnectToPlc(string Addr, int Port)
+        public void ConnectToPlc(string Address, int Port)
         {
             throw new NotImplementedException();
         }
-        public void ConnectToPlc(string Addr, int Port, PLCType plcType)
+        public void ConnectToPlc(string Address, int Port, PLCType plcType)
         {
             try
             {
-                if (!string.IsNullOrEmpty(Addr))
+                if (!string.IsNullOrEmpty(Address))
                 {
-                    PLCAddr = Addr;
+                    PLCAddr = Address;
                 }
 
                 lock (this)
@@ -77,6 +77,10 @@ namespace iFactory.DevComServer
             {
                 _log.WriteLog(ex.Message);
             }
+        }
+        public void ConnectToPlc(string Address, int port, byte station = 0)
+        {
+            throw new NotImplementedException();
         }
         public void ReConnectToPlc()
         {
@@ -126,13 +130,13 @@ namespace iFactory.DevComServer
         /// <param name="Addr"></param>
         /// <param name="value"></param>
         /// <returns></returns>
-        public bool WriteValue(string address, bool value)
+        public bool WriteValue(string Address, bool value)
         {
             try
             {
                 lock (obj)
                 {
-                    OperateResult res = siemensTcpNet.Write(address, value);
+                    OperateResult res = siemensTcpNet.Write(Address, value);
                     return res.IsSuccess;
                 }
             }
@@ -149,13 +153,13 @@ namespace iFactory.DevComServer
         /// <param name="Addr"></param>
         /// <param name="value"></param>
         /// <returns></returns>
-        public bool WriteValue(string address, short value)
+        public bool WriteValue(string Address, short value)
         {
             try
             {
                 lock (obj)
                 {
-                    OperateResult res = siemensTcpNet.Write(address, value);
+                    OperateResult res = siemensTcpNet.Write(Address, value);
                     return res.IsSuccess;
                 }
             }
@@ -172,13 +176,13 @@ namespace iFactory.DevComServer
         /// <param name="Addr"></param>
         /// <param name="value"></param>
         /// <returns></returns>
-        public bool WriteValue(string address, int value)
+        public bool WriteValue(string Address, int value)
         {
             try
             {
                 lock (obj)
                 {
-                    OperateResult res = siemensTcpNet.Write(address, value);
+                    OperateResult res = siemensTcpNet.Write(Address, value);
                     return res.IsSuccess;
                 }
             }
@@ -195,13 +199,13 @@ namespace iFactory.DevComServer
         /// <param name="Addr"></param>
         /// <param name="value"></param>
         /// <returns></returns>
-        public bool WriteValue(string address, float value)
+        public bool WriteValue(string Address, float value)
         {
             try
             {
                 lock (obj)
                 {
-                    OperateResult res = siemensTcpNet.Write(address, value);
+                    OperateResult res = siemensTcpNet.Write(Address, value);
                     return res.IsSuccess;
                 }
             }
@@ -219,7 +223,7 @@ namespace iFactory.DevComServer
         /// <param name="value"></param>
         /// <param name="WCharMode">WCharMode模式是unicode编码</param>
         /// <returns></returns>
-        public bool WriteValue(string address, string value, bool WCharMode = true, int Length=-1)
+        public bool WriteValue(string Address, string value, bool WCharMode = true, int Length=-1)
         {
             byte[] bytes;
             List<byte> list = new List<byte>();
@@ -249,7 +253,7 @@ namespace iFactory.DevComServer
                         list.AddRange(bytes);//第3个开始为内容
                     }
 
-                    OperateResult res = siemensTcpNet.Write(address, list.ToArray());
+                    OperateResult res = siemensTcpNet.Write(Address, list.ToArray());
 
                     return res.IsSuccess;
                 }
@@ -560,6 +564,12 @@ namespace iFactory.DevComServer
         }
         #endregion
 
+
+        public bool BatchWriteValue(string Address, short[] value)
+        {
+            throw new NotImplementedException();
+        }
+
         public void Dispose()
         {
             if (siemensTcpNet != null)
@@ -567,6 +577,7 @@ namespace iFactory.DevComServer
                 siemensTcpNet.Dispose();
             }
         }
+
     }
     
 }

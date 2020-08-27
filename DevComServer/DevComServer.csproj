@@ -84,12 +84,12 @@
     <Compile Include="PLCDevice\SimensPLCHelper.cs" />
     <Compile Include="PLC\PLCScanTask.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Tag\BatchReadSection.cs" />
     <Compile Include="Tag\Tag.cs" />
     <Compile Include="PLC\PLCType.cs" />
     <Compile Include="Tag\TagDataType.cs" />
     <Compile Include="Tag\TagGroup.cs" />
     <Compile Include="Tag\TagList.cs" />
-    <Compile Include="Tcp\RobotModbus.cs" />
     <Compile Include="Tcp\TcpSocketClient.cs" />
   </ItemGroup>
   <ItemGroup>

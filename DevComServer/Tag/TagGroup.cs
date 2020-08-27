@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
 
 namespace iFactory.DevComServer
 {
@@ -16,8 +13,8 @@ namespace iFactory.DevComServer
         /// 数据类型
         /// </summary>
         TagDataType DataType { set; get; }
-
     }
+
     /// <summary>
     ///  变量组对象，包含队列，以及是否激活属性
     /// </summary>
@@ -117,10 +114,14 @@ namespace iFactory.DevComServer
             else
             {
                 previousTag = _Tags[_Tags.Count -2];//当前已经加入了
-                if(TagContinuousCheck(previousTag, tag) && _SectionList[_SectionList.Count - 1].ReadLength<=128)//地址连续，且长度不大于128，在上一个片段内新增
+                var res = TagContinuousCheck(previousTag, tag);
+                if (res.Item1==true && _SectionList[_SectionList.Count - 1].ReadLength<=128)//地址连续，且长度不大于128，在上一个片段内新增
                 {
                     batchReadSection = _SectionList[_SectionList.Count - 1];
-                    batchReadSection.ReadLength += 1;
+                    batchReadSection.ReadLength += (ushort)res.Item2;
+                    int pos = batchReadSection.TagPosList[batchReadSection.TagPosList.Count - 1];//前一个偏移地址
+                    pos = pos + res.Item2;//加上现在的偏移地址
+                    batchReadSection.TagPosList.Add(pos);//该标签在分片里面的位置
                 }
                 else
                 {
@@ -132,8 +133,8 @@ namespace iFactory.DevComServer
         /// <summary>
         /// 标签地址连续性判断
         /// </summary>
-        /// <returns></returns>
-        public bool TagContinuousCheck(Tag<T> previousTag, Tag<T> currentTag)
+        /// <returns>地址连续返回True,否则返回False</returns>
+        public (bool, int) TagContinuousCheck(Tag<T> previousTag, Tag<T> currentTag)
         {
             switch(plcType)
             {
@@ -145,14 +146,16 @@ namespace iFactory.DevComServer
                 case PLCType.Omron:
                 case PLCType.Fx:
                     return OmronFxTagContinuousCheck(previousTag, currentTag);
+                case PLCType.Modbus:
+                    return ModbusContinuousCheck(previousTag, currentTag);
             }
-            return true;
+            return (true,0);
         }
         /// <summary>
         /// 西门子标签地址连续性判断
         /// </summary>
         /// <returns></returns>
-        public bool SimimensTagContinuousCheck(Tag<T> previousTag, Tag<T> currentTag)
+        public (bool, int) SimimensTagContinuousCheck(Tag<T> previousTag, Tag<T> currentTag)
         {
             string addr1Str, addr2Str;
             string[] addr1Array, addr2Array;
@@ -174,7 +177,7 @@ namespace iFactory.DevComServer
                     addrSpan = addr2D - addr1D;
                     if (addrSpan == 1)
                     {
-                        return true;
+                        return (true, 1);
                     }
                 }
             }
@@ -187,7 +190,7 @@ namespace iFactory.DevComServer
                     addrSpan = addr2D - addr1D;
                     if (addrSpan == 2)
                     {
-                        return true;
+                        return (true,1);
                     }
                 }
             }
@@ -200,68 +203,54 @@ namespace iFactory.DevComServer
                     addrSpan = addr2D - addr1D;
                     if (addrSpan == 4)
                     {
-                        return true;
+                        return (true, 1);
                     }
                 }
             }
-            return false;
+            return (false, 0);
         }
         /// <summary>
-        ///欧姆龙标签地址连续性判断
+        /// 欧姆龙标签地址连续性判断
         /// </summary>
-        /// <returns></returns>
-        public bool OmronFxTagContinuousCheck(Tag<T> previousTag, Tag<T> currentTag)
+        /// <param name="previousTag"></param>
+        /// <param name="currentTag"></param>
+        /// <returns>地址连续返回True,否则返回False.第二个参数返回间隔</returns>
+        public (bool,int) OmronFxTagContinuousCheck(Tag<T> previousTag, Tag<T> currentTag)
         {
             string addr1Str, addr2Str;
-            double addr1D, addr2D, addrSpan;
+            int addr1D, addr2D, addrSpan;
             addr1Str = previousTag.TagAddr.Replace("D", "");
             addr2Str = currentTag.TagAddr.Replace("D", "");
             addr1Str = previousTag.TagAddr.Replace("d", "");
             addr2Str = currentTag.TagAddr.Replace("d", "");
 
-            if (currentTag.DataType == TagDataType.Bool)//DB1.0.0  DB1.0.1
+            if (currentTag.DataType == TagDataType.Bool)//
             {
-                
+                return (false,0);
             }
-            else if (currentTag.DataType == TagDataType.Short)//DB1.10 DB1.12
+            else if (currentTag.DataType == TagDataType.Short)//D100 D102
             {
-                double.TryParse(addr1Str, out addr1D);
-                double.TryParse(addr2Str, out addr2D);
+                int.TryParse(addr1Str, out addr1D);
+                int.TryParse(addr2Str, out addr2D);
                 addrSpan = addr2D - addr1D;
-                if (addrSpan == 2)
+                if (addrSpan <= 2)//间隔2个以内
                 {
-                    return true;
+                    return (true, addrSpan);
                 }
             }
             else if (currentTag.DataType == TagDataType.Int || currentTag.DataType == TagDataType.Float)//DB1.1092 DB1.1096
             {
                 
             }
-            return true;
+            return (false,0);
         }
-    }
-    /// <summary>
-    /// 标签组批量读写组
-    /// </summary>
-    public class BatchReadSection
-    {
-        public BatchReadSection(string Addr,int Index,int Length=1)
+        /// <summary>
+        ///Modbus地址连续性判断
+        /// </summary>
+        /// <returns>地址连续返回True,否则返回False</returns>
+        public (bool, int) ModbusContinuousCheck(Tag<T> previousTag, Tag<T> currentTag)
         {
-            this.StartAddr = Addr;
-            this.StartIndex = Index;
-            this.ReadLength = (ushort)Length;
+            return (false,0);
         }
-        /// <summary>
-        /// 起始的地址
-        /// </summary>
-        public string StartAddr { set; get; }
-        /// <summary>
-        /// 需要读取的长度，默认为1
-        /// </summary>
-        public ushort ReadLength { set; get; }
-        /// <summary>
-        /// 该分组所对应的位置
-        /// </summary>
-        public int StartIndex { set; get; }
     }
 }

@@ -35,11 +35,11 @@ namespace iFactory.DevComServer
         {
             //WriteValue("M100.0", true);
         }
-        public void ConnectToPlc(string Addr = null, int Port = 0)
+        public void ConnectToPlc(string Address = null, int Port = 0)
         {
             try
             {
-                this.PLCAddr = Addr;
+                this.PLCAddr = Address;
                 this.PLCPort = Port;
                 ReConnectToPlc();
             }
@@ -48,15 +48,19 @@ namespace iFactory.DevComServer
                 _log.WriteLog(ex.Message);
             }
         }
-        public void ConnectToPlc(string Addr)
+        public void ConnectToPlc(string Address, int port, byte station = 0)
         {
-            this.PLCAddr = Addr;
+            throw new NotImplementedException();
+        }
+        public void ConnectToPlc(string Address)
+        {
+            this.PLCAddr = Address;
             ReConnectToPlc();
         }
 
-        public void ConnectToPlc(string Addr, int Port, PLCType plcType)
+        public void ConnectToPlc(string Address, int Port, PLCType plcType)
         {
-            this.PLCAddr = Addr;
+            this.PLCAddr = Address;
             this.PLCPort = Port;
             ReConnectToPlc();
         }
@@ -89,13 +93,13 @@ namespace iFactory.DevComServer
         }
 
         #region 写值
-        public bool WriteValue(string address, bool value)
+        public bool WriteValue(string Address, bool value)
         {
             try
             {
                 lock (obj)
                 {
-                    OperateResult res = fxTcpNet.Write(address, value);
+                    OperateResult res = fxTcpNet.Write(Address, value);
                     return res.IsSuccess;
                 }
             }
@@ -106,13 +110,13 @@ namespace iFactory.DevComServer
             return false;
         }
 
-        public bool WriteValue(string address, short value)
+        public bool WriteValue(string Address, short value)
         {
             try
             {
                 lock (obj)
                 {
-                    OperateResult res = fxTcpNet.Write(address, value);
+                    OperateResult res = fxTcpNet.Write(Address, value);
                     return res.IsSuccess;
                 }
             }
@@ -123,13 +127,13 @@ namespace iFactory.DevComServer
             return false;
         }
 
-        public bool WriteValue(string address, int value)
+        public bool WriteValue(string Address, int value)
         {
             try
             {
                 lock (obj)
                 {
-                    OperateResult res = fxTcpNet.Write(address, value);
+                    OperateResult res = fxTcpNet.Write(Address, value);
                     return res.IsSuccess;
                 }
             }
@@ -140,13 +144,13 @@ namespace iFactory.DevComServer
             return false;
         }
 
-        public bool WriteValue(string address, float value)
+        public bool WriteValue(string Address, float value)
         {
             try
             {
                 lock (obj)
                 {
-                    OperateResult res = fxTcpNet.Write(address, value);
+                    OperateResult res = fxTcpNet.Write(Address, value);
                     return res.IsSuccess;
                 }
             }
@@ -309,6 +313,11 @@ namespace iFactory.DevComServer
             {
                 fxTcpNet.Dispose();
             }
+        }
+
+        public bool BatchWriteValue(string Address, short[] value)
+        {
+            throw new NotImplementedException();
         }
     }
 }

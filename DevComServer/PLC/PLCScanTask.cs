@@ -1,8 +1,6 @@
 ﻿using iFactory.CommonLibrary;
 using iFactory.CommonLibrary.Interface;
 using System;
-using System.Collections.Generic;
-using System.Configuration;
 using System.Threading;
 
 namespace iFactory.DevComServer
@@ -15,34 +13,38 @@ namespace iFactory.DevComServer
         /// <summary>
         /// plc组对象
         /// </summary>
-        public PLCGroup PLCGroupObj { set; get; }
+        public PLCDevice PlcDevice { set; get; }
 
-        public PLCScanTask(PLCGroup plcGroup,ILogWrite logWrite)
+        public PLCScanTask(PLCDevice plcDevice,ILogWrite logWrite)
         {
             _log = logWrite;
-            PLCGroupObj = plcGroup;
+            PlcDevice = plcDevice;
             try
             {
-                switch(plcGroup.Type)
+                switch(plcDevice.Type)
                 {
                     case PLCType.Simens1200:
                     case PLCType.Simens1500:
                     case PLCType.Simens300:
                     case PLCType.Simens200Smart:
                         plcHelper = new SimensPLCHelper(_log);//指定为西门子PLC连接
-                        plcHelper.ConnectToPlc(PLCGroupObj.Ip, PLCGroupObj.Port, plcGroup.Type);
+                        plcHelper.ConnectToPlc(PlcDevice.Ip, PlcDevice.Port, plcDevice.Type);
                         break;
                     case PLCType.Omron:
                         plcHelper = new OmronPLCHelper(_log);//指定为欧姆龙PLC连接
-                        plcHelper.ConnectToPlc(PLCGroupObj.Ip, PLCGroupObj.Port);
+                        plcHelper.ConnectToPlc(PlcDevice.Ip, PlcDevice.Port);
                         break;
                     case PLCType.Fx:
                         plcHelper = new FxPLCHelper(_log);//指定为三菱PLC连接
-                        plcHelper.ConnectToPlc(PLCGroupObj.Ip, PLCGroupObj.Port);
+                        plcHelper.ConnectToPlc(PlcDevice.Ip, PlcDevice.Port);
+                        break;
+                    case PLCType.Modbus:
+                        plcHelper = new ModbusTcpHelper(_log);//指定为Modbus连接(Robot机械手)
+                        plcHelper.ConnectToPlc(PlcDevice.Ip, PlcDevice.Port);
                         break;
                     default://默认西门子
                         plcHelper = new SimensPLCHelper(_log);//指定为西门子PLC连接
-                        plcHelper.ConnectToPlc(PLCGroupObj.Ip, PLCGroupObj.Port, plcGroup.Type);
+                        plcHelper.ConnectToPlc(PlcDevice.Ip, PlcDevice.Port, plcDevice.Type);
                         break;
                 }
               
@@ -65,7 +67,7 @@ namespace iFactory.DevComServer
         /// </summary>
         public void TagListInitial()
         {
-            foreach(ITagGroup tagGroup in PLCGroupObj.TagGroups)
+            foreach(ITagGroup tagGroup in PlcDevice.TagGroups)
             {
                 switch(tagGroup.DataType)
                 {
@@ -116,10 +118,10 @@ namespace iFactory.DevComServer
             Thread.Sleep(3000);//延时等待其他任务加载，然后再启动刷新
             while (true)
             {
-                PLCGroupObj.IsConnected = plcHelper.CheckConnect();
-                if (PLCGroupObj.IsConnected)
+                PlcDevice.IsConnected = plcHelper.CheckConnect();
+                if (PlcDevice.IsConnected)
                 {
-                    foreach (ITagGroup tagGroup in PLCGroupObj.TagGroups)
+                    foreach (ITagGroup tagGroup in PlcDevice.TagGroups)
                     {
                         switch (tagGroup.DataType)
                         {
@@ -130,9 +132,9 @@ namespace iFactory.DevComServer
                                     bool[] values;
                                     if(plcHelper.BatchReadValue(section.StartAddr, section.ReadLength,out values))
                                     {
-                                        for(int i=0;i< values.Length;i++)
+                                        for(int i=0;i< section.TagPosList.Count; i++)
                                         {
-                                            boolGroup.Tags[section.StartIndex + i].TagValue = values[i];
+                                            boolGroup.Tags[section.StartIndex + i].TagValue = values[section.TagPosList[i]];
                                         }
                                     }
                                 }
@@ -144,9 +146,9 @@ namespace iFactory.DevComServer
                                     short[] values;
                                     if (plcHelper.BatchReadValue(section.StartAddr, section.ReadLength, out values))
                                     {
-                                        for (int i = 0; i < values.Length; i++)
+                                        for (int i = 0; i < section.TagPosList.Count; i++)
                                         {
-                                            shortGroup.Tags[section.StartIndex + i].TagValue = values[i];
+                                            shortGroup.Tags[section.StartIndex + i].TagValue = values[section.TagPosList[i]];
                                         }
                                     }
                                 }
@@ -158,9 +160,9 @@ namespace iFactory.DevComServer
                                     int[] values;
                                     if (plcHelper.BatchReadValue(section.StartAddr, section.ReadLength, out values))
                                     {
-                                        for (int i = 0; i < values.Length; i++)
+                                        for (int i = 0; i < section.TagPosList.Count; i++)
                                         {
-                                            intGroup.Tags[section.StartIndex + i].TagValue = values[i];
+                                            intGroup.Tags[section.StartIndex + i].TagValue = values[section.TagPosList[i]];
                                         }
                                     }
                                 }
@@ -172,9 +174,9 @@ namespace iFactory.DevComServer
                                     float[] values;
                                     if (plcHelper.BatchReadValue(section.StartAddr, section.ReadLength, out values))
                                     {
-                                        for (int i = 0; i < values.Length; i++)
+                                        for (int i = 0; i < section.TagPosList.Count; i++)
                                         {
-                                            floatGroup.Tags[section.StartIndex + i].TagValue = values[i];
+                                            floatGroup.Tags[section.StartIndex + i].TagValue = values[section.TagPosList[i]];
                                         }
                                     }
                                 }
@@ -186,23 +188,23 @@ namespace iFactory.DevComServer
                                     string[] values;
                                     if (plcHelper.BatchReadValue(section.StartAddr, section.ReadLength, out values))
                                     {
-                                        for (int i = 0; i < values.Length; i++)
+                                        for (int i = 0; i < section.TagPosList.Count; i++)
                                         {
-                                            stringGroup.Tags[section.StartIndex + i].TagValue = values[i];
+                                            stringGroup.Tags[section.StartIndex + i].TagValue = values[section.TagPosList[i]];
                                         }
                                     }
                                 }
                                 break;
                         }
                     }
-                    if(!string.IsNullOrEmpty(PLCGroupObj.HeartBit))//写入心跳位
+                    if(!string.IsNullOrEmpty(PlcDevice.HeartBit))//写入心跳位
                     {
-                        plcHelper.WriteValue(PLCGroupObj.HeartBit, true);
+                        plcHelper.WriteValue(PlcDevice.HeartBit, true);
                     }
                 }
                 else
                 {
-                    if (NetworkHelper.IsNetWorkConnect(PLCGroupObj.Ip))//plc可以ping通
+                    if (NetworkHelper.IsNetWorkConnect(PlcDevice.Ip))//plc可以ping通
                     {
                         Thread.Sleep(1000);
                         _log.WriteLog("PLC重新连接初始化！");
@@ -214,7 +216,7 @@ namespace iFactory.DevComServer
                         Thread.Sleep(5000);//延时等待PLC再次连接
                     }
                 }
-                Thread.Sleep(PLCGroupObj.CycleTime);
+                Thread.Sleep(PlcDevice.CycleTime);
             }
         }
         #region 标签写入值

@@ -1,11 +1,6 @@
 ﻿using iFactory.CommonLibrary.Interface;
 using iFactory.DataService.IService;
 using iFactory.DataService.Model;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace iFactory.DevComServer
 {
@@ -40,14 +35,14 @@ namespace iFactory.DevComServer
             var list = _plcGroupService.QueryableToList(x=>x.Active==true);//查找出激活的PLC
             foreach(var plcgroupItem in list)
             {
-                PLCGroup plcGroup = new PLCGroup();
-                plcGroup.Name = plcgroupItem.Name;
-                plcGroup.Ip = plcgroupItem.Ip;
-                plcGroup.Type =(PLCType) plcgroupItem.DeviceType;
-                plcGroup.Port = plcgroupItem.Port;
-                plcGroup.CycleTime = plcgroupItem.CycleTime;
-                plcGroup.HeartBit = plcgroupItem.HeartBit;
-                plcGroup.Description = plcgroupItem.Description;
+                PLCDevice plcDevice = new PLCDevice();
+                plcDevice.Name = plcgroupItem.Name;
+                plcDevice.Ip = plcgroupItem.Ip;
+                plcDevice.Type =(PLCType) plcgroupItem.DeviceType;
+                plcDevice.Port = plcgroupItem.Port;
+                plcDevice.CycleTime = plcgroupItem.CycleTime;
+                plcDevice.HeartBit = plcgroupItem.HeartBit;
+                plcDevice.Description = plcgroupItem.Description;
 
                 var dbTags= _tagService.QueryableToList(x=>x.GroupId== plcgroupItem.id);
                 
@@ -57,27 +52,27 @@ namespace iFactory.DevComServer
                     {
                         case (int)TagDataType.Bool:
                             Tag<bool> boolTag = new Tag<bool>();
-                            GetDbTagInfoAndAdd<bool>(plcGroup,dbTag, boolTag);
+                            GetDbTagInfoAndAdd<bool>(plcDevice,dbTag, boolTag);
                             break;
                         case (int)TagDataType.Short:
                             Tag<short> shortTag = new Tag<short>();
-                            GetDbTagInfoAndAdd<short>(plcGroup, dbTag, shortTag);
+                            GetDbTagInfoAndAdd<short>(plcDevice, dbTag, shortTag);
                             break;
                         case (int)TagDataType.Int:
                             Tag<int> intTag = new Tag<int>();
-                            GetDbTagInfoAndAdd<int>(plcGroup, dbTag, intTag);
+                            GetDbTagInfoAndAdd<int>(plcDevice, dbTag, intTag);
                             break;
                         case (int)TagDataType.Float:
                             Tag<float> floatTag = new Tag<float>();
-                            GetDbTagInfoAndAdd<float>(plcGroup, dbTag, floatTag);
+                            GetDbTagInfoAndAdd<float>(plcDevice, dbTag, floatTag);
                             break;
                         case (int)TagDataType.String:
                             Tag<string> stringTag = new Tag<string>();
-                            GetDbTagInfoAndAdd<string>(plcGroup, dbTag, stringTag);
+                            GetDbTagInfoAndAdd<string>(plcDevice, dbTag, stringTag);
                             break;
                     }
                 }
-                PLCScanTask scanTask = new PLCScanTask(plcGroup, logWrite);
+                PLCScanTask scanTask = new PLCScanTask(plcDevice, logWrite);
                 scanTask.StartTask();
                 TagList.PLCGroups.Add(scanTask);
             }
@@ -88,7 +83,7 @@ namespace iFactory.DevComServer
         /// <typeparam name="T"></typeparam>
         /// <param name="databaseTag"></param>
         /// <param name="tag"></param>
-        private static void GetDbTagInfoAndAdd<T>(PLCGroup plcGroup,DatabaseTag databaseTag,Tag<T> tag)
+        private static void GetDbTagInfoAndAdd<T>(PLCDevice plcDevice, DatabaseTag databaseTag,Tag<T> tag)
         {
             // tag.DataType = (TagDataType)databaseTag.DataType;//类型自动判断了
             tag.CycleRead = databaseTag.CycleRead;
@@ -97,7 +92,7 @@ namespace iFactory.DevComServer
             tag.TagAddr = databaseTag.TagAddr;
             tag.GroupId = databaseTag.GroupId;
 
-            plcGroup.AddToGroup<T>(tag);
+            plcDevice.AddToGroup<T>(tag);
         }
     }
 }
