@@ -12,7 +12,7 @@ namespace iFactory.DevComServer
         void ConnectToPlc(string Address, int Port);
         void ConnectToPlc(string Address, int Port, PLCType plcType);
         void ConnectToPlc(string Address, int port, byte station =0);
-        void ReConnectToPlc();
+        void ConnectToPlc();
 
         bool CheckConnect();
 

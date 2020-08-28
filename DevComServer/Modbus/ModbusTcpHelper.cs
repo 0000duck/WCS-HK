@@ -23,19 +23,19 @@ namespace iFactory.DevComServer
             _mSzIp = Addr;
             _mIPort = port;
             _station = station;
-            ReConnectToPlc();
+            ConnectToPlc();
         }
         public void ConnectToPlc(string Addr)
         {
             _mSzIp = Addr;
-            ReConnectToPlc();
+            ConnectToPlc();
         }
 
         public void ConnectToPlc(string Addr, int Port)
         {
             _mSzIp = Addr;
             _mIPort = Port;
-            ReConnectToPlc();
+            ConnectToPlc();
         }
 
         public void ConnectToPlc(string Addr, int Port, PLCType plcType)
@@ -43,7 +43,7 @@ namespace iFactory.DevComServer
             throw new NotImplementedException();
         }
 
-        public void ReConnectToPlc()
+        public void ConnectToPlc()
         {
             _deviceModbus?.ConnectClose();
             _deviceModbus?.Dispose();

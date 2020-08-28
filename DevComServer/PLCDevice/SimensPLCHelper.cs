@@ -1,13 +1,9 @@
 ﻿using HslCommunication;
 using HslCommunication.Profinet.Siemens;
-using iFactory.CommonLibrary;
 using iFactory.CommonLibrary.Interface;
 using System;
 using System.Collections.Generic;
-using System.Configuration;
-using System.Linq;
 using System.Text;
-using System.Threading;
 
 namespace iFactory.DevComServer
 {
@@ -70,7 +66,7 @@ namespace iFactory.DevComServer
                             siemensPLCS = SiemensPLCS.S200Smart;
                             break;
                     }
-                    ReConnectToPlc();
+                    ConnectToPlc();
                 }
             }
             catch (Exception ex)
@@ -82,19 +78,10 @@ namespace iFactory.DevComServer
         {
             throw new NotImplementedException();
         }
-        public void ReConnectToPlc()
+        public void ConnectToPlc()
         {
-            if(siemensTcpNet !=null)
-            {
-                try
-                {
-                    siemensTcpNet.Dispose();
-                }
-                catch(Exception ex)
-                {
-
-                }
-            }
+            siemensTcpNet?.ConnectClose();
+            siemensTcpNet?.Dispose();
             siemensTcpNet = new SiemensS7Net(siemensPLCS, PLCAddr)
             {
                 ConnectTimeOut = 2000

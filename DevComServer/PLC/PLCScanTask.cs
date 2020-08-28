@@ -208,7 +208,7 @@ namespace iFactory.DevComServer
                     {
                         Thread.Sleep(1000);
                         _log.WriteLog("PLC重新连接初始化！");
-                        plcHelper.ReConnectToPlc();
+                        plcHelper.ConnectToPlc();
                     }
                     else
                     {

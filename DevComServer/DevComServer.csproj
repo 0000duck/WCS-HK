@@ -78,7 +78,7 @@
     <Compile Include="Modbus\ModbusTcpHelper.cs" />
     <Compile Include="PLCDevice\FxPLCHelper.cs" />
     <Compile Include="PLCDevice\OmronPLCHelper.cs" />
-    <Compile Include="PLC\PLCGroup.cs" />
+    <Compile Include="PLC\PLCDevice.cs" />
     <Compile Include="PLC\PLCManager.cs" />
     <Compile Include="SerialPort\SerialHelper.cs" />
     <Compile Include="PLCDevice\SimensPLCHelper.cs" />

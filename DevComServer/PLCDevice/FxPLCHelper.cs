@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using HslCommunication;
 using HslCommunication.Profinet.Melsec;
 using iFactory.CommonLibrary.Interface;
@@ -28,6 +25,14 @@ namespace iFactory.DevComServer
         {
             _log = logWrite;
         }
+        public void ConnectToPlc()
+        {
+            fxTcpNet = new MelsecMcNet(PLCAddr, PLCPort);
+            fxTcpNet.ConnectTimeOut = 2000; // 网络连接的超时时间
+            fxTcpNet.NetworkNumber = 0x00;  // 网络号
+            fxTcpNet.NetworkStationNumber = 0x00; // 网络站号    
+            fxTcpNet.SetPersistentConnection();
+        }
         /// <summary>
         /// 心跳位写入，M100.0
         /// </summary>
@@ -41,7 +46,7 @@ namespace iFactory.DevComServer
             {
                 this.PLCAddr = Address;
                 this.PLCPort = Port;
-                ReConnectToPlc();
+                ConnectToPlc();
             }
             catch (Exception ex)
             {
@@ -55,24 +60,17 @@ namespace iFactory.DevComServer
         public void ConnectToPlc(string Address)
         {
             this.PLCAddr = Address;
-            ReConnectToPlc();
+            ConnectToPlc();
         }
 
         public void ConnectToPlc(string Address, int Port, PLCType plcType)
         {
             this.PLCAddr = Address;
             this.PLCPort = Port;
-            ReConnectToPlc();
+            ConnectToPlc();
         }
 
-        public void ReConnectToPlc()
-        {
-            fxTcpNet = new MelsecMcNet(PLCAddr, PLCPort);
-            fxTcpNet.ConnectTimeOut = 2000; // 网络连接的超时时间
-            fxTcpNet.NetworkNumber = 0x00;  // 网络号
-            fxTcpNet.NetworkStationNumber = 0x00; // 网络站号    
-            fxTcpNet.SetPersistentConnection();
-        }
+        
         /// <summary>
         /// 检查是否连接成功,通过读取PLC的M0.0固定地址来判断
         /// </summary>

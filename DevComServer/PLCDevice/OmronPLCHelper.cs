@@ -1,7 +1,6 @@
 ﻿using System;
 using HslCommunication;
 using HslCommunication.Profinet.Omron;
-using iFactory.CommonLibrary;
 using iFactory.CommonLibrary.Interface;
 
 namespace iFactory.DevComServer
@@ -20,6 +19,26 @@ namespace iFactory.DevComServer
         {
             _log = logWrite;
         }
+        public void ConnectToPlc()
+        {
+            string[] ipArray;
+            byte[] values;
+            omronTcpNet = new OmronFinsNet(PLCAddr, PLCPort)
+            {
+                ConnectTimeOut = 2000
+            };
+            ipArray = PLCLocalPcAddr.Split('.');
+            values = System.BitConverter.GetBytes(int.Parse(ipArray[ipArray.Length - 1]));
+            omronTcpNet.SA1 = values[0]; // PC网络号，PC的IP地址的最后一个数.假如你的电脑的Ip地址为192.168.0.13，那么这个值就是13
+            ipArray = PLCAddr.Split('.');
+            values = System.BitConverter.GetBytes(int.Parse(ipArray[ipArray.Length - 1]));
+            omronTcpNet.DA1 = values[0]; // 0x10 PLC网络号，PLC的IP地址的最后一个数.假如你的PLC的Ip地址为192.168.0.10，那么这个值就是10
+            //omronTcpNet.SA1 = 0x12; // PC网络号，PC的IP地址的最后一个数
+            //omronTcpNet.DA1 = 0x10; // PLC网络号，PLC的IP地址的最后一个数
+            omronTcpNet.DA2 = 0x00; // PLC单元号，通常为0
+            omronTcpNet.ConnectServer();
+            omronTcpNet.SetPersistentConnection();   // 设置长连接   
+        }
         public void ConnectToPlc(string Address)
         {
             throw new NotImplementedException();
@@ -34,8 +53,7 @@ namespace iFactory.DevComServer
         /// </summary>
         public void ConnectToPlc(string Address = null, int Port = 0)
         {
-            string[] ipArray;
-            byte[] values;
+            
             try
             {
                 if(!string.IsNullOrEmpty(Address))
@@ -46,22 +64,7 @@ namespace iFactory.DevComServer
                 {
                     PLCPort = Port;
                 }
-                omronTcpNet = new OmronFinsNet(PLCAddr, PLCPort)
-                {
-                    ConnectTimeOut = 2000
-                };
-                ipArray = PLCLocalPcAddr.Split('.');
-                values = System.BitConverter.GetBytes(int.Parse(ipArray[ipArray.Length - 1]));
-                omronTcpNet.SA1 = values[0]; // PC网络号，PC的IP地址的最后一个数.假如你的电脑的Ip地址为192.168.0.13，那么这个值就是13
-                ipArray = PLCAddr.Split('.');
-                values = System.BitConverter.GetBytes(int.Parse(ipArray[ipArray.Length - 1]));
-                omronTcpNet.DA1 = values[0]; // 0x10 PLC网络号，PLC的IP地址的最后一个数.假如你的PLC的Ip地址为192.168.0.10，那么这个值就是10
-                //omronTcpNet.SA1 = 0x12; // PC网络号，PC的IP地址的最后一个数
-                //omronTcpNet.DA1 = 0x10; // PLC网络号，PLC的IP地址的最后一个数
-                omronTcpNet.DA2 = 0x00; // PLC单元号，通常为0
-                                        //siemensTcpNet.LogNet = LogNet;
-                omronTcpNet.ConnectServer();
-                omronTcpNet.SetPersistentConnection();   // 设置长连接              
+                ConnectToPlc();
             }
             catch (Exception ex)
             {
@@ -286,10 +289,7 @@ namespace iFactory.DevComServer
             }
         }
 
-        public void ReConnectToPlc()
-        {
-            throw new NotImplementedException();
-        }
+        
 
         public bool BatchWriteValue(string Address, short[] value)
         {

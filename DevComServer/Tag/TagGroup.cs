@@ -160,10 +160,10 @@ namespace iFactory.DevComServer
             string addr1Str, addr2Str;
             string[] addr1Array, addr2Array;
             double addr1D, addr2D,addrSpan;
-            addr1Str = previousTag.TagAddr.Replace("DB", "");
-            addr2Str = currentTag.TagAddr.Replace("DB", "");
-            addr1Str = previousTag.TagAddr.Replace("db", "");
-            addr2Str = currentTag.TagAddr.Replace("db", "");
+            addr1Str = previousTag.TagAddr.Replace("DB", String.Empty);
+            addr2Str = currentTag.TagAddr.Replace("DB", String.Empty);
+            addr1Str = addr1Str.Replace("db", String.Empty);
+            addr2Str = addr2Str.Replace("db", String.Empty);
 
             addr1Array = addr1Str.Split('.');
             addr2Array = addr2Str.Split('.');
@@ -219,10 +219,10 @@ namespace iFactory.DevComServer
         {
             string addr1Str, addr2Str;
             int addr1D, addr2D, addrSpan;
-            addr1Str = previousTag.TagAddr.Replace("D", "");
-            addr2Str = currentTag.TagAddr.Replace("D", "");
-            addr1Str = previousTag.TagAddr.Replace("d", "");
-            addr2Str = currentTag.TagAddr.Replace("d", "");
+            addr1Str = previousTag.TagAddr.Replace("D", String.Empty);
+            addr2Str = currentTag.TagAddr.Replace("D", String.Empty);
+            addr1Str = addr1Str.Replace("d", String.Empty);
+            addr2Str = addr2Str.Replace("d", String.Empty);
 
             if (currentTag.DataType == TagDataType.Bool)//
             {
