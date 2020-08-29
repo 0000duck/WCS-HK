@@ -55,6 +55,10 @@ namespace iFactoryApp.View
                 MessageBoxX.Show("产品名称不能为空", "错误", Application.Current.MainWindow);
                 return;
             }
+            if(_viewModel.SelectedModel !=null)
+            {
+                _viewModel.Finish(_viewModel.SelectedModel);//完成
+            }
             var parameter= _productParameterService.QueryableToEntity(x => x.product_name== _viewModel.EditModel.product_name);
             if(parameter !=null)
             {   
@@ -87,7 +91,8 @@ namespace iFactoryApp.View
                 }
                 else
                 {
-                    _taskOrderManager.StartToDownloadParamter(_viewModel.EditModel);
+                    _viewModel.SelectedModel = _viewModel.EditModel;
+                    _taskOrderManager.StartToDownloadParamter(_viewModel.SelectedModel);
                 }
             }
             else
@@ -98,7 +103,8 @@ namespace iFactoryApp.View
                 }
                 else
                 {
-                    _taskOrderManager.StartToDownloadParamter(_viewModel.EditModel);
+                    _viewModel.SelectedModel = _viewModel.EditModel;
+                    _taskOrderManager.StartToDownloadParamter(_viewModel.SelectedModel);//下载参数
                 }
             }
 

@@ -23,6 +23,10 @@ namespace iFactory.DevComServer
         /// </summary>
         public int Port { set; get; }
         /// <summary>
+        /// 站位(Modbus使用)
+        /// </summary>
+        public byte Station { set; get; }
+        /// <summary>
         /// 扫描周期ms
         /// </summary>
         public int CycleTime { set; get; } = 500;

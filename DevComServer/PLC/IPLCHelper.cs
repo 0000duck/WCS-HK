@@ -1,20 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace iFactory.DevComServer
 {
     public interface IPLCHelper:IDisposable
     {
-        void ConnectToPlc(string Address);
-        void ConnectToPlc(string Address, int Port);
-        void ConnectToPlc(string Address, int Port, PLCType plcType);
-        void ConnectToPlc(string Address, int port, byte station =0);
         void ConnectToPlc();
 
-        bool CheckConnect();
+        void CheckConnect();
 
         bool WriteValue(string Address, bool value);
         bool WriteValue(string Address, short value);

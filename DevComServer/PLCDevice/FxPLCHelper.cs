@@ -7,27 +7,22 @@ namespace iFactory.DevComServer
 {
     public class FxPLCHelper: IPLCHelper
     {
-        private object obj = new object();
-        public string PLCAddr { set; get; }
-        public int PLCPort { set; get; } = 6000;//默认6000端口
+        private readonly PLCDevice _device;
         /// <summary>
         /// 操作对象.Fx3U使用MelsecA1ENet
         /// </summary>
         public MelsecMcNet fxTcpNet { set; get; }
-        private bool connectStatus = false;
-        public bool ConnectStatus
-        {
-            get => connectStatus;
-            set => connectStatus = value;
-        }
+       
         private readonly ILogWrite _log;
-        public FxPLCHelper(ILogWrite logWrite)
+
+        public FxPLCHelper(PLCDevice device, ILogWrite logWrite)
         {
+            _device = device;
             _log = logWrite;
         }
         public void ConnectToPlc()
         {
-            fxTcpNet = new MelsecMcNet(PLCAddr, PLCPort);
+            fxTcpNet = new MelsecMcNet(_device.Ip, _device.Port);
             fxTcpNet.ConnectTimeOut = 2000; // 网络连接的超时时间
             fxTcpNet.NetworkNumber = 0x00;  // 网络号
             fxTcpNet.NetworkStationNumber = 0x00; // 网络站号    
@@ -40,54 +35,31 @@ namespace iFactory.DevComServer
         {
             //WriteValue("M100.0", true);
         }
-        public void ConnectToPlc(string Address = null, int Port = 0)
-        {
-            try
-            {
-                this.PLCAddr = Address;
-                this.PLCPort = Port;
-                ConnectToPlc();
-            }
-            catch (Exception ex)
-            {
-                _log.WriteLog(ex.Message);
-            }
-        }
-        public void ConnectToPlc(string Address, int port, byte station = 0)
-        {
-            throw new NotImplementedException();
-        }
-        public void ConnectToPlc(string Address)
-        {
-            this.PLCAddr = Address;
-            ConnectToPlc();
-        }
 
-        public void ConnectToPlc(string Address, int Port, PLCType plcType)
-        {
-            this.PLCAddr = Address;
-            this.PLCPort = Port;
-            ConnectToPlc();
-        }
-
-        
         /// <summary>
         /// 检查是否连接成功,通过读取PLC的M0.0固定地址来判断
         /// </summary>
         /// <returns></returns>
-        public bool CheckConnect()
+        public void CheckConnect()
         {
             try
             {
-                OperateResult connect = fxTcpNet.ConnectServer();
-                this.ConnectStatus = connect.IsSuccess;
-                return connect.IsSuccess;
+                if (fxTcpNet != null)
+                {
+                    OperateResult<short> res = fxTcpNet.ReadInt16("D100");
+                    _device.IsConnected = res.IsSuccess;
+                }
+                else
+                {
+                    _device.IsConnected = false;
+                }
+
             }
             catch (Exception ex)
             {
                 _log.WriteLog(ex.Message);
+                _device.IsConnected = false;
             }
-            return false;
         }
 
         #region 写值
@@ -95,11 +67,9 @@ namespace iFactory.DevComServer
         {
             try
             {
-                lock (obj)
-                {
-                    OperateResult res = fxTcpNet.Write(Address, value);
-                    return res.IsSuccess;
-                }
+                OperateResult res = fxTcpNet.Write(Address, value);
+                return res.IsSuccess;
+
             }
             catch (Exception ex)
             {
@@ -112,11 +82,8 @@ namespace iFactory.DevComServer
         {
             try
             {
-                lock (obj)
-                {
-                    OperateResult res = fxTcpNet.Write(Address, value);
-                    return res.IsSuccess;
-                }
+                OperateResult res = fxTcpNet.Write(Address, value);
+                return res.IsSuccess;
             }
             catch (Exception ex)
             {
@@ -129,11 +96,8 @@ namespace iFactory.DevComServer
         {
             try
             {
-                lock (obj)
-                {
-                    OperateResult res = fxTcpNet.Write(Address, value);
-                    return res.IsSuccess;
-                }
+                OperateResult res = fxTcpNet.Write(Address, value);
+                return res.IsSuccess;
             }
             catch (Exception ex)
             {
@@ -146,11 +110,8 @@ namespace iFactory.DevComServer
         {
             try
             {
-                lock (obj)
-                {
-                    OperateResult res = fxTcpNet.Write(Address, value);
-                    return res.IsSuccess;
-                }
+                OperateResult res = fxTcpNet.Write(Address, value);
+                return res.IsSuccess;
             }
             catch (Exception ex)
             {

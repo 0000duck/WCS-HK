@@ -7,61 +7,42 @@ namespace iFactory.DevComServer
 {
     public class ModbusTcpHelper: IPLCHelper
     {
+        private readonly PLCDevice _device;
         private ModbusTcpNet _deviceModbus = null;
-        private string _mSzIp = null;
-        private int _mIPort = 502;
-        private byte _station=0;
-        public bool IsConnected { set; get; }
         private readonly ILogWrite _log;
 
-        public ModbusTcpHelper(ILogWrite logWrite)
+        public ModbusTcpHelper(PLCDevice device, ILogWrite logWrite)
         {
+            _device = device;
             _log = logWrite;
-        }
-        public void ConnectToPlc(string Addr, int port, byte station = 0)
-        {
-            _mSzIp = Addr;
-            _mIPort = port;
-            _station = station;
-            ConnectToPlc();
-        }
-        public void ConnectToPlc(string Addr)
-        {
-            _mSzIp = Addr;
-            ConnectToPlc();
-        }
-
-        public void ConnectToPlc(string Addr, int Port)
-        {
-            _mSzIp = Addr;
-            _mIPort = Port;
-            ConnectToPlc();
-        }
-
-        public void ConnectToPlc(string Addr, int Port, PLCType plcType)
-        {
-            throw new NotImplementedException();
         }
 
         public void ConnectToPlc()
         {
             _deviceModbus?.ConnectClose();
             _deviceModbus?.Dispose();
-            _deviceModbus = new ModbusTcpNet(_mSzIp, _mIPort, _station);
+            _deviceModbus = new ModbusTcpNet(_device.Ip, _device.Port, _device.Station);
             _deviceModbus.AddressStartWithZero = true;//首地址从0开始
             _deviceModbus.DataFormat = HslCommunication.Core.DataFormat.ABCD;
             _deviceModbus.IsStringReverse = false; //字符串跌倒
             _deviceModbus.SetPersistentConnection();
-            _log.WriteLog($"modbus连接成功{_mSzIp}");
+            _log.WriteLog($"modbus连接成功{_device.Ip}");
         }
-        public bool CheckConnect()
+        /// <summary>
+        /// 检查连接，并将结果写入ConnectStatus
+        /// </summary>
+        /// <returns></returns>
+        public void CheckConnect()
         {
             if (_deviceModbus != null)
             {
                 bool res = false;
-                return ReadValueDi("0", out res);
+                _device.IsConnected = ReadValueDi("0", out res);
             }
-            return false;
+            else
+            {
+                _device.IsConnected = false;
+            }
         }
         public bool WriteValue(string Address, bool value)
         {
@@ -77,7 +58,7 @@ namespace iFactory.DevComServer
             }
             else
             {
-                _log.WriteLog($"modbus{_mSzIp}写入地址{Address}{value}失败");
+                _log.WriteLog($"modbus{_device.Ip}写入地址{Address}{value}失败");
                 return false;
             }
         }
@@ -91,7 +72,7 @@ namespace iFactory.DevComServer
             }
             else
             {
-                _log.WriteLog($"modbus{_mSzIp}写入地址{Address}{value}失败");
+                _log.WriteLog($"modbus{_device.Ip}写入地址{Address}{value}失败");
                 return false;
             }
         }
@@ -105,7 +86,7 @@ namespace iFactory.DevComServer
             }
             else
             {
-                _log.WriteLog($"modbus{_mSzIp}写入地址{Address}{value}失败");
+                _log.WriteLog($"modbus{_device.Ip}写入地址{Address}{value}失败");
                 return false;
             }
         }
@@ -141,7 +122,7 @@ namespace iFactory.DevComServer
             }
             catch (Exception ex)
             {
-                _log.WriteLog($"modbus{_mSzIp}读取地址{Address}失败",ex);
+                _log.WriteLog($"modbus{_device.Ip}读取地址{Address}失败",ex);
             }
             value = 0;
             return false;
@@ -160,7 +141,7 @@ namespace iFactory.DevComServer
             }
             catch (Exception ex)
             {
-                _log.WriteLog($"modbus{_mSzIp}读取地址{Address}失败", ex);
+                _log.WriteLog($"modbus{_device.Ip}读取地址{Address}失败", ex);
             }
             value = 0;
             return false;
@@ -179,7 +160,7 @@ namespace iFactory.DevComServer
             }
             catch (Exception ex)
             {
-                _log.WriteLog($"modbus{_mSzIp}读取地址{Address}失败", ex);
+                _log.WriteLog($"modbus{_device.Ip}读取地址{Address}失败", ex);
             }
             value = 0;
             return false;
@@ -249,7 +230,7 @@ namespace iFactory.DevComServer
             }
             else
             {
-                _log.WriteLog($"modbus{_mSzIp}写入地址{Address}{value}失败");
+                _log.WriteLog($"modbus{_device.Ip}写入地址{Address}{value}失败");
                 return false;
             }
         }

@@ -5,32 +5,32 @@ using iFactory.CommonLibrary.Interface;
 
 namespace iFactory.DevComServer
 {
-    public class OmronPLCHelper: BasePLCHelper, IPLCHelper
+    public class OmronPLCHelper:  IPLCHelper
     {
-        public string PLCLocalPcAddr { set; get; } = "192.168.100.12";
-        private object obj = new object();
+        private readonly PLCDevice _device;
         /// <summary>
         /// 操作对象
         /// </summary>
         public OmronFinsNet omronTcpNet { set; get; }
         private readonly ILogWrite _log;
 
-        public OmronPLCHelper(ILogWrite logWrite)
+        public OmronPLCHelper(PLCDevice device,ILogWrite logWrite)
         {
+            _device = device;
             _log = logWrite;
         }
         public void ConnectToPlc()
         {
             string[] ipArray;
             byte[] values;
-            omronTcpNet = new OmronFinsNet(PLCAddr, PLCPort)
+            omronTcpNet = new OmronFinsNet(_device.Ip, _device.Port)
             {
                 ConnectTimeOut = 2000
             };
-            ipArray = PLCLocalPcAddr.Split('.');
+            ipArray = _device.Ip.Split('.');
             values = System.BitConverter.GetBytes(int.Parse(ipArray[ipArray.Length - 1]));
             omronTcpNet.SA1 = values[0]; // PC网络号，PC的IP地址的最后一个数.假如你的电脑的Ip地址为192.168.0.13，那么这个值就是13
-            ipArray = PLCAddr.Split('.');
+            ipArray = _device.Ip.Split('.');
             values = System.BitConverter.GetBytes(int.Parse(ipArray[ipArray.Length - 1]));
             omronTcpNet.DA1 = values[0]; // 0x10 PLC网络号，PLC的IP地址的最后一个数.假如你的PLC的Ip地址为192.168.0.10，那么这个值就是10
             //omronTcpNet.SA1 = 0x12; // PC网络号，PC的IP地址的最后一个数
@@ -48,51 +48,31 @@ namespace iFactory.DevComServer
         {
             throw new NotImplementedException();
         }
-        /// <summary>
-        /// 连接PLC
-        /// </summary>
-        public void ConnectToPlc(string Address = null, int Port = 0)
-        {
-            
-            try
-            {
-                if(!string.IsNullOrEmpty(Address))
-                {
-                    PLCAddr = Address;
-                }
-                if(Port>0)
-                {
-                    PLCPort = Port;
-                }
-                ConnectToPlc();
-            }
-            catch (Exception ex)
-            {
-                _log.WriteLog(ex.Message);
-            }
-        }
-        public void ConnectToPlc(string Address, int port, byte station = 0)
-        {
-            throw new NotImplementedException();
-        }
+        
         /// <summary>
         /// 检查是否连接成功,通过读取PLC的M0.0固定地址来判断
         /// </summary>
         /// <returns></returns>
-        public bool CheckConnect()
+        public void CheckConnect()
         {
             try
             {
-                //OperateResult<bool> res = omronTcpNet.ReadBool("20.0");
-                OperateResult<short> res = omronTcpNet.ReadInt16("D100");
+                if (omronTcpNet != null)
+                {
+                    OperateResult<short> res = omronTcpNet.ReadInt16("D100");
+                    _device.IsConnected = res.IsSuccess;
+                }
+                else
+                {
+                    _device.IsConnected = false;
+                }
 
-                return res.IsSuccess;
             }
             catch (Exception ex)
             {
                 _log.WriteLog(ex.Message);
+                _device.IsConnected = false;
             }
-            return false;
         }
 
         #region 写入值
@@ -106,11 +86,8 @@ namespace iFactory.DevComServer
         {
             try
             {
-                lock (obj)
-                {
-                    OperateResult res = omronTcpNet.Write(Address, value);
-                    return res.IsSuccess;
-                }
+                OperateResult res = omronTcpNet.Write(Address, value);
+                return res.IsSuccess;
             }
             catch (Exception ex)
             {
@@ -128,11 +105,8 @@ namespace iFactory.DevComServer
         {
             try
             {
-                lock (obj)
-                {
-                    OperateResult res = omronTcpNet.Write(Address, value);
-                    return res.IsSuccess;
-                }
+                OperateResult res = omronTcpNet.Write(Address, value);
+                return res.IsSuccess;
             }
             catch (Exception ex)
             {
@@ -150,11 +124,8 @@ namespace iFactory.DevComServer
         {
             try
             {
-                lock (obj)
-                {
-                    OperateResult res = omronTcpNet.Write(Address, value);
-                    return res.IsSuccess;
-                }
+                OperateResult res = omronTcpNet.Write(Address, value);
+                return res.IsSuccess;
             }
             catch (Exception ex)
             {
@@ -172,11 +143,8 @@ namespace iFactory.DevComServer
         {
             try
             {
-                lock (obj)
-                {
-                    OperateResult res = omronTcpNet.Write(Address, value);
-                    return res.IsSuccess;
-                }
+                OperateResult res = omronTcpNet.Write(Address, value);
+                return res.IsSuccess;
             }
             catch (Exception ex)
             {

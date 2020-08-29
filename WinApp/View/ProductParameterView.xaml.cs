@@ -52,7 +52,7 @@ namespace iFactoryApp.View
             CommandBindings.Add(new CommandBinding(MyCommands.Save,
                (s, e) =>
                {
-                   MessageBoxResult result = MessageBoxX.Show($"确定删除该参数吗？", "确认", Application.Current.MainWindow, MessageBoxButton.YesNo);
+                   MessageBoxResult result = MessageBoxX.Show($"确定保存该参数吗？", "确认", Application.Current.MainWindow, MessageBoxButton.YesNo);
                    if (result == MessageBoxResult.Yes)
                    {
                        if(string.IsNullOrEmpty(viewModel.EditModel.product_name) || string.IsNullOrEmpty(viewModel.EditModel.graphic_carton_size) ||

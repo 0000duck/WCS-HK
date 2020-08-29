@@ -71,14 +71,16 @@ namespace iFactoryApp.Service
             }
             cameraList.Add(keyenceCameraHelper);
         }
-        //队列1
+
+        #region 产品与彩箱sn比对
+        //产品条码
         private void KeyenceCamera1_NewReaderDataEvent(string receivedData, int index)
         {
             lastBarcode1 = receivedData;
             _taskOrderViewModel.cameraBarcode.product_barcode = lastBarcode1;
             _systemLogViewModel.AddMewStatus($"接收到产品sn为{lastBarcode1}");
         }
-        //队列2
+        //彩箱sn
         private void KeyenceCamera2_NewReaderDataEvent(string receivedData, int index)
         {
             lastBarcode2 = receivedData;
@@ -90,8 +92,8 @@ namespace iFactoryApp.Service
             Tag<short> tag1, tag2;
             if (!string.IsNullOrEmpty(lastBarcode1) && !string.IsNullOrEmpty(lastBarcode2))
             {
-                TagList.GetTag("graphic_sn", out tag1);
-                TagList.GetTag("product_sn", out tag2);
+                TagList.GetTag("graphic_sn", out tag1, "FxPLC");
+                TagList.GetTag("product_sn", out tag2, "FxPLC");
 
                 if (lastBarcode1 == lastBarcode2)//条码一致
                 {
@@ -135,8 +137,8 @@ namespace iFactoryApp.Service
         private void barcodeCheckTimer_Tick(object sender, EventArgs e)//时间到达
         {
             Tag<short> tag1, tag2;
-            TagList.GetTag("graphic_sn", out tag1);
-            TagList.GetTag("product_sn", out tag2);
+            TagList.GetTag("graphic_sn", out tag1, "FxPLC");
+            TagList.GetTag("product_sn", out tag2, "FxPLC");
             barcodeCheckTimer.Stop();
             if (!string.IsNullOrEmpty(lastBarcode1) && !string.IsNullOrEmpty(lastBarcode2))
             {
@@ -166,53 +168,116 @@ namespace iFactoryApp.Service
             {
                 tag2.Write(2);//写入错误
             }
-
         }
+        #endregion
+
         /// <summary>
         /// 开始下载参数信息
         /// </summary>
         /// <param name="taskOrder"></param>
         public void StartToDownloadParamter(TaskOrder taskOrder)
         {
-            Tag<short> tag;
-            short value = 0;
+            List<short> ValueList = new List<short>();
             #region 写入PLC信号
-            TagList.GetTag("pack_mode", out tag);
-            if(tag !=null)
-            {
-                tag.Write((short)taskOrder.pack_mode);
-            }
-            TagList.GetTag("open_machine_mode", out tag);
-            if (tag != null)
-            {
-                tag.Write((short)taskOrder.open_machine_mode);
-            }
-            TagList.GetTag("barcode_machine_mode", out tag);
-            if (tag != null)
-            {
-                tag.Write((short)taskOrder.barcode_machine_mode);
-            }
-            TagList.GetTag("sn_barcode_enable", out tag);
-            if (tag != null)
-            {
-                value = taskOrder.sn_barcode_enable == true ? (short)1 : (short)0;
-                tag.Write(value);
-            }
-            TagList.GetTag("card_machine_enable", out tag);
-            if (tag != null)
-            {
-                value = taskOrder.card_machine_enable == true ? (short)1 : (short)0;
-                tag.Write(value);
-            }
-            TagList.GetTag("plate_enable", out tag);
-            if (tag != null)
-            {
-                value = taskOrder.plate_enable == true ? (short)1 : (short)0;
-                tag.Write(value);
-            }
+            WritePlcValue("FxPLC", "pack_mode", taskOrder.pack_mode);
+            WritePlcValue("FxPLC", "open_machine_mode", taskOrder.open_machine_mode);
+            WritePlcValue("FxPLC", "barcode_machine_mode", taskOrder.barcode_machine_mode);
+            WritePlcValue("FxPLC", "sn_barcode_enable",-1, taskOrder.sn_barcode_enable);
+            WritePlcValue("FxPLC", "bubble_cover_enable",-1, taskOrder.bubble_cover_enable);
+            WritePlcValue("FxPLC", "card_machine_enable",-1, taskOrder.card_machine_enable);
             #endregion
 
-            //写入机械手信号
+            //写入尺寸信息
+            ValueList = new List<short>();
+            GetPropertyToList(taskOrder.product_size, ValueList);
+            WriteRobot("Robot1", "product_size", ValueList);
+
+            ValueList = new List<short>();
+            GetPropertyToList(taskOrder.product_size, ValueList);
+            WriteRobot("Robot2", "product_size", ValueList);
+
+            ValueList = new List<short>();
+            GetPropertyToList(taskOrder.graphic_carton_size, ValueList);
+            GetPropertyToList(taskOrder.noraml_carton_size, ValueList);
+            GetPropertyToList(taskOrder.outer_carton_size, ValueList);
+            GetPropertyToList(taskOrder.pallet_size, ValueList);
+            ValueList.Add((short)taskOrder.robot_pg_no);
+            ValueList.Add((short)taskOrder.pallet_num);
+            if(taskOrder.plate_enable)
+            {
+                ValueList.Add(1);
+            }
+            else
+            {
+                ValueList.Add(0);
+            }
+            ValueList.Add((short)taskOrder.pack_mode);
+            WriteRobot("Robot3", "graphic_carton_size", ValueList);//首地址写入
+        }
+        private void WritePlcValue(string plcName, string TagName,int value=-1,bool boolValue=false)
+        {
+            Tag<short> tag;
+            TagList.GetTag(TagName, out tag, plcName);
+            if (tag != null)
+            {
+                if(value>0)
+                {
+                    tag.Write((short)value);
+                }
+                else if(boolValue)
+                {
+                    tag.Write(1);
+                }
+                else
+                {
+                    tag.Write(0);
+                }
+            }
+        }
+        /// <summary>
+        /// 写入尺寸信息
+        /// </summary>
+        /// <param name="RobotName"></param>
+        /// <param name="TagName"></param>
+        /// <param name="size"></param>
+        private void WriteRobot(string RobotName, string TagName, List<short> ValueList)
+        {
+            int count = ValueList.Count;
+            short[] value = new short[count];
+            Tag<short> tag;
+            TagList.GetTag(TagName, out tag, RobotName);
+
+            if (tag != null)
+            {
+                for (int i = 0; i < ValueList.Count; i++)
+                {
+                    value[i] = ValueList[i];
+                }
+
+                var plc = TagList.PLCGroups.FirstOrDefault(x => x.PlcDevice.Name == RobotName);
+                if (plc != null)
+                {
+                    plc.WriteValue(tag.TagAddr, value);
+                    _systemLogViewModel.AddMewStatus($"成功写入{RobotName}地址{tag.TagAddr}写入数量为{ValueList.Count}", LogTypeEnum.Info);
+                }
+            }
+        }
+
+        public bool GetPropertyToList(string setValue,List<short> ValueList)
+        {
+            short value = 0;
+            string[] valeus = setValue.Split('*');
+            if (valeus.Length > 0)
+            {
+                for (int i = 0; i < valeus.Length; i++)
+                {
+                    short.TryParse(valeus[i], out value);
+                    ValueList.Add(value);
+                }
+                return true;
+            }
+
+            return false;
         }
     }
 }

@@ -56,10 +56,7 @@ namespace iFactoryApp.View
         private void datagrid1_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             viewModel.SelectedModel = null;
-            if (datagrid1.SelectedItem != null)
-            {
-                viewModel.SelectedModel = datagrid1.SelectedItem as TaskOrder;
-            }
+          
         }
         private void ContextMenu_Click(object sender, RoutedEventArgs e)
         {
@@ -142,11 +139,15 @@ namespace iFactoryApp.View
                         {
                             MessageBoxX.Show("任务完成失败！", "错误", Application.Current.MainWindow);
                         }
+                        else
+                        {
+                            viewModel.SelectedModel = null;
+                        }
                     }
                 }
                 else
                 {
-                    MessageBoxX.Show("请先选择一个任务单进行操作！", "错误", Application.Current.MainWindow);
+                    MessageBoxX.Show("当前未有任务信息，不能完成！", "错误", Application.Current.MainWindow);
                 }
             }
         }

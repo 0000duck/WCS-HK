@@ -6,8 +6,7 @@
       xmlns:pu="clr-namespace:Panuon.UI.Silver;assembly=Panuon.UI.Silver"
       xmlns:comLib="clr-namespace:iFactory.CommonLibrary;assembly=CommonLibrary"
       xmlns:local="clr-namespace:iFactoryApp.View"
-      mc:Ignorable="d" 
-      d:DesignHeight="300" d:DesignWidth="600" Title="产品参数管理" Background="LightGray" ResizeMode="NoResize">
+      mc:Ignorable="d" Title="产品参数管理" Background="LightGray" ResizeMode="NoResize" Height="356.444" Width="681.333">
     <Window.ContextMenu>
         <ContextMenu Width="200" FontSize="14" pu:ContextMenuHelper.CornerRadius="15"
                      pu:ContextMenuHelper.HoverBackground="DarkGray" MenuItem.Click="ContextMenu_Click">
@@ -20,23 +19,23 @@
     </Window.ContextMenu>
     <Grid Name="grd1" Focusable="False">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="120"/>
+            <ColumnDefinition Width="84.889"/>
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
-        <TreeView x:Name="treeview1" Grid.RowSpan="2" ItemsSource="{Binding ModelTrees}" Height="Auto" 
-                  HorizontalAlignment="Stretch" Margin="0,0,0,0" VerticalAlignment="Stretch" Width="Auto" 
+        <TreeView x:Name="treeview1" ItemsSource="{Binding ModelTrees}" Height="Auto" 
+                  HorizontalAlignment="Stretch" Margin="0,0,480.778,0.111" VerticalAlignment="Stretch" Width="Auto" 
                   FontSize="12"  SelectedItemChanged="treeView1_SelectedItemChanged" 
                   ToolTip="参数编号以产品为唯一标识" Background="#FFBDD0E4"
                   pu:TreeViewHelper.SelectedBackground="LightGray"
                   pu:TreeViewHelper.SelectMode="Any"
-                  pu:TreeViewHelper.SelectedForeground="Red">
+                  pu:TreeViewHelper.SelectedForeground="Red" Grid.ColumnSpan="2">
             <TreeView.ItemTemplate>
                 <HierarchicalDataTemplate ItemsSource="{Binding Path=ChildNodes}">
                     <TextBlock Text="{Binding Path=Name}"/>
                 </HierarchicalDataTemplate>
             </TreeView.ItemTemplate>
         </TreeView>
-        <Grid  Grid.Column="1">
+        <Grid  Grid.Column="1" Margin="1.111,0,-0.222,0.111">
             <Grid.RowDefinitions>
                 <RowDefinition Height="40"/>
                 <RowDefinition/>
@@ -92,6 +91,7 @@
                         <CheckBox IsChecked="{Binding sn_barcode_enable}" pu:CheckBoxHelper.CheckBoxStyle="Switch" pu:CheckBoxHelper.CheckedBackground="LimeGreen" pu:CheckBoxHelper.Header="SN标签检测功能" pu:CheckBoxHelper.HeaderWidth="auto" pu:CheckBoxHelper.CornerRadius="5" VerticalAlignment="Center" Height="32" Margin="5,0,10,0" Padding="0"/>
                         <CheckBox IsChecked="{Binding card_machine_enable}" pu:CheckBoxHelper.CheckBoxStyle="Switch"  pu:CheckBoxHelper.CheckedBackground="LimeGreen" pu:CheckBoxHelper.Header="发卡机启用" pu:CheckBoxHelper.HeaderWidth="auto" pu:TextBoxHelper.CornerRadius="5" VerticalAlignment="Center" Height="32" Margin="15,0" Padding="0"/>
                         <CheckBox IsChecked="{Binding plate_enable}" pu:CheckBoxHelper.CheckBoxStyle="Switch"  pu:CheckBoxHelper.CheckedBackground="LimeGreen" pu:CheckBoxHelper.Header="隔板启用" pu:CheckBoxHelper.HeaderWidth="auto" pu:CheckBoxHelper.CornerRadius="5" VerticalAlignment="Center" Height="32" Margin="15,0" Padding="0"/>
+                        <CheckBox IsChecked="{Binding bubble_cover_enable}" pu:CheckBoxHelper.CheckBoxStyle="Switch"  pu:CheckBoxHelper.CheckedBackground="LimeGreen" pu:CheckBoxHelper.Header="装上下泡沫盖启用" pu:CheckBoxHelper.HeaderWidth="auto" pu:CheckBoxHelper.CornerRadius="5" VerticalAlignment="Center" Height="32" Margin="15,0" Padding="0"/>
                     </StackPanel>
                 </Grid>
             </GroupBox>

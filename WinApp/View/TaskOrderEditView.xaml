@@ -7,7 +7,7 @@
       xmlns:pu="clr-namespace:Panuon.UI.Silver;assembly=Panuon.UI.Silver"
       xmlns:comLib="clr-namespace:iFactory.CommonLibrary;assembly=CommonLibrary"
       xmlns:local="clr-namespace:iFactoryApp.View"
-      mc:Ignorable="d" Title="包装任务计划维护" Background="LightGray" Width="424.024" Height="216.216" ResizeMode="NoResize" WindowStartupLocation="CenterScreen">
+      mc:Ignorable="d" Title="包装任务计划加载" Background="LightGray" Width="424.024" Height="216.216" ResizeMode="NoResize" WindowStartupLocation="CenterScreen">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition/>

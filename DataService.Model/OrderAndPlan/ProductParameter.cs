@@ -194,5 +194,19 @@ namespace iFactory.DataService.Model
             }
             get { return _plate_enable; }
         }
+        private bool _bubble_cover_enable = false;
+        /// <summary>
+        /// 装上下泡沫盖
+        /// </summary>
+        [SugarColumn(IsNullable = true)]
+        public bool bubble_cover_enable
+        {
+            set
+            {
+                _bubble_cover_enable = value;
+                NotifyPropertyChanged("bubble_cover_enable");
+            }
+            get { return _bubble_cover_enable; }
+        }
     }
 }

@@ -1,4 +1,5 @@
-﻿using iFactory.CommonLibrary;
+﻿using GalaSoft.MvvmLight;
+using iFactory.CommonLibrary;
 using iFactory.DataService.IService;
 using iFactory.DataService.Model;
 using System;
@@ -10,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace iFactoryApp.ViewModel
 {
-    public class TaskOrderViewModel
+    public class TaskOrderViewModel : ViewModelBase
     {
         private readonly ITaskOrderService _taskOrderService;
         private readonly ITaskOrderHistoryService _taskOrderHistoryService;
@@ -20,8 +21,19 @@ namespace iFactoryApp.ViewModel
         public ObservableCollection<ProductParameter> ParameterList { set; get; } = new ObservableCollection<ProductParameter>();
         public ObservableCollection<TaskOrder> ModelList { set; get; } = new ObservableCollection<TaskOrder>();
         public TaskOrder EditModel { set; get; }
-        public TaskOrder SelectedModel { set; get; }
+
+        private TaskOrder _SelectedModel;
+        public TaskOrder SelectedModel //当前选择操作对象
+        { 
+            set 
+            { 
+                _SelectedModel = value;
+                RaisePropertyChanged<TaskOrder>("SelectedModel");
+            }
+            get { return _SelectedModel; } 
+        }
         public CameraBarcode cameraBarcode { set; get; } = new CameraBarcode();
+
 
         /// <summary>
         /// Initializes a new instance of the MainViewModel class.
@@ -49,15 +61,12 @@ namespace iFactoryApp.ViewModel
                     ParameterList.Add(item);
                 }
             }
+           
         }
         public void LoadAllInfos()
         {
             ModelList.Clear();
-            List<TaskOrder> orders = _taskOrderService.QueryableToList(x => x.id > 0).ToList();
-            foreach (var item in orders)
-            {
-                ModelList.Add(item);
-            }
+            _SelectedModel = _taskOrderService.QueryableToEntity(x => x.id > 0);
         }
         #region 对象操作
         public bool Insert(TaskOrder model)
@@ -65,6 +74,7 @@ namespace iFactoryApp.ViewModel
             long id = _taskOrderService.InsertBigIdentity(model);
             if (id > 0)
             {
+                model.id = (int)id;
                 return true;
             }
             return false;

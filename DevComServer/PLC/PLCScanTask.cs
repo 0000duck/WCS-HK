@@ -27,24 +27,24 @@ namespace iFactory.DevComServer
                     case PLCType.Simens1500:
                     case PLCType.Simens300:
                     case PLCType.Simens200Smart:
-                        plcHelper = new SimensPLCHelper(_log);//指定为西门子PLC连接
-                        plcHelper.ConnectToPlc(PlcDevice.Ip, PlcDevice.Port, plcDevice.Type);
+                        plcHelper = new SimensPLCHelper(plcDevice,_log);//指定为西门子PLC连接
+                        plcHelper.ConnectToPlc();
                         break;
                     case PLCType.Omron:
-                        plcHelper = new OmronPLCHelper(_log);//指定为欧姆龙PLC连接
-                        plcHelper.ConnectToPlc(PlcDevice.Ip, PlcDevice.Port);
+                        plcHelper = new OmronPLCHelper(plcDevice, _log);//指定为欧姆龙PLC连接
+                        plcHelper.ConnectToPlc();
                         break;
                     case PLCType.Fx:
-                        plcHelper = new FxPLCHelper(_log);//指定为三菱PLC连接
-                        plcHelper.ConnectToPlc(PlcDevice.Ip, PlcDevice.Port);
+                        plcHelper = new FxPLCHelper(plcDevice, _log);//指定为三菱PLC连接
+                        plcHelper.ConnectToPlc();
                         break;
                     case PLCType.Modbus:
-                        plcHelper = new ModbusTcpHelper(_log);//指定为Modbus连接(Robot机械手)
-                        plcHelper.ConnectToPlc(PlcDevice.Ip, PlcDevice.Port);
+                        plcHelper = new ModbusTcpHelper(plcDevice, _log);//指定为Modbus连接(Robot机械手)
+                        plcHelper.ConnectToPlc();
                         break;
                     default://默认西门子
-                        plcHelper = new SimensPLCHelper(_log);//指定为西门子PLC连接
-                        plcHelper.ConnectToPlc(PlcDevice.Ip, PlcDevice.Port, plcDevice.Type);
+                        plcHelper = new SimensPLCHelper(plcDevice, _log);//指定为西门子PLC连接
+                        plcHelper.ConnectToPlc();
                         break;
                 }
               
@@ -118,7 +118,7 @@ namespace iFactory.DevComServer
             Thread.Sleep(3000);//延时等待其他任务加载，然后再启动刷新
             while (true)
             {
-                PlcDevice.IsConnected = plcHelper.CheckConnect();
+                plcHelper.CheckConnect();
                 if (PlcDevice.IsConnected)
                 {
                     foreach (ITagGroup tagGroup in PlcDevice.TagGroups)
@@ -222,41 +222,92 @@ namespace iFactory.DevComServer
         #region 标签写入值
         public void WriteValue(Tag<bool> tag, bool value,int Length=-1)
         {
-            bool res = plcHelper.WriteValue(tag.TagAddr, value);
-            if (!res)
+            if (PlcDevice.IsConnected)
             {
-                _log.WriteLog($"{tag.TagName}={tag.TagAddr}写入值{value}失败，重新写入");
-                plcHelper.WriteValue(tag.TagAddr, value);
+                bool res = plcHelper.WriteValue(tag.TagAddr, value);
+                if (!res)
+                {
+                    _log.WriteLog($"{tag.TagName}={tag.TagAddr}写入值{value}失败，重新写入");
+                    plcHelper.WriteValue(tag.TagAddr, value);
+                }
+            }
+            else
+            {
+                _log.WriteLog($"设备未连接，{tag.TagName}={tag.TagAddr}写入值{value}失败");
             }
         }
         public void WriteValue(Tag<short> tag, short value, int Length = -1)
         {
-            bool res = plcHelper.WriteValue(tag.TagAddr, value);
-            if (!res)
+            if (PlcDevice.IsConnected)
             {
-                _log.WriteLog($"{tag.TagName}={tag.TagAddr}写入值{value}失败，重新写入");
-                plcHelper.WriteValue(tag.TagAddr, value);
+                bool res = plcHelper.WriteValue(tag.TagAddr, value);
+                if (!res)
+                {
+                    _log.WriteLog($"{tag.TagName}={tag.TagAddr}写入值{value}失败，重新写入");
+                    plcHelper.WriteValue(tag.TagAddr, value);
+                }
+            }
+            else
+            {
+                _log.WriteLog($"设备未连接，{tag.TagName}={tag.TagAddr}写入值{value}失败");
+            }
+        }
+        /// <summary>
+        /// 批量写入值
+        /// </summary>
+        /// <param name="Address"></param>
+        /// <param name="value"></param>
+        public void WriteValue(string Address, short[] value)
+        {
+            if(PlcDevice.IsConnected)
+            {
+                bool res = plcHelper.BatchWriteValue(Address, value);
+                if (!res)
+                {
+                    _log.WriteLog($"{Address}写入值{value}失败，重新写入");
+                    plcHelper.BatchWriteValue(Address, value);
+                }
+            }
+            else
+            {
+                _log.WriteLog($"设备未连接，{Address}写入值{value}失败");
             }
         }
         public void WriteValue(Tag<int> tag, int value, int Length = -1)
         {
-            bool res = plcHelper.WriteValue(tag.TagAddr, value);
-            if (!res)
+            if (PlcDevice.IsConnected)
             {
-                _log.WriteLog($"{tag.TagName}={tag.TagAddr}写入值{value}失败，重新写入");
-                plcHelper.WriteValue(tag.TagAddr, value);
+                bool res = plcHelper.WriteValue(tag.TagAddr, value);
+                if (!res)
+                {
+                    _log.WriteLog($"{tag.TagName}={tag.TagAddr}写入值{value}失败，重新写入");
+                    plcHelper.WriteValue(tag.TagAddr, value);
+                }
+            }
+            else
+            {
+                _log.WriteLog($"设备未连接，{tag.TagName}={tag.TagAddr}写入值{value}失败");
             }
         }
         public void WriteValue(Tag<float> tag, float value, int Length = -1)
         {
-            bool res = plcHelper.WriteValue(tag.TagAddr, value);
-            if (!res)
+            if (PlcDevice.IsConnected)
             {
-                _log.WriteLog($"{tag.TagName}={tag.TagAddr}写入值{value}失败，重新写入");
-                plcHelper.WriteValue(tag.TagAddr, value);
+                bool res = plcHelper.WriteValue(tag.TagAddr, value);
+                if (!res)
+                {
+                    _log.WriteLog($"{tag.TagName}={tag.TagAddr}写入值{value}失败，重新写入");
+                    plcHelper.WriteValue(tag.TagAddr, value);
+                }
+
+            }
+            else
+            {
+                _log.WriteLog($"设备未连接，{tag.TagName}={tag.TagAddr}写入值{value}失败");
             }
         }
-        public void WriteValue(Tag<string> tag, string value, int Length = -1)
+        
+    public void WriteValue(Tag<string> tag, string value, int Length = -1)
         {
             //_plcHelper.WriteValue(tag.TagAddr, value, WCharMode, Length);
         }

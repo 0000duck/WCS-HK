@@ -9,80 +9,42 @@ namespace iFactory.DevComServer
 {
     public class SimensPLCHelper: IPLCHelper
     {
-        public string PLCAddr { set; get; }
+        private readonly PLCDevice _device;
         private SiemensPLCS siemensPLCS= SiemensPLCS.S1200;
-        private object obj = new object();
         /// <summary>
         /// 操作对象
         /// </summary>
         public SiemensS7Net siemensTcpNet { set; get; }
-        private bool connectStatus = false;
-        public bool ConnectStatus
-        {
-            get => connectStatus;
-            set => connectStatus = value;
-        }
+       
         private readonly ILogWrite _log;
 
-        public SimensPLCHelper(ILogWrite logWrite)
+        public SimensPLCHelper(PLCDevice device,ILogWrite logWrite)
         {
+            _device = device;
             _log = logWrite;
         }
-        public void ConnectToPlc(string Address)
-        {
-            throw new NotImplementedException();
-        }
-        /// <summary>
-        /// 连接PLC
-        /// </summary>
-        public void ConnectToPlc(string Address, int Port)
-        {
-            throw new NotImplementedException();
-        }
-        public void ConnectToPlc(string Address, int Port, PLCType plcType)
-        {
-            try
-            {
-                if (!string.IsNullOrEmpty(Address))
-                {
-                    PLCAddr = Address;
-                }
-
-                lock (this)
-                {
-                    siemensPLCS = SiemensPLCS.S1200;
-                    switch (plcType)
-                    {
-                        case PLCType.Simens1200:
-                            siemensPLCS = SiemensPLCS.S1200;
-                            break;
-                        case PLCType.Simens1500:
-                            siemensPLCS = SiemensPLCS.S1500;
-                            break;
-                        case PLCType.Simens300:
-                            siemensPLCS = SiemensPLCS.S300;
-                            break;
-                        case PLCType.Simens200Smart:
-                            siemensPLCS = SiemensPLCS.S200Smart;
-                            break;
-                    }
-                    ConnectToPlc();
-                }
-            }
-            catch (Exception ex)
-            {
-                _log.WriteLog(ex.Message);
-            }
-        }
-        public void ConnectToPlc(string Address, int port, byte station = 0)
-        {
-            throw new NotImplementedException();
-        }
+       
         public void ConnectToPlc()
         {
+            siemensPLCS = SiemensPLCS.S1200;
+            switch (_device.Type)
+            {
+                case PLCType.Simens1200:
+                    siemensPLCS = SiemensPLCS.S1200;
+                    break;
+                case PLCType.Simens1500:
+                    siemensPLCS = SiemensPLCS.S1500;
+                    break;
+                case PLCType.Simens300:
+                    siemensPLCS = SiemensPLCS.S300;
+                    break;
+                case PLCType.Simens200Smart:
+                    siemensPLCS = SiemensPLCS.S200Smart;
+                    break;
+            }
             siemensTcpNet?.ConnectClose();
             siemensTcpNet?.Dispose();
-            siemensTcpNet = new SiemensS7Net(siemensPLCS, PLCAddr)
+            siemensTcpNet = new SiemensS7Net(siemensPLCS, _device.Ip)
             {
                 ConnectTimeOut = 2000
             };
@@ -94,19 +56,26 @@ namespace iFactory.DevComServer
         /// 检查是否连接成功,通过读取PLC的M0.0固定地址来判断
         /// </summary>
         /// <returns></returns>
-        public bool CheckConnect()
+        public void CheckConnect()
         {
             try
             {
-                OperateResult<bool> res = siemensTcpNet.ReadBool("M0.0");
+                if (siemensTcpNet != null)
+                {
+                    OperateResult<bool> res = siemensTcpNet.ReadBool("M0.0");
+                    _device.IsConnected = res.IsSuccess;
+                }
+                else
+                {
+                    _device.IsConnected = false;
+                }
 
-                return res.IsSuccess;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 _log.WriteLog(ex.Message);
+                _device.IsConnected = false;
             }
-            return false;
         }
 
         #region 写入值
@@ -121,11 +90,8 @@ namespace iFactory.DevComServer
         {
             try
             {
-                lock (obj)
-                {
-                    OperateResult res = siemensTcpNet.Write(Address, value);
-                    return res.IsSuccess;
-                }
+                OperateResult res = siemensTcpNet.Write(Address, value);
+                return res.IsSuccess;
             }
             catch(Exception ex)
             {
@@ -144,11 +110,8 @@ namespace iFactory.DevComServer
         {
             try
             {
-                lock (obj)
-                {
-                    OperateResult res = siemensTcpNet.Write(Address, value);
-                    return res.IsSuccess;
-                }
+                OperateResult res = siemensTcpNet.Write(Address, value);
+                return res.IsSuccess;
             }
             catch (Exception ex)
             {
@@ -167,11 +130,8 @@ namespace iFactory.DevComServer
         {
             try
             {
-                lock (obj)
-                {
-                    OperateResult res = siemensTcpNet.Write(Address, value);
-                    return res.IsSuccess;
-                }
+                OperateResult res = siemensTcpNet.Write(Address, value);
+                return res.IsSuccess;
             }
             catch (Exception ex)
             {
@@ -190,11 +150,8 @@ namespace iFactory.DevComServer
         {
             try
             {
-                lock (obj)
-                {
-                    OperateResult res = siemensTcpNet.Write(Address, value);
-                    return res.IsSuccess;
-                }
+                OperateResult res = siemensTcpNet.Write(Address, value);
+                return res.IsSuccess;
             }
             catch (Exception ex)
             {
@@ -215,40 +172,39 @@ namespace iFactory.DevComServer
             byte[] bytes;
             List<byte> list = new List<byte>();
             if (value == null) return false;
-            lock (obj)
+
+            try
             {
-                try
+                if (WCharMode == true)//wchar模式
                 {
-                    if (WCharMode == true)//wchar模式
+                    bytes = Encoding.BigEndianUnicode.GetBytes(value);
+                    list.AddRange(bytes);
+                    for (int i = bytes.Length; i < Length; i++)//剩余的部分全部补齐为空格
                     {
-                        bytes = Encoding.BigEndianUnicode.GetBytes(value);
-                        list.AddRange(bytes);
-                        for (int i = bytes.Length; i < Length; i++)//剩余的部分全部补齐为空格
-                        {
-                            if (i % 2 == 0)
-                                list.Add(0);//0 32
-                            else
-                                list.Add(32);//0 32
-                        }
+                        if (i % 2 == 0)
+                            list.Add(0);//0 32
+                        else
+                            list.Add(32);//0 32
                     }
-                    else
-                    {
-                        Encoding GB2312 = System.Text.Encoding.GetEncoding("gb2312");
-                        bytes = GB2312.GetBytes(value);
-                        list.Add(254);//第1个为固定字符
-                        list.Add((byte)bytes.Length);//第2个为长度
-                        list.AddRange(bytes);//第3个开始为内容
-                    }
-
-                    OperateResult res = siemensTcpNet.Write(Address, list.ToArray());
-
-                    return res.IsSuccess;
                 }
-                catch(Exception ex)
+                else
                 {
-                    _log.WriteLog(ex.Message);
+                    Encoding GB2312 = System.Text.Encoding.GetEncoding("gb2312");
+                    bytes = GB2312.GetBytes(value);
+                    list.Add(254);//第1个为固定字符
+                    list.Add((byte)bytes.Length);//第2个为长度
+                    list.AddRange(bytes);//第3个开始为内容
                 }
+
+                OperateResult res = siemensTcpNet.Write(Address, list.ToArray());
+
+                return res.IsSuccess;
             }
+            catch(Exception ex)
+            {
+                _log.WriteLog(ex.Message);
+            }
+
             return false;
         }
         #endregion
