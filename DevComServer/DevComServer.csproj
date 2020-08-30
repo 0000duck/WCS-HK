@@ -71,8 +71,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DeviceStatus.cs" />
-    <Compile Include="PLC\DeviceComStatus.cs" />
     <Compile Include="PLC\IPLCHelper.cs" />
     <Compile Include="Modbus\ModbusTcpHelper.cs" />
     <Compile Include="PLCDevice\FxPLCHelper.cs" />

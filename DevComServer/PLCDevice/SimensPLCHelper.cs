@@ -14,7 +14,7 @@ namespace iFactory.DevComServer
         /// <summary>
         /// 操作对象
         /// </summary>
-        public SiemensS7Net siemensTcpNet { set; get; }
+        public SiemensS7Net deviceDriver { set; get; }
        
         private readonly ILogWrite _log;
 
@@ -42,15 +42,25 @@ namespace iFactory.DevComServer
                     siemensPLCS = SiemensPLCS.S200Smart;
                     break;
             }
-            siemensTcpNet?.ConnectClose();
-            siemensTcpNet?.Dispose();
-            siemensTcpNet = new SiemensS7Net(siemensPLCS, _device.Ip)
+            deviceDriver?.ConnectClose();
+            deviceDriver?.Dispose();
+            deviceDriver = new SiemensS7Net(siemensPLCS, _device.Ip)
             {
                 ConnectTimeOut = 2000
             };
 
             //siemensTcpNet.LogNet = LogNet;
-            siemensTcpNet.SetPersistentConnection();   // 设置长连接 
+            deviceDriver.SetPersistentConnection();   // 设置长连接 
+            OperateResult res = deviceDriver.ConnectServer();
+            if (res.IsSuccess)
+            {
+                _log.WriteLog($"{_device.Name}{_device.Ip}连接成功");
+            }
+            else
+            {
+                _log.WriteLog($"{_device.Name}{_device.Ip}连接失败");
+            }
+            _device.IsConnected = res.IsSuccess;
         }
         /// <summary>
         /// 检查是否连接成功,通过读取PLC的M0.0固定地址来判断
@@ -60,9 +70,9 @@ namespace iFactory.DevComServer
         {
             try
             {
-                if (siemensTcpNet != null)
+                if (deviceDriver != null)
                 {
-                    OperateResult<bool> res = siemensTcpNet.ReadBool("M0.0");
+                    OperateResult<bool> res = deviceDriver.ReadBool("M0.0");
                     _device.IsConnected = res.IsSuccess;
                 }
                 else
@@ -90,10 +100,22 @@ namespace iFactory.DevComServer
         {
             try
             {
-                OperateResult res = siemensTcpNet.Write(Address, value);
-                return res.IsSuccess;
+                if (_device.IsConnected)
+                {
+                    OperateResult res = deviceDriver.Write(Address, value);
+                    if (res.IsSuccess == false)
+                    {
+                        _log.WriteLog($"{_device.Name}{_device.Ip}，写入地址{Address}值{value}失败");
+                    }
+                    return res.IsSuccess;
+                }
+                else
+                {
+                    _log.WriteLog($"{_device.Name}{_device.Ip}通信未连接，写入地址{Address}值{value}失败");
+                }
+                return false;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 _log.WriteLog(ex.Message);
             }
@@ -110,8 +132,20 @@ namespace iFactory.DevComServer
         {
             try
             {
-                OperateResult res = siemensTcpNet.Write(Address, value);
-                return res.IsSuccess;
+                if (_device.IsConnected)
+                {
+                    OperateResult res = deviceDriver.Write(Address, value);
+                    if (res.IsSuccess == false)
+                    {
+                        _log.WriteLog($"{_device.Name}{_device.Ip}，写入地址{Address}值{value}失败");
+                    }
+                    return res.IsSuccess;
+                }
+                else
+                {
+                    _log.WriteLog($"{_device.Name}{_device.Ip}通信未连接，写入地址{Address}值{value}失败");
+                }
+                return false;
             }
             catch (Exception ex)
             {
@@ -130,8 +164,20 @@ namespace iFactory.DevComServer
         {
             try
             {
-                OperateResult res = siemensTcpNet.Write(Address, value);
-                return res.IsSuccess;
+                if (_device.IsConnected)
+                {
+                    OperateResult res = deviceDriver.Write(Address, value);
+                    if (res.IsSuccess == false)
+                    {
+                        _log.WriteLog($"{_device.Name}{_device.Ip}，写入地址{Address}值{value}失败");
+                    }
+                    return res.IsSuccess;
+                }
+                else
+                {
+                    _log.WriteLog($"{_device.Name}{_device.Ip}通信未连接，写入地址{Address}值{value}失败");
+                }
+                return false;
             }
             catch (Exception ex)
             {
@@ -150,8 +196,20 @@ namespace iFactory.DevComServer
         {
             try
             {
-                OperateResult res = siemensTcpNet.Write(Address, value);
-                return res.IsSuccess;
+                if (_device.IsConnected)
+                {
+                    OperateResult res = deviceDriver.Write(Address, value);
+                    if (res.IsSuccess == false)
+                    {
+                        _log.WriteLog($"{_device.Name}{_device.Ip}，写入地址{Address}值{value}失败");
+                    }
+                    return res.IsSuccess;
+                }
+                else
+                {
+                    _log.WriteLog($"{_device.Name}{_device.Ip}通信未连接，写入地址{Address}值{value}失败");
+                }
+                return false;
             }
             catch (Exception ex)
             {
@@ -196,7 +254,7 @@ namespace iFactory.DevComServer
                     list.AddRange(bytes);//第3个开始为内容
                 }
 
-                OperateResult res = siemensTcpNet.Write(Address, list.ToArray());
+                OperateResult res = deviceDriver.Write(Address, list.ToArray());
 
                 return res.IsSuccess;
             }
@@ -206,6 +264,11 @@ namespace iFactory.DevComServer
             }
 
             return false;
+        }
+
+        public bool WriteValue(string address, string value)
+        {
+            throw new NotImplementedException();
         }
         #endregion
 
@@ -220,7 +283,7 @@ namespace iFactory.DevComServer
         {
             try
             {
-                OperateResult<bool> res = siemensTcpNet.ReadBool(Address);
+                OperateResult<bool> res = deviceDriver.ReadBool(Address);
                 if (res.IsSuccess)
                 {
                     value = res.Content;
@@ -244,7 +307,7 @@ namespace iFactory.DevComServer
         {
             try
             {
-                OperateResult<bool[]> res = siemensTcpNet.ReadBool(Address, length);
+                OperateResult<bool[]> res = deviceDriver.ReadBool(Address, length);
                 if (res.IsSuccess)
                 {
                     value = res.Content;
@@ -270,7 +333,7 @@ namespace iFactory.DevComServer
         {
             try
             {
-                OperateResult<short> res = siemensTcpNet.ReadInt16(Address);
+                OperateResult<short> res = deviceDriver.ReadInt16(Address);
                 if (res.IsSuccess)
                 {
                     value = res.Content;
@@ -288,7 +351,7 @@ namespace iFactory.DevComServer
         {
             try
             {
-                OperateResult<short[]> res = siemensTcpNet.ReadInt16(Address,length);
+                OperateResult<short[]> res = deviceDriver.ReadInt16(Address,length);
                 if (res.IsSuccess)
                 {
                     value = res.Content;
@@ -315,7 +378,7 @@ namespace iFactory.DevComServer
         {
             try
             {
-                OperateResult<int> res = siemensTcpNet.ReadInt32(Address);
+                OperateResult<int> res = deviceDriver.ReadInt32(Address);
                 if (res.IsSuccess)
                 {
                     value = res.Content;
@@ -333,7 +396,7 @@ namespace iFactory.DevComServer
         {
             try
             {
-                OperateResult<int[]> res = siemensTcpNet.ReadInt32(Address,length);
+                OperateResult<int[]> res = deviceDriver.ReadInt32(Address,length);
                 if (res.IsSuccess)
                 {
                     value = res.Content;
@@ -359,7 +422,7 @@ namespace iFactory.DevComServer
         {
             try
             {
-                OperateResult<float> res = siemensTcpNet.ReadFloat(Address);
+                OperateResult<float> res = deviceDriver.ReadFloat(Address);
                 if (res.IsSuccess)
                 {
                     value = res.Content;
@@ -377,7 +440,7 @@ namespace iFactory.DevComServer
         {
             try
             {
-                OperateResult<float[]> res = siemensTcpNet.ReadFloat(Address, length);
+                OperateResult<float[]> res = deviceDriver.ReadFloat(Address, length);
                 if (res.IsSuccess)
                 {
                     value = res.Content;
@@ -404,7 +467,7 @@ namespace iFactory.DevComServer
         {
             try
             {
-                OperateResult<byte[]> res = siemensTcpNet.Read(Address, Length);
+                OperateResult<byte[]> res = deviceDriver.Read(Address, Length);
                 if (res.IsSuccess)
                 {
                     if (WCharMode == false)//string模式读取，第1个是254，第2个是长度，第3个开始是内容
@@ -480,7 +543,7 @@ namespace iFactory.DevComServer
         {
             try
             {
-                OperateResult<byte[]> res = siemensTcpNet.Read(Address, 1);
+                OperateResult<byte[]> res = deviceDriver.Read(Address, 1);
                 if (res.IsSuccess)
                 {
                     int count = res.Content[1];//第1个是254，第2个是长度，第3个开始是内容
@@ -515,12 +578,13 @@ namespace iFactory.DevComServer
 
         public void Dispose()
         {
-            if (siemensTcpNet != null)
+            if (deviceDriver != null)
             {
-                siemensTcpNet.Dispose();
+                deviceDriver.Dispose();
             }
         }
 
+       
     }
     
 }

@@ -92,7 +92,10 @@ namespace iFactoryApp.View
                 else
                 {
                     _viewModel.SelectedModel = _viewModel.EditModel;
-                    _taskOrderManager.StartToDownloadParamter(_viewModel.SelectedModel);
+                    if(!_taskOrderManager.StartToDownloadParamter(_viewModel.SelectedModel))
+                    {
+                        MessageBoxX.Show("参数下载失败，请检查网络连接后重新下载！", "错误", Application.Current.MainWindow);
+                    }
                 }
             }
             else
@@ -104,7 +107,10 @@ namespace iFactoryApp.View
                 else
                 {
                     _viewModel.SelectedModel = _viewModel.EditModel;
-                    _taskOrderManager.StartToDownloadParamter(_viewModel.SelectedModel);//下载参数
+                    if (!_taskOrderManager.StartToDownloadParamter(_viewModel.SelectedModel))
+                    {
+                        MessageBoxX.Show("参数下载失败，请检查网络连接后重新下载！", "错误", Application.Current.MainWindow);
+                    }
                 }
             }
 

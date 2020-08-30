@@ -22,6 +22,39 @@ namespace iFactory.DevComServer
         TagDataType DataType { set; get; }
     }
 
+    public class BaseTag<T> : INotifyPropertyChanged
+    {
+        /// <summary>
+        /// Tag值写入事件
+        /// </summary>
+        public delegate bool TagWriteValueEvent(string Addr, T value);
+
+        /// <summary>
+        /// Tag值写入事件。当Tag所在组被激活之后，检测到值变化，自动触发此事件
+        /// </summary>
+        public event TagWriteValueEvent WriteValueEvent;
+
+        protected virtual void SendWriteValueEvent(string Addr, T value)
+        {
+            if (this.WriteValueEvent != null && value != null)
+            {
+                this.WriteValueEvent(Addr, value);
+            }
+        }
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected virtual void SendPropertyChanged(String propertyName)
+        {
+            if ((this.PropertyChanged != null))
+            {
+                this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            }
+        }
+    }
+    /// <summary>
+    /// 标签
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
     public class Tag<T> : BaseTag<T>, ITag 
     {
         public int GroupId { set; get; }
@@ -121,49 +154,16 @@ namespace iFactory.DevComServer
                 dataType = TagDataType.String;
             }
         }
-        /// <summary>
-        /// 写入的值
-        /// </summary>
-        public T WriteValue { private set; get; }
+       
         /// <summary>
         /// 写入值
         /// </summary>
         /// <param name="Value"></param>
-        public void Write(T Value,int WriteLength=-1)
+        public void Write(T Value)
         {
-            SendWriteValueEvent(this,Value, WriteLength);
+            SendWriteValueEvent(this.TagAddr,Value);
         }
        
     }
 
-    public class BaseTag<T>: INotifyPropertyChanged
-    {
-        /// <summary>
-        /// Tag值写入事件
-        /// </summary>
-        public delegate void TagWriteValueEvent(Tag<T> tag, T value,int Length = -1);
-        
-        /// <summary>
-        /// Tag值写入事件。当Tag所在组被激活之后，检测到值变化，自动触发此事件
-        /// </summary>
-        public event TagWriteValueEvent WriteValueEvent = delegate { };
-
-        protected virtual void SendWriteValueEvent(Tag<T>tag, T value,int Length=-1)
-        {
-            if (this.WriteValueEvent != null && value !=null)
-            {
-                this.WriteValueEvent(tag, value, Length);
-            }
-        }
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        protected virtual void SendPropertyChanged(String propertyName)
-        {
-            if ((this.PropertyChanged != null))
-            {
-                this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-            }
-        }
-    }
-    
 }

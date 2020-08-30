@@ -1,17 +1,13 @@
-﻿using iFactory.CommonLibrary;
-using iFactory.CommonLibrary.Interface;
+﻿using iFactory.CommonLibrary.Interface;
 using iFactory.DataService.IService;
 using iFactory.DevComServer;
 using iFactoryApp.Common;
 using iFactoryApp.View;
 using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
-using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Threading;
 
 namespace iFactoryApp
 {
@@ -20,11 +16,12 @@ namespace iFactoryApp
     /// </summary>
     public partial class App : Application
     {
+        private ILogWrite log;
         private void Application_Startup(object sender, StartupEventArgs e)
         {
             GlobalSettings.LoadSettings();//加载参数
             IoC.SetupIoC();//IoC容器启用
-            var log = IoC.Get<ILogWrite>();
+            log = IoC.Get<ILogWrite>();
             var service1 = IoC.Get<IDatabaseTagGroupService>();
             var service2 = IoC.Get<IDatabaseTagService>();
             PLCManager.SetService(service1, service2, log);
@@ -33,6 +30,12 @@ namespace iFactoryApp
 
             UserViewService.LoadLoginWindow();
             Application.Current.Exit += Current_Exit;
+            //UI线程未捕获异常处理事件
+            this.DispatcherUnhandledException += new DispatcherUnhandledExceptionEventHandler(App_DispatcherUnhandledException);
+            //Task线程内未捕获异常处理事件
+            TaskScheduler.UnobservedTaskException += TaskScheduler_UnobservedTaskException;
+            //非UI线程未捕获异常处理事件
+            AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
         }
        
         private static System.Threading.Mutex mutex;
@@ -58,6 +61,37 @@ namespace iFactoryApp
         {
             IoC.Dispose();
             Environment.Exit(0);
+        }
+
+        private void App_DispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
+        {
+            try
+            {
+                e.Handled = true; //把 Handled 属性设为true，表示此异常已处理，程序可以继续运行，不会强制退出      
+                log.WriteLog("捕获App_DispatcherUnhandledException未处理异常", e.Exception);
+            }
+            catch (Exception ex)
+            {
+                log.WriteLog($"程序发生致命错误，将终止{ ex.Message}");
+            }
+        }
+
+        private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+        {
+            if (e.ExceptionObject is Exception)
+            {
+                log.WriteLog("捕获CurrentDomain未处理异常", (Exception)e.ExceptionObject);
+            }
+            else
+            {
+                log.WriteLog($"程序发生致命错误，将终止{ e.ExceptionObject.ToString()}");
+            }
+        }
+
+        private void TaskScheduler_UnobservedTaskException(object sender, UnobservedTaskExceptionEventArgs e)
+        {
+            //task线程内未处理捕获
+            log.WriteLog($"程序线程内发生致命错误，将终止{ e.ToString()}");
         }
     }
 }

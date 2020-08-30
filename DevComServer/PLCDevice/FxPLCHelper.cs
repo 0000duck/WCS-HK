@@ -11,7 +11,7 @@ namespace iFactory.DevComServer
         /// <summary>
         /// 操作对象.Fx3U使用MelsecA1ENet
         /// </summary>
-        public MelsecMcNet fxTcpNet { set; get; }
+        public MelsecMcNet deviceDriver { set; get; }
        
         private readonly ILogWrite _log;
 
@@ -22,11 +22,21 @@ namespace iFactory.DevComServer
         }
         public void ConnectToPlc()
         {
-            fxTcpNet = new MelsecMcNet(_device.Ip, _device.Port);
-            fxTcpNet.ConnectTimeOut = 2000; // 网络连接的超时时间
-            fxTcpNet.NetworkNumber = 0x00;  // 网络号
-            fxTcpNet.NetworkStationNumber = 0x00; // 网络站号    
-            fxTcpNet.SetPersistentConnection();
+            deviceDriver = new MelsecMcNet(_device.Ip, _device.Port);
+            deviceDriver.ConnectTimeOut = 2000; // 网络连接的超时时间
+            deviceDriver.NetworkNumber = 0x00;  // 网络号
+            deviceDriver.NetworkStationNumber = 0x00; // 网络站号    
+            deviceDriver.SetPersistentConnection();
+            OperateResult res = deviceDriver.ConnectServer();
+            if (res.IsSuccess)
+            {
+                _log.WriteLog($"{_device.Name}{_device.Ip}连接成功");
+            }
+            else
+            {
+                _log.WriteLog($"{_device.Name}{_device.Ip}连接失败");
+            }
+            _device.IsConnected = res.IsSuccess;
         }
         /// <summary>
         /// 心跳位写入，M100.0
@@ -44,9 +54,9 @@ namespace iFactory.DevComServer
         {
             try
             {
-                if (fxTcpNet != null)
+                if (deviceDriver != null)
                 {
-                    OperateResult<short> res = fxTcpNet.ReadInt16("D100");
+                    OperateResult<short> res = deviceDriver.ReadInt16("D100");
                     _device.IsConnected = res.IsSuccess;
                 }
                 else
@@ -67,9 +77,20 @@ namespace iFactory.DevComServer
         {
             try
             {
-                OperateResult res = fxTcpNet.Write(Address, value);
-                return res.IsSuccess;
-
+                if(_device.IsConnected)
+                {
+                    OperateResult res = deviceDriver.Write(Address, value);
+                    if(res.IsSuccess==false)
+                    {
+                        _log.WriteLog($"{_device.Name}{_device.Ip}，写入地址{Address}值{value}失败");
+                    }
+                    return res.IsSuccess;
+                }
+                else
+                {
+                    _log.WriteLog($"{_device.Name}{_device.Ip}通信未连接，写入地址{Address}值{value}失败");
+                }
+                return false;
             }
             catch (Exception ex)
             {
@@ -82,8 +103,20 @@ namespace iFactory.DevComServer
         {
             try
             {
-                OperateResult res = fxTcpNet.Write(Address, value);
-                return res.IsSuccess;
+                if (_device.IsConnected)
+                {
+                    OperateResult res = deviceDriver.Write(Address, value);
+                    if (res.IsSuccess == false)
+                    {
+                        _log.WriteLog($"{_device.Name}{_device.Ip}，写入地址{Address}值{value}失败");
+                    }
+                    return res.IsSuccess;
+                }
+                else
+                {
+                    _log.WriteLog($"{_device.Name}{_device.Ip}通信未连接，写入地址{Address}值{value}失败");
+                }
+                return false;
             }
             catch (Exception ex)
             {
@@ -96,8 +129,20 @@ namespace iFactory.DevComServer
         {
             try
             {
-                OperateResult res = fxTcpNet.Write(Address, value);
-                return res.IsSuccess;
+                if (_device.IsConnected)
+                {
+                    OperateResult res = deviceDriver.Write(Address, value);
+                    if (res.IsSuccess == false)
+                    {
+                        _log.WriteLog($"{_device.Name}{_device.Ip}，写入地址{Address}值{value}失败");
+                    }
+                    return res.IsSuccess;
+                }
+                else
+                {
+                    _log.WriteLog($"{_device.Name}{_device.Ip}通信未连接，写入地址{Address}值{value}失败");
+                }
+                return false;
             }
             catch (Exception ex)
             {
@@ -110,8 +155,20 @@ namespace iFactory.DevComServer
         {
             try
             {
-                OperateResult res = fxTcpNet.Write(Address, value);
-                return res.IsSuccess;
+                if (_device.IsConnected)
+                {
+                    OperateResult res = deviceDriver.Write(Address, value);
+                    if (res.IsSuccess == false)
+                    {
+                        _log.WriteLog($"{_device.Name}{_device.Ip}，写入地址{Address}值{value}失败");
+                    }
+                    return res.IsSuccess;
+                }
+                else
+                {
+                    _log.WriteLog($"{_device.Name}{_device.Ip}通信未连接，写入地址{Address}值{value}失败");
+                }
+                return false;
             }
             catch (Exception ex)
             {
@@ -121,12 +178,13 @@ namespace iFactory.DevComServer
         }
 
         #endregion
+
         #region 读值
         public bool ReadValue(string Address, out bool value)
         {
             try
             {
-                OperateResult<bool> res = fxTcpNet.ReadBool(Address);
+                OperateResult<bool> res = deviceDriver.ReadBool(Address);
                 if (res.IsSuccess)
                 {
                     value = res.Content;
@@ -145,7 +203,7 @@ namespace iFactory.DevComServer
         {
             try
             {
-                OperateResult<short> res = fxTcpNet.ReadInt16(Address);
+                OperateResult<short> res = deviceDriver.ReadInt16(Address);
                 if (res.IsSuccess)
                 {
                     value = res.Content;
@@ -164,7 +222,7 @@ namespace iFactory.DevComServer
         {
             try
             {
-                OperateResult<int> res = fxTcpNet.ReadInt32(Address);
+                OperateResult<int> res = deviceDriver.ReadInt32(Address);
                 if (res.IsSuccess)
                 {
                     value = res.Content;
@@ -183,7 +241,7 @@ namespace iFactory.DevComServer
         {
             try
             {
-                OperateResult<float> res = fxTcpNet.ReadFloat(Address);
+                OperateResult<float> res = deviceDriver.ReadFloat(Address);
                 if (res.IsSuccess)
                 {
                     value = res.Content;
@@ -203,7 +261,7 @@ namespace iFactory.DevComServer
         {
             try
             {
-                OperateResult<bool[]> res = fxTcpNet.ReadBool(Address, length);
+                OperateResult<bool[]> res = deviceDriver.ReadBool(Address, length);
                 if (res.IsSuccess)
                 {
                     value = res.Content;
@@ -222,7 +280,7 @@ namespace iFactory.DevComServer
         {
             try
             {
-                OperateResult<short[]> res = fxTcpNet.ReadInt16(Address, length);
+                OperateResult<short[]> res = deviceDriver.ReadInt16(Address, length);
                 if (res.IsSuccess)
                 {
                     value = res.Content;
@@ -241,7 +299,7 @@ namespace iFactory.DevComServer
         {
             try
             {
-                OperateResult<int[]> res = fxTcpNet.ReadInt32(Address, length);
+                OperateResult<int[]> res = deviceDriver.ReadInt32(Address, length);
                 if (res.IsSuccess)
                 {
                     value = res.Content;
@@ -268,13 +326,18 @@ namespace iFactory.DevComServer
         #endregion
         public void Dispose()
         {
-            if(fxTcpNet !=null)
+            if(deviceDriver !=null)
             {
-                fxTcpNet.Dispose();
+                deviceDriver.Dispose();
             }
         }
 
         public bool BatchWriteValue(string Address, short[] value)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool WriteValue(string address, string value)
         {
             throw new NotImplementedException();
         }

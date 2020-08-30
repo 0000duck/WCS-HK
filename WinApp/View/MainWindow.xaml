@@ -21,8 +21,62 @@
                        Text="WCS设备管理系统" />
             <StackPanel Orientation="Horizontal" FlowDirection="RightToLeft" Grid.Column="1">
                 <TextBlock Text="思辟德智能科技江苏有限公司" FontSize="14" FontWeight="Light" VerticalAlignment="Center"  Margin="15,0,30,0" Foreground="Black"  />
-                <Rectangle Height="12" Width="12" Fill="{Binding DevStatus.IsConnected,Converter={StaticResource StatusColor}}" Margin="0,0,5,0" ToolTip="设备plc连接状态。当为红色时为故障，当为绿色时表示连接正常"></Rectangle>
-                <Rectangle Height="12" Visibility="Hidden" Width="12" Fill="LimeGreen" Margin="0,0,5,0" ToolTip="设备plc连接状态。当为红色时为故障，当为绿色时表示连接正常"></Rectangle>
+                <Rectangle Height="12" Width="12" Fill="{Binding Device1.IsConnected,Converter={StaticResource StatusColor}}" Margin="0,0,5,0">
+                    <Rectangle.ToolTip>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock>
+                                <TextBlock.Text>
+                                    <MultiBinding StringFormat="连接状态信息(绿色正常),名称:{0},网络地址:{1}">
+                                        <Binding Path="Device1.Name" />
+                                        <Binding Path="Device1.Ip" />
+                                    </MultiBinding>
+                                </TextBlock.Text>
+                            </TextBlock>
+                        </StackPanel>
+                    </Rectangle.ToolTip>
+                </Rectangle>
+                <Rectangle Height="12" Width="12" Fill="{Binding Device2.IsConnected,Converter={StaticResource StatusColor}}" Margin="0,0,5,0">
+                    <Rectangle.ToolTip>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock>
+                                <TextBlock.Text>
+                                    <MultiBinding StringFormat="连接状态信息(绿色正常),名称:{0},网络地址:{1}">
+                                        <Binding Path="Device2.Name" />
+                                        <Binding Path="Device2.Ip" />
+                                    </MultiBinding>
+                                </TextBlock.Text>
+                            </TextBlock>
+                        </StackPanel>
+                    </Rectangle.ToolTip>
+                </Rectangle>
+                <Rectangle Height="12" Width="12" Fill="{Binding Device3.IsConnected,Converter={StaticResource StatusColor}}" Margin="0,0,5,0">
+                    <Rectangle.ToolTip>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock>
+                                <TextBlock.Text>
+                                    <MultiBinding StringFormat="连接状态信息(绿色正常),名称:{0},网络地址:{1}">
+                                        <Binding Path="Device3.Name" />
+                                        <Binding Path="Device3.Ip" />
+                                    </MultiBinding>
+                                </TextBlock.Text>
+                            </TextBlock>
+                        </StackPanel>
+                    </Rectangle.ToolTip>
+                </Rectangle>
+                <Rectangle Height="12" Width="12" Fill="{Binding Device4.IsConnected,Converter={StaticResource StatusColor}}" Margin="0,0,5,0">
+                    <Rectangle.ToolTip>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock>
+                                <TextBlock.Text>
+                                    <MultiBinding StringFormat="连接状态信息(绿色正常),名称:{0},网络地址:{1}">
+                                        <Binding Path="Device4.Name" />
+                                        <Binding Path="Device4.Ip" />
+                                    </MultiBinding>
+                                </TextBlock.Text>
+                            </TextBlock>
+                        </StackPanel>
+                    </Rectangle.ToolTip>
+                </Rectangle>
             </StackPanel>
         </Grid>
     </pu:WindowXCaption.Header>
@@ -89,6 +143,7 @@
             <MenuItem Header="监控主页" Icon="&#xf015;" Tag="Main"  Click="MenuItem_Click" Padding="5,0" ToolTip=""/>
             <MenuItem Header="产品参数管理  " Icon="&#xf036;" Tag="Product"  Click="MenuItem_Click"  Padding="5,0" />
             <MenuItem Header="加载产品任务" Tag="New" Icon="&#xf152;"  Padding="5,0" Click="MenuItem_Click" />
+            <MenuItem Header="参数重下载" Tag="Download" Icon="&#xf019;"  Padding="5,0" Click="MenuItem_Click" />
             <MenuItem Header="完成当前任务" Tag="Finish" Icon="&#xf14a;"  Padding="5,0" Click="MenuItem_Click"  >
                 <!--<MenuItem Header="完成当前任务" Tag="TaskOrder"  Click="MenuItem_Click"  ToolTip="创建新的任务并执行"/>
                 <MenuItem Header="新建任务" Tag="New"  Click="MenuItem_Click"  ToolTip="创建新的任务并执行"/>
@@ -97,7 +152,7 @@
                 <MenuItem Header="完成任务" Tag="Finish"  Click="MenuItem_Click" ToolTip="完成正在进行的任务"/>-->
             </MenuItem>
             <MenuItem Header="数据记录查询  " Icon="&#xf009;" Tag="Data" Padding="5,0" ToolTip=""/>
-            <MenuItem Header="RFID监控  " Icon="&#xf009;" Tag="Data" Padding="5,0" ToolTip=""/>
+            <MenuItem Header="RFID监控  " Icon="&#xf2c3;" Tag="Data" Padding="5,0" ToolTip=""/>
             <MenuItem Header="系统信息" Icon="&#xf15c;"  Padding="5,0">
                 <MenuItem Header="系统运行日志" Tag="SystemLog"  Click="MenuItem_Click"  ToolTip="系统操作过程中的一些日志记录信息，可在运行目录下log做进一步查询"/>
                 <MenuItem Header="关于系统" Tag="SystemInfo"  Click="MenuItem_Click" ToolTip="关于系统的信息"/>

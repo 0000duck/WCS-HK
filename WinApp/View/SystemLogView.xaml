@@ -3,12 +3,19 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:pu="clr-namespace:Panuon.UI.Silver;assembly=Panuon.UI.Silver"
         xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
         xmlns:local="clr-namespace:iFactoryApp.View"
         mc:Ignorable="d"
         Title="系统运行日志" Height="433.5" Width="561.5" WindowStartupLocation="CenterOwner" ResizeMode="NoResize">
     <Grid>
-        <DataGrid x:Name="datagrid1" VerticalContentAlignment="Center" AutoGenerateColumns="False" ItemsSource="{Binding OperatesCollection}" ToolTip="右键双击清除" IsReadOnly="True" AlternatingRowBackground="#FFE8E5E5" FontSize="12">
+        <DataGrid x:Name="datagrid1" VerticalContentAlignment="Center" AutoGenerateColumns="False" ItemsSource="{Binding OperatesCollection}" ToolTip="右键双击清除" IsReadOnly="True" AlternatingRowBackground="#FFE8E5E5" FontSize="12"
+                  pu:DataGridHelper.SelectedBackground="#1C86EE"
+                  pu:DataGridHelper.HeaderPadding="5,0"
+                  pu:DataGridHelper.ColumnHorizontalContentAlignment="Center"
+                  pu:DataGridHelper.ColumnVerticalContentAlignment="Center" 
+                  pu:DataGridHelper.HeaderBackground="#7A7A7A"
+                  pu:DataGridHelper.HeaderForeground="White">
             <i:Interaction.Triggers>
                 <i:EventTrigger EventName="MouseRightButtonDown">
                     <i:InvokeCommandAction Command="{Binding LogClearCmd, Mode=OneWay}"/>

@@ -49,12 +49,48 @@ namespace iFactoryApp.ViewModel
         /// <summary>
         /// plc连接状态
         /// </summary>
-        public PLCDevice DevStatus
+        public PLCDevice Device1
         {
             get 
             { 
                 if(TagList.PLCGroups !=null && TagList.PLCGroups.Count>0)
                      return TagList.PLCGroups[0].PlcDevice;
+                return null;
+            }
+        }
+        /// <summary>
+        /// plc连接状态
+        /// </summary>
+        public PLCDevice Device2
+        {
+            get
+            {
+                if (TagList.PLCGroups != null && TagList.PLCGroups.Count > 0)
+                    return TagList.PLCGroups[1].PlcDevice;
+                return null;
+            }
+        }
+        /// <summary>
+        /// plc连接状态
+        /// </summary>
+        public PLCDevice Device3
+        {
+            get
+            {
+                if (TagList.PLCGroups != null && TagList.PLCGroups.Count > 0)
+                    return TagList.PLCGroups[2].PlcDevice;
+                return null;
+            }
+        }
+        /// <summary>
+        /// plc连接状态
+        /// </summary>
+        public PLCDevice Device4
+        {
+            get
+            {
+                if (TagList.PLCGroups != null && TagList.PLCGroups.Count > 0)
+                    return TagList.PLCGroups[3].PlcDevice;
                 return null;
             }
         }

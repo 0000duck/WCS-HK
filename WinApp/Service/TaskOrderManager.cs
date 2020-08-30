@@ -8,8 +8,6 @@ using Keyence.AutoID.SDK;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Threading;
 
 namespace iFactoryApp.Service
@@ -175,44 +173,81 @@ namespace iFactoryApp.Service
         /// 开始下载参数信息
         /// </summary>
         /// <param name="taskOrder"></param>
-        public void StartToDownloadParamter(TaskOrder taskOrder)
+        public bool StartToDownloadParamter(TaskOrder taskOrder)
         {
             List<short> ValueList = new List<short>();
+            _systemLogViewModel.AddMewStatus("开始写入PLC参数");
             #region 写入PLC信号
-            WritePlcValue("FxPLC", "pack_mode", taskOrder.pack_mode);
-            WritePlcValue("FxPLC", "open_machine_mode", taskOrder.open_machine_mode);
-            WritePlcValue("FxPLC", "barcode_machine_mode", taskOrder.barcode_machine_mode);
-            WritePlcValue("FxPLC", "sn_barcode_enable",-1, taskOrder.sn_barcode_enable);
-            WritePlcValue("FxPLC", "bubble_cover_enable",-1, taskOrder.bubble_cover_enable);
-            WritePlcValue("FxPLC", "card_machine_enable",-1, taskOrder.card_machine_enable);
-            #endregion
-
-            //写入尺寸信息
-            ValueList = new List<short>();
-            GetPropertyToList(taskOrder.product_size, ValueList);
-            WriteRobot("Robot1", "product_size", ValueList);
-
-            ValueList = new List<short>();
-            GetPropertyToList(taskOrder.product_size, ValueList);
-            WriteRobot("Robot2", "product_size", ValueList);
-
-            ValueList = new List<short>();
-            GetPropertyToList(taskOrder.graphic_carton_size, ValueList);
-            GetPropertyToList(taskOrder.noraml_carton_size, ValueList);
-            GetPropertyToList(taskOrder.outer_carton_size, ValueList);
-            GetPropertyToList(taskOrder.pallet_size, ValueList);
-            ValueList.Add((short)taskOrder.robot_pg_no);
-            ValueList.Add((short)taskOrder.pallet_num);
-            if(taskOrder.plate_enable)
+            var plc = TagList.PLCGroups.FirstOrDefault(x => x.PlcDevice.Name == "FxPLC");
+            if (plc != null && plc.PlcDevice.IsConnected)
             {
-                ValueList.Add(1);
+                WritePlcValue("FxPLC", "pack_mode", taskOrder.pack_mode);
+                WritePlcValue("FxPLC", "open_machine_mode", taskOrder.open_machine_mode);
+                WritePlcValue("FxPLC", "barcode_machine_mode", taskOrder.barcode_machine_mode);
+                WritePlcValue("FxPLC", "sn_barcode_enable", -1, taskOrder.sn_barcode_enable);
+                WritePlcValue("FxPLC", "bubble_cover_enable", -1, taskOrder.bubble_cover_enable);
+                WritePlcValue("FxPLC", "card_machine_enable", -1, taskOrder.card_machine_enable);
             }
             else
             {
-                ValueList.Add(0);
+                _systemLogViewModel.AddMewStatus("PLC参数写入失败",LogTypeEnum.Error);
+                return false;
             }
-            ValueList.Add((short)taskOrder.pack_mode);
-            WriteRobot("Robot3", "graphic_carton_size", ValueList);//首地址写入
+            #endregion
+            var robot1 = TagList.PLCGroups.FirstOrDefault(x => x.PlcDevice.Name == "Robot1");
+            if (robot1 != null && robot1.PlcDevice.IsConnected)
+            {
+                //写入尺寸信息
+                ValueList = new List<short>();
+                GetPropertyToList(taskOrder.product_size, ValueList);
+                WriteRobot("Robot1", "product_size", ValueList);
+            }
+            else
+            {
+                _systemLogViewModel.AddMewStatus("Robot1机械手参数写入失败", LogTypeEnum.Error);
+                return false;
+            }
+
+            var robot2 = TagList.PLCGroups.FirstOrDefault(x => x.PlcDevice.Name == "Robot2");
+            if (robot2 != null && robot2.PlcDevice.IsConnected)
+            {
+                ValueList = new List<short>();
+                GetPropertyToList(taskOrder.product_size, ValueList);
+                WriteRobot("Robot2", "product_size", ValueList);
+            }
+            else
+            {
+                _systemLogViewModel.AddMewStatus("Robot2机械手参数写入失败", LogTypeEnum.Error);
+                return false;
+            }
+
+            var robot3 = TagList.PLCGroups.FirstOrDefault(x => x.PlcDevice.Name == "Robot3");
+            if (robot3 != null && robot2.PlcDevice.IsConnected)
+            {
+                ValueList = new List<short>();
+                GetPropertyToList(taskOrder.graphic_carton_size, ValueList);
+                GetPropertyToList(taskOrder.noraml_carton_size, ValueList);
+                GetPropertyToList(taskOrder.outer_carton_size, ValueList);
+                GetPropertyToList(taskOrder.pallet_size, ValueList);
+                ValueList.Add((short)taskOrder.robot_pg_no);
+                ValueList.Add((short)taskOrder.pallet_num);
+                if (taskOrder.plate_enable)
+                {
+                    ValueList.Add(1);
+                }
+                else
+                {
+                    ValueList.Add(0);
+                }
+                ValueList.Add((short)taskOrder.pack_mode);
+                WriteRobot("Robot3", "graphic_carton_size", ValueList);//首地址写入
+            }
+            else
+            {
+                _systemLogViewModel.AddMewStatus("Robot3机械手参数写入失败", LogTypeEnum.Error);
+                return false;
+            }
+            return true;
         }
         private void WritePlcValue(string plcName, string TagName,int value=-1,bool boolValue=false)
         {
@@ -257,8 +292,14 @@ namespace iFactoryApp.Service
                 var plc = TagList.PLCGroups.FirstOrDefault(x => x.PlcDevice.Name == RobotName);
                 if (plc != null)
                 {
-                    plc.WriteValue(tag.TagAddr, value);
-                    _systemLogViewModel.AddMewStatus($"成功写入{RobotName}地址{tag.TagAddr}写入数量为{ValueList.Count}", LogTypeEnum.Info);
+                    if (plc.plcDriverHelper.BatchWriteValue(tag.TagAddr, value))
+                    {
+                        _systemLogViewModel.AddMewStatus($"写入{RobotName}地址{tag.TagAddr}成功，写入数量为{ValueList.Count}", LogTypeEnum.Info);
+                    }
+                    else
+                    {
+                        _systemLogViewModel.AddMewStatus($"写入{RobotName}地址{tag.TagAddr}失败，写入数量为{ValueList.Count}", LogTypeEnum.Error);
+                    }
                 }
             }
         }

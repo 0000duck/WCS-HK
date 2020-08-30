@@ -1,23 +1,11 @@
-﻿using iFactory.CommonLibrary;
-using iFactory.DataService.Model;
-using iFactory.DevComServer;
+﻿using iFactory.DataService.Model;
 using iFactoryApp.Service;
 using iFactoryApp.ViewModel;
 using Panuon.UI.Silver;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace iFactoryApp.View
 {
@@ -128,7 +116,7 @@ namespace iFactoryApp.View
                     MessageBoxX.Show("请先选择一个任务单进行操作！", "错误", Application.Current.MainWindow);
                 }
             }
-            else if (click_name == "Finish")//删除
+            else if (click_name == "Finish")//完成
             {
                 if (viewModel.SelectedModel != null)
                 {
@@ -142,6 +130,24 @@ namespace iFactoryApp.View
                         else
                         {
                             viewModel.SelectedModel = null;
+                        }
+                    }
+                }
+                else
+                {
+                    MessageBoxX.Show("当前未有任务信息，不能完成！", "错误", Application.Current.MainWindow);
+                }
+            }
+            else if (click_name == "Download")//下载参数
+            {
+                if (viewModel.SelectedModel != null)
+                {
+                    MessageBoxResult result = MessageBoxX.Show($"确定再次下载参数吗？", "确认", Application.Current.MainWindow, MessageBoxButton.YesNo);
+                    if (result == MessageBoxResult.Yes)
+                    {
+                        if(!_taskOrderManager.StartToDownloadParamter(viewModel.SelectedModel))
+                        {
+                            MessageBoxX.Show("参数下载失败！", "错误", Application.Current.MainWindow);
                         }
                     }
                 }

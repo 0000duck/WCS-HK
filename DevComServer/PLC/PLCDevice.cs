@@ -6,9 +6,35 @@ using System.Linq;
 namespace iFactory.DevComServer
 {
     /// <summary>
+    /// 设备状态基类
+    /// </summary>
+    public class DeviceStatus : INotifyPropertyChanged
+    {
+        private bool _IsConnected = false;
+        /// <summary>
+        /// 是否连接
+        /// </summary>
+        public bool IsConnected
+        {
+            set
+            {
+                _IsConnected = value;
+                NotifyPropertyChanged("IsConnected");
+            }
+            get => _IsConnected;
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        public void NotifyPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+
+    /// <summary>
     /// 一个plc访问对象
     /// </summary>
-    public class PLCDevice : INotifyPropertyChanged
+    public class PLCDevice : DeviceStatus
     {
         /// <summary>
         /// PLC访问对象的名称
@@ -30,16 +56,6 @@ namespace iFactory.DevComServer
         /// 扫描周期ms
         /// </summary>
         public int CycleTime { set; get; } = 500;
-        private bool _IsConnected = false;
-        public bool IsConnected
-        {
-            set
-            {
-                _IsConnected = value;
-                NotifyPropertyChanged("IsConnected");
-            }
-            get => _IsConnected;
-        }
         /// <summary>
         /// 心跳位
         /// </summary>
@@ -53,11 +69,6 @@ namespace iFactory.DevComServer
         /// </summary>
         public string Description { set; get; }
 
-        public event PropertyChangedEventHandler PropertyChanged;
-        public void NotifyPropertyChanged(string propertyName)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
         /// <summary>
         /// 标签队列
         /// </summary>
@@ -86,17 +97,5 @@ namespace iFactory.DevComServer
                 this.TagGroups.Add(group);
             }
         }
-        /// <summary>
-        /// 加入扫描队列
-        /// </summary>
-        /// <param name="logWrite"></param>
-        public void StartToScan(ILogWrite logWrite)
-        {
-            plcScanTask = new PLCScanTask(this, logWrite);
-        }
-        /// <summary>
-        /// 扫描任务
-        /// </summary>
-        public PLCScanTask plcScanTask { set; get; }
     }
 }

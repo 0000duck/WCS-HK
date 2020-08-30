@@ -47,17 +47,16 @@ namespace iFactoryApp.View
                 case "SystemLog":
                     SystemLogView systemLogView = new SystemLogView();
                     systemLogView.ShowDialog();
-                    lastView = null;
                     break;
                 case "SystemInfo":
                     SystemInfoView systemInfoView = new SystemInfoView();
                     systemInfoView.ShowDialog();
-                    lastView = null;
                     break;
                 case "New":
                 case "Edit":
                 case "Delete":
                 case "Finish":
+                case "Download":
                     if (lastView != null)
                     {
                         lastView.ContextMenu_Click(control.Tag.ToString());

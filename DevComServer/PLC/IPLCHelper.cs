@@ -12,7 +12,7 @@ namespace iFactory.DevComServer
         bool WriteValue(string Address, short value);
         bool WriteValue(string Address, int value);
         bool WriteValue(string Address, float value);
-        // bool WriteValue(string address, string value, bool WCharMode = true, int Length = -1);
+         bool WriteValue(string address, string value);
 
         bool ReadValue(string Address, out bool value);
         bool ReadValue(string Address, out short value);
