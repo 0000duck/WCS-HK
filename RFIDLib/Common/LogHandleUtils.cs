@@ -11,21 +11,17 @@ namespace RFIDLib
         public LogHandleUtils()
         {
 
-
         }
 
         public void writeLog(string log)
         {
             string nowTime = DateTime.Now.ToString();
 
-   
-                logfile = new FileStream(logPath, FileMode.Append);
-                StreamWriter sw = new StreamWriter(logfile, Encoding.Default);
-                sw.WriteLine(nowTime + " - " + log);
-                sw.Close();
-                logfile.Close();
-            
-
+            logfile = new FileStream(logPath, FileMode.Append);
+            StreamWriter sw = new StreamWriter(logfile, Encoding.Default);
+            sw.WriteLine(nowTime + " - " + log);
+            sw.Close();
+            logfile.Close();
         }
 
         public void createLogPath()

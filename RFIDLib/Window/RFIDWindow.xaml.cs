@@ -47,26 +47,37 @@ namespace RFIDLib
 
         private char[] HexChar = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
 
-        public RFIDWindow(int PortIndex=0)
+        public RFIDWindow(string ComPortName,bool Readmode=true)
         {
             InitializeComponent();
-            //Check serial ports
-            string[] portList = serialPortUtils.getPortNameList();
-            for (int i = 0; i < portList.Length; i++)
+            if(Readmode)
             {
-                comboBox_serial_port.Items.Add(portList[i]);
+                labelMode.Content = "当前模式为连续读取";
             }
-            comboBox_serial_port.SelectedIndex = PortIndex;
-            if(comboBox_serial_port.SelectedValue !=null)
+            else
             {
-                serialPort = serialPortUtils.OpenPort(comboBox_serial_port.SelectedValue.ToString(), logHandleUtils);
-                textBox_info_box.Text = comboBox_serial_port.SelectedValue.ToString() + "已打开";
-                logHandleUtils.writeLog(comboBox_serial_port.SelectedValue.ToString() + "已打开");
+                labelMode.Content = "当前模式为写入";
             }
-
+            
             logHandleUtils.createLogPath();
             dataHandleUtils.createDataPath();
             configHandleUtils.createConfigPath();
+
+            //Check serial ports
+            string[] portList = serialPortUtils.getPortNameList();
+            textBoxCom.Text = ComPortName;
+
+            serialPort = serialPortUtils.OpenPort(ComPortName, logHandleUtils);
+            if(serialPort.IsOpen)
+            {
+                textBox_info_box.Text = ComPortName + "已打开";
+                logHandleUtils.writeLog(ComPortName + "已打开");
+            }
+            else
+            {
+                textBox_info_box.Text = ComPortName + "打开失败";
+                logHandleUtils.writeLog(ComPortName + "打开失败");
+            }
 
             string configPath = configHandleUtils.getConfigFilePath();
             string configString = File.ReadAllText(configPath, Encoding.UTF8);

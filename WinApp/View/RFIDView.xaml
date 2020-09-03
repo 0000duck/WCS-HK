@@ -6,7 +6,7 @@
         xmlns:pu="clr-namespace:Panuon.UI.Silver;assembly=Panuon.UI.Silver"
         xmlns:local="clr-namespace:iFactoryApp.View"
         mc:Ignorable="d"
-        Title="思辟德WCS控制系统" Height="540" Width="940" Background="WhiteSmoke" ResizeMode="NoResize">
+        Title="RFID操作界面" Height="540" Width="940" Background="WhiteSmoke" ResizeMode="NoResize">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition/>

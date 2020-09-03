@@ -33,7 +33,14 @@ namespace iFactoryApp.View
             switch (control.Tag.ToString())
             {
                 case "RFID":
-                    rfidView.Show();
+                    if(rfidView.Visibility !=Visibility.Visible)
+                    {
+                        rfidView.Show();
+                    }
+                    else
+                    {
+                        rfidView.Activate();
+                    }
                     break;
                 case "TaskOrder":
                     frame1.NavigateToPage(taskOrderView, false);
