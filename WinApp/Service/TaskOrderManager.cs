@@ -45,6 +45,21 @@ namespace iFactoryApp.Service
             barcodeCheckTimer.Interval = TimeSpan.FromSeconds(5);//5秒
             barcodeCheckTimer.Tick += barcodeCheckTimer_Tick;
         }
+        private void InitialRfid()
+        {
+            Tag<short> tag;
+            TagList.GetTag("rfid_write", out tag, "FxPLC");
+            if(tag !=null)
+            {
+                tag.PropertyChanged += Tag_PropertyChanged;
+            }
+        }
+
+        //写入rfid标签值变化
+        private void Tag_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            
+        }
 
         /// <summary>
         /// 初始化相机

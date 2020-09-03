@@ -17,12 +17,12 @@ namespace iFactoryApp.ViewModel
     /// See http://www.galasoft.ch/mvvm
     /// </para>
     /// </summary>
-    public class WatchViewModel : ViewModelBase
+    public class RFIDViewModel : ViewModelBase
     {
         /// <summary>
         /// Initializes a new instance of the MainViewModel class.
         /// </summary>
-        public WatchViewModel()
+        public RFIDViewModel()
         {
             ////if (IsInDesignMode)
             ////{

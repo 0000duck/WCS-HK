@@ -15,6 +15,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DevComServer", "DevComServe
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WinApp", "WinApp\WinApp.csproj", "{01DC3D16-A42D-4958-9223-611E2B5D1C9C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RFIDLib", "RFIDLib\RFIDLib.csproj", "{50CC1C24-2964-49D6-9873-4DA0E8FC64D7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -97,6 +99,18 @@ Global
 		{01DC3D16-A42D-4958-9223-611E2B5D1C9C}.Release|x64.Build.0 = Release|Any CPU
 		{01DC3D16-A42D-4958-9223-611E2B5D1C9C}.Release|x86.ActiveCfg = Release|x86
 		{01DC3D16-A42D-4958-9223-611E2B5D1C9C}.Release|x86.Build.0 = Release|x86
+		{50CC1C24-2964-49D6-9873-4DA0E8FC64D7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{50CC1C24-2964-49D6-9873-4DA0E8FC64D7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{50CC1C24-2964-49D6-9873-4DA0E8FC64D7}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{50CC1C24-2964-49D6-9873-4DA0E8FC64D7}.Debug|x64.Build.0 = Debug|Any CPU
+		{50CC1C24-2964-49D6-9873-4DA0E8FC64D7}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{50CC1C24-2964-49D6-9873-4DA0E8FC64D7}.Debug|x86.Build.0 = Debug|Any CPU
+		{50CC1C24-2964-49D6-9873-4DA0E8FC64D7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{50CC1C24-2964-49D6-9873-4DA0E8FC64D7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{50CC1C24-2964-49D6-9873-4DA0E8FC64D7}.Release|x64.ActiveCfg = Release|Any CPU
+		{50CC1C24-2964-49D6-9873-4DA0E8FC64D7}.Release|x64.Build.0 = Release|Any CPU
+		{50CC1C24-2964-49D6-9873-4DA0E8FC64D7}.Release|x86.ActiveCfg = Release|Any CPU
+		{50CC1C24-2964-49D6-9873-4DA0E8FC64D7}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -168,14 +168,14 @@
     <Compile Include="IoC.cs" />
     <Compile Include="Service\TaskOrderManager.cs" />
     <Compile Include="Service\UserViewService.cs" />
-    <Compile Include="ViewModel\WatchViewModel.cs" />
+    <Compile Include="ViewModel\RFIDViewModel.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="ViewModel\ProductParameterViewModel.cs" />
     <Compile Include="ViewModel\SystemLogViewModel.cs" />
     <Compile Include="ViewModel\TaskOrderViewModel.cs" />
     <Compile Include="ViewModel\ViewModelLocator.cs" />
-    <Compile Include="View\WatchView.xaml.cs">
-      <DependentUpon>WatchView.xaml</DependentUpon>
+    <Compile Include="View\RFIDView.xaml.cs">
+      <DependentUpon>RFIDView.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\ProductParameterView.xaml.cs">
       <DependentUpon>ProductParameterView.xaml</DependentUpon>
@@ -199,7 +199,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="View\WatchView.xaml">
+    <Page Include="View\RFIDView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -279,6 +279,10 @@
     <ProjectReference Include="..\DevComServer\DevComServer.csproj">
       <Project>{9031a3e1-e6a4-4d6c-bfaf-da0ddb23b689}</Project>
       <Name>DevComServer</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\RFIDLib\RFIDLib.csproj">
+      <Project>{50cc1c24-2964-49d6-9873-4da0e8fc64d7}</Project>
+      <Name>RFIDLib</Name>
     </ProjectReference>
     <ProjectReference Include="..\UserManage\UserManage.csproj">
       <Project>{7f982410-b69d-4680-82b2-7b8b58c51d69}</Project>

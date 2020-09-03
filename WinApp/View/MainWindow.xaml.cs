@@ -14,7 +14,7 @@ namespace iFactoryApp.View
     public partial class MainWindow : WindowX
     {
         private readonly MainViewModel viewModel;
-        private readonly WatchView watchView = new WatchView();
+        private readonly RFIDView rfidView = new RFIDView();
         private readonly TaskOrderView taskOrderView = new TaskOrderView();
         private IContextMenuView lastView;
 
@@ -32,9 +32,8 @@ namespace iFactoryApp.View
             if (control == null || control.Tag == null) return;
             switch (control.Tag.ToString())
             {
-                case "Main":
-                    frame1.NavigateToPage(watchView, false);
-                    lastView = watchView;
+                case "RFID":
+                    rfidView.Show();
                     break;
                 case "TaskOrder":
                     frame1.NavigateToPage(taskOrderView, false);

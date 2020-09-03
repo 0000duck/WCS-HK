@@ -24,6 +24,10 @@ namespace iFactory.DevComServer
             _tagService = tagService;
             logWrite = logWriteObj;
             
+            if(!HslCommunication.Authorization.SetAuthorizationCode("2487cfb8-334f-4b04-bd32-122453cfeb37"))
+            {
+                logWriteObj.WriteLog("访问驱动激活失败");
+            }
             LoadTags();
         }
         

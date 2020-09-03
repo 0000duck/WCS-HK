@@ -65,7 +65,7 @@ namespace iFactoryApp.ViewModel
         {
             get
             {
-                if (TagList.PLCGroups != null && TagList.PLCGroups.Count > 0)
+                if (TagList.PLCGroups != null && TagList.PLCGroups.Count > 1)
                     return TagList.PLCGroups[1].PlcDevice;
                 return null;
             }
@@ -77,7 +77,7 @@ namespace iFactoryApp.ViewModel
         {
             get
             {
-                if (TagList.PLCGroups != null && TagList.PLCGroups.Count > 0)
+                if (TagList.PLCGroups != null && TagList.PLCGroups.Count > 2)
                     return TagList.PLCGroups[2].PlcDevice;
                 return null;
             }
@@ -89,7 +89,7 @@ namespace iFactoryApp.ViewModel
         {
             get
             {
-                if (TagList.PLCGroups != null && TagList.PLCGroups.Count > 0)
+                if (TagList.PLCGroups != null && TagList.PLCGroups.Count > 3)
                     return TagList.PLCGroups[3].PlcDevice;
                 return null;
             }

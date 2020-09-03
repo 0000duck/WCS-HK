@@ -74,8 +74,8 @@
     <Compile Include="Window\LogWindow.xaml.cs">
       <DependentUpon>LogWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Window\RFIDView.xaml.cs">
-      <DependentUpon>RFIDView.xaml</DependentUpon>
+    <Compile Include="Window\RFIDWindow.xaml.cs">
+      <DependentUpon>RFIDWindow.xaml</DependentUpon>
     </Compile>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -95,7 +95,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Window\RFIDView.xaml">
+    <Page Include="Window\RFIDWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

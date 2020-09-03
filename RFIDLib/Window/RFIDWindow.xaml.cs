@@ -16,7 +16,7 @@ namespace RFIDLib
     /// <summary>
     /// MainWindow.xaml 的交互逻辑
     /// </summary>
-    public partial class RFIDView : Page
+    public partial class RFIDWindow : Page
     {
         public ObservableCollection<string> ReadCollection = new ObservableCollection<string>();
         /// <summary>
@@ -32,7 +32,6 @@ namespace RFIDLib
         ConfigHandleUtils configHandleUtils = new ConfigHandleUtils();
         DataUtils dataUtils = new DataUtils();
         SoundPlay soundPlay = new SoundPlay();
-        //System.Timers.Timer readTimer = new System.Timers.Timer();
         System.Windows.Forms.Timer readTimer = new System.Windows.Forms.Timer();
         string log;
         int tryTimes = 8;
@@ -48,7 +47,7 @@ namespace RFIDLib
 
         private char[] HexChar = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
 
-        public RFIDView(int PortIndex=0)
+        public RFIDWindow(int PortIndex=0)
         {
             InitializeComponent();
             //Check serial ports
@@ -64,7 +63,6 @@ namespace RFIDLib
                 textBox_info_box.Text = comboBox_serial_port.SelectedValue.ToString() + "已打开";
                 logHandleUtils.writeLog(comboBox_serial_port.SelectedValue.ToString() + "已打开");
             }
-           
 
             logHandleUtils.createLogPath();
             dataHandleUtils.createDataPath();
@@ -97,10 +95,7 @@ namespace RFIDLib
             textBox_product_date.Text = year + monthDay;
             
             readTimer.Interval = 200;
-            //readTimer.AutoReset = true;
             readTimer.Enabled = false;
-            //readTimer.Elapsed += new System.Timers.ElapsedEventHandler(Timer_TimesUp);
-
             readTimer.Tick += new EventHandler(Timer_TimesUp);
         }
 
@@ -113,7 +108,6 @@ namespace RFIDLib
 
             string[] data = dataUtils.getRecieveFilterData(recieveData);
             int filterCode = dataUtils.getResultCode(recieveData);
-
 
             if (filterCode == 84)
             {
@@ -146,6 +140,7 @@ namespace RFIDLib
                 }
             }
         }
+
         private void button_sp_test_Click(object sender, RoutedEventArgs e)
         {
             try {
@@ -208,7 +203,7 @@ namespace RFIDLib
         {
             textBox_info_box.Background = new SolidColorBrush(Constans.whtieColor);
             recieveData = "";
-            if (comboBox_serial_port.SelectedValue != null)
+            if (serialPort != null && serialPort.IsOpen)
             {
                 //if (Regex.IsMatch(textBox_serial_NO.Text, @"^[+-]?\d*[.]?\d*$"))
                 if (true)
@@ -370,7 +365,7 @@ namespace RFIDLib
 
         private string getHeartBeat()
         {
-            if (comboBox_serial_port.SelectedValue != null)
+            if (serialPort != null && serialPort.IsOpen)
             {                 
                 try
                 {
@@ -405,7 +400,7 @@ namespace RFIDLib
         }
         private string getFilterData()
         {
-            if (comboBox_serial_port.SelectedValue != null)
+            if (serialPort != null && serialPort.IsOpen)
             {
                 
                 try
@@ -434,16 +429,12 @@ namespace RFIDLib
                 {
                     textBox_info_box.Text = ex.Message;
                 }
-
-
                 return dataUtils.resultAnalyse(recieveData);
           
                 //else
                 //{
                 //    return "数据读取异常。";
                 //}
-                
-                
             }
             else
             {
@@ -453,7 +444,7 @@ namespace RFIDLib
         }
         public string getFilterSN()
         {
-            if (comboBox_serial_port.SelectedValue != null)
+            if (serialPort != null && serialPort.IsOpen)
             {
                 try
                 {
@@ -489,9 +480,8 @@ namespace RFIDLib
 
         public void getSN()
         {
-            if (comboBox_serial_port.SelectedValue != null)
+            if (serialPort != null && serialPort.IsOpen)
             {
-
                 try
                 {
                     serialPort.Write(Constans.getFilterSNCode, 0, Constans.getFilterSNCode.Length);
@@ -525,6 +515,7 @@ namespace RFIDLib
                 textBox_info_box.Text= "请选择串口。";
             }
         }
+
         //单次读取RFID
         private void button_read_filter_data_Click(object sender, RoutedEventArgs e)
         {
@@ -575,10 +566,14 @@ namespace RFIDLib
             logHandleUtils.writeLog(textBox_info_box.Text);
 
         }
-        //连续读取
-        private void button_read_successive_Click(object sender, RoutedEventArgs e)
+        /// <summary>
+        /// 连续读取
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        public void button_read_successive_Click(object sender, RoutedEventArgs e)
         {
-            if (comboBox_serial_port.SelectedValue != null)
+            if (serialPort != null && serialPort.IsOpen)
             {
                 if (bReadSuccessiveFlag == false)
                 {
@@ -818,14 +813,11 @@ namespace RFIDLib
         {
             recieveData = "";
             textBox_info_box.Background = new SolidColorBrush(Constans.whtieColor);
-            if (comboBox_serial_port.SelectedValue != null)
+            if (serialPort != null && serialPort.IsOpen)
             {
                 if (Regex.IsMatch(textBox_serial_NO.Text, @"^[+-]?\d*[.]?\d*$"))
                 {
-
                     string result = reburnFilterData(factory_num, product_num, product_date, textBox_serial_NO.Text);
-
-               
                     int code = dataUtils.getResultCode(recieveData);
 
                     if (code == 80)

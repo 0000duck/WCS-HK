@@ -6,10 +6,12 @@ using iFactory.DataService.Service;
 using iFactory.DevComServer;
 using iFactory.UserManage;
 using iFactoryApp.Service;
+using iFactoryApp.View;
 using iFactoryApp.ViewModel;
 using Prism.Unity;
 using SqlSugar;
 using System.Configuration;
+using System.Runtime.CompilerServices;
 using System.Windows.Controls;
 using Unity;
 using Unity.Resolution;
@@ -52,8 +54,8 @@ namespace iFactoryApp
 
             Container.RegisterSingleton<ProductParameterViewModel>();
             Container.RegisterSingleton<TaskOrderViewModel>();
-            Container.RegisterSingleton<WatchViewModel>();
-
+            Container.RegisterSingleton<RFIDViewModel>();
+            
             //用户权限
             Container.RegisterSingleton<UserManageViewModel>();
 
