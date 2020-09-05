@@ -1,4 +1,4 @@
-﻿<Page x:Class="iFactoryApp.View.TaskOrderView"
+﻿<Page
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -7,6 +7,7 @@
       xmlns:pu="clr-namespace:Panuon.UI.Silver;assembly=Panuon.UI.Silver"
       xmlns:comLib="clr-namespace:iFactory.CommonLibrary;assembly=CommonLibrary"
       xmlns:local="clr-namespace:iFactoryApp.View"
+      xmlns:iFactoryApp="clr-namespace:iFactoryApp" x:Class="iFactoryApp.View.TaskOrderView"
       mc:Ignorable="d" 
       d:DesignHeight="768" d:DesignWidth="1024" Title="包装作业任务" Background="LightGray" Loaded="Page_Loaded" >
     <Page.ContextMenu>
@@ -18,7 +19,7 @@
             <Separator></Separator>
             <MenuItem Name="Delete" Header="删除" Height="35" Icon="&#xf1f8;"/>
             <Separator></Separator>-->
-            <MenuItem Name="Finish" Header="完成" Height="35" Icon="&#xf14a;"/>
+            <MenuItem x:Name="Finish" Header="完成" Height="35" Icon="&#xF14A;"/>
         </ContextMenu>
     </Page.ContextMenu>
     <Grid>
@@ -55,20 +56,21 @@
                         <RowDefinition/>
                     </Grid.RowDefinitions>
                     <TextBox Grid.Row="0" Grid.Column="0" Text="{Binding SelectedModel.product_name}" IsReadOnly="True" pu:TextBoxHelper.Header="产品型号" pu:TextBoxHelper.HeaderWidth="80" pu:TextBoxHelper.CornerRadius="5" VerticalAlignment="Center" Height="25" Margin="5,0" Padding="0"/>
-                    <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding SelectedModel.pack_mode,Converter={StaticResource packModeConverter}}" IsReadOnly="True" pu:TextBoxHelper.Header="作业模式" pu:TextBoxHelper.HeaderWidth="80" pu:TextBoxHelper.CornerRadius="5" VerticalAlignment="Center" Height="25" Margin="5,0" Padding="0"/>
-                    <TextBox Grid.Row="1" Grid.Column="0" Text="{Binding SelectedModel.open_machine_mode,Converter={StaticResource openMachineModeConverter}}" IsReadOnly="True" pu:TextBoxHelper.Header="开盒设备" pu:TextBoxHelper.HeaderWidth="80" pu:TextBoxHelper.CornerRadius="5" VerticalAlignment="Center" Height="25" Margin="5,0" Padding="0"/>
-                    <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding SelectedModel.barcode_machine_mode,Converter={StaticResource barcodeMachineModeConverter}}" IsReadOnly="True" pu:TextBoxHelper.Header="贴标设备" pu:TextBoxHelper.HeaderWidth="80" pu:TextBoxHelper.CornerRadius="5" VerticalAlignment="Center" Height="25" Margin="5,0" Padding="0"/>
+                    <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding SelectedModel.pack_mode, Converter={StaticResource packModeConverter}}" IsReadOnly="True" pu:TextBoxHelper.Header="作业模式" pu:TextBoxHelper.HeaderWidth="80" pu:TextBoxHelper.CornerRadius="5" VerticalAlignment="Center" Height="25" Margin="5,0" Padding="0"/>
+                    <TextBox Grid.Row="1" Grid.Column="0" Text="{Binding SelectedModel.open_machine_mode, Converter={StaticResource openMachineModeConverter}}" IsReadOnly="True" pu:TextBoxHelper.Header="开盒设备" pu:TextBoxHelper.HeaderWidth="80" pu:TextBoxHelper.CornerRadius="5" VerticalAlignment="Center" Height="25" Margin="5,0" Padding="0"/>
+                    <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding SelectedModel.barcode_machine_mode, Converter={StaticResource barcodeMachineModeConverter}}" IsReadOnly="True" pu:TextBoxHelper.Header="贴标设备" pu:TextBoxHelper.HeaderWidth="80" pu:TextBoxHelper.CornerRadius="5" VerticalAlignment="Center" Height="25" Margin="5,0" Padding="0"/>
                     <TextBox Grid.Row="2" Grid.Column="0" Text="{Binding cameraBarcode.product_barcode}" IsReadOnly="True" pu:TextBoxHelper.Header="产品sn" pu:TextBoxHelper.HeaderWidth="80" pu:TextBoxHelper.CornerRadius="5" VerticalAlignment="Center" Height="25" Margin="5,0" Padding="0"/>
                     <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding cameraBarcode.graphic_barcode}" IsReadOnly="True" pu:TextBoxHelper.Header="彩箱sn" pu:TextBoxHelper.HeaderWidth="80" pu:TextBoxHelper.CornerRadius="5" VerticalAlignment="Center" Height="25" Margin="5,0" Padding="0"/>
-                    <TextBox Grid.Row="3" Grid.Column="0" Text="{Binding SelectedModel.sn_barcode_enable,Converter={StaticResource enableModeConverter}}" IsReadOnly="True" pu:TextBoxHelper.Header="sn标签检测" pu:TextBoxHelper.HeaderWidth="80" pu:TextBoxHelper.CornerRadius="5" VerticalAlignment="Center" Height="25" Margin="5,0" Padding="0"/>
+                    <TextBox Grid.Row="3" Grid.Column="0" Text="{Binding SelectedModel.sn_barcode_enable, Converter={StaticResource enableModeConverter}}" IsReadOnly="True" pu:TextBoxHelper.Header="sn标签检测" pu:TextBoxHelper.HeaderWidth="80" pu:TextBoxHelper.CornerRadius="5" VerticalAlignment="Center" Height="25" Margin="5,0" Padding="0"/>
                     <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding SelectedModel.card_machine_enable, Converter={StaticResource enableModeConverter}}" IsReadOnly="True" pu:TextBoxHelper.Header="发卡机启用" pu:TextBoxHelper.HeaderWidth="80" pu:TextBoxHelper.CornerRadius="5" VerticalAlignment="Center" Height="25" Margin="5,0" Padding="0"/>
-                    <TextBox Grid.Row="4" Grid.Column="0" Text="{Binding SelectedModel.plate_enable,Converter={StaticResource enableModeConverter}}" IsReadOnly="True" pu:TextBoxHelper.Header="隔板启用" pu:TextBoxHelper.HeaderWidth="80" pu:TextBoxHelper.CornerRadius="5" VerticalAlignment="Center" Height="25" Margin="5,0" Padding="0"/>
+                    <TextBox Grid.Row="4" Grid.Column="0" Text="{Binding SelectedModel.plate_enable, Converter={StaticResource enableModeConverter}}" IsReadOnly="True" pu:TextBoxHelper.Header="隔板启用" pu:TextBoxHelper.HeaderWidth="80" pu:TextBoxHelper.CornerRadius="5" VerticalAlignment="Center" Height="25" Margin="5,0" Padding="0"/>
                     <TextBox Grid.Row="4" Grid.Column="1" Text="{Binding SelectedModel.start_time, Converter={StaticResource datetTimeConverter}}" IsReadOnly="True" pu:TextBoxHelper.Header="开始时间" pu:TextBoxHelper.HeaderWidth="80" pu:TextBoxHelper.CornerRadius="5" VerticalAlignment="Center" Height="25" Margin="5,0" Padding="0"/>
                     <TextBox Grid.Row="5" Grid.Column="0" Text="{Binding SelectedModel.product_count}" IsReadOnly="True" pu:TextBoxHelper.Header="完成数量" pu:TextBoxHelper.HeaderWidth="80" pu:TextBoxHelper.CornerRadius="5" VerticalAlignment="Center" Height="25" Margin="5,0" Padding="0"/>
                     <TextBox Grid.Row="5" Grid.Column="1" Text="{Binding SelectedModel.defective_count}" IsReadOnly="True" pu:TextBoxHelper.Header="不良品数量" pu:TextBoxHelper.HeaderWidth="80" pu:TextBoxHelper.CornerRadius="5" VerticalAlignment="Center" Height="25" Margin="5,0" Padding="0"/>
                 </Grid>
             </GroupBox>
         </Grid>
-        
+        <Image Grid.Row="1" Source="/WinApp;component/Resources/flow.jpg" Stretch="Fill" Margin="0,2,0,0"/>
+        <iFactoryApp:StatusControl HorizontalAlignment="Left" Height="57" Margin="605,447,0,0" Grid.Row="1" VerticalAlignment="Top" Width="61" PlcName="FxPLC" TagName="RFID"/>
     </Grid>
 </Page>

@@ -168,6 +168,9 @@
     <Compile Include="IoC.cs" />
     <Compile Include="Service\TaskOrderManager.cs" />
     <Compile Include="Service\UserViewService.cs" />
+    <Compile Include="StatusControl.xaml.cs">
+      <DependentUpon>StatusControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ViewModel\RFIDViewModel.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="ViewModel\ProductParameterViewModel.cs" />
@@ -198,6 +201,10 @@
     <Page Include="Resources\Styles.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="StatusControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="View\RFIDView.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -300,6 +307,7 @@
     <Content Include="Lib\VncClientControlCommon.dll" />
     <Content Include="Lib\VncClientControlCommonLib.dll" />
     <Content Include="Lib\WPFToolkit.Extended.dll" />
+    <Resource Include="Resources\flow.jpg" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
