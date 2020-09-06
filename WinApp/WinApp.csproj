@@ -162,21 +162,30 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Common\DatagridDropHelper.cs" />
-    <Compile Include="Common\GlobalSettings.cs" />
+    <Compile Include="Common\ErrorMessageEventClass.cs" />
+    <Compile Include="Common\GlobalData.cs" />
     <Compile Include="Common\IContextMenuView.cs" />
     <Compile Include="Common\KeyenceCameraHelper.cs" />
     <Compile Include="IoC.cs" />
     <Compile Include="Service\TaskOrderManager.cs" />
     <Compile Include="Service\UserViewService.cs" />
-    <Compile Include="StatusControl.xaml.cs">
+    <Compile Include="Common\StatusControl.xaml.cs">
       <DependentUpon>StatusControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ViewModel\ErrMessageViewModel.cs" />
+    <Compile Include="ViewModel\ReportViewModel.cs" />
     <Compile Include="ViewModel\RFIDViewModel.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="ViewModel\ProductParameterViewModel.cs" />
     <Compile Include="ViewModel\SystemLogViewModel.cs" />
     <Compile Include="ViewModel\TaskOrderViewModel.cs" />
     <Compile Include="ViewModel\ViewModelLocator.cs" />
+    <Compile Include="View\ErrMessageView.xaml.cs">
+      <DependentUpon>ErrMessageView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\ReportView.xaml.cs">
+      <DependentUpon>ReportView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\RFIDView.xaml.cs">
       <DependentUpon>RFIDView.xaml</DependentUpon>
     </Compile>
@@ -192,6 +201,9 @@
     <Compile Include="View\SystemLogView.xaml.cs">
       <DependentUpon>SystemLogView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="View\TaskOrderFinishView.xaml.cs">
+      <DependentUpon>TaskOrderFinishView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\TaskOrderEditView.xaml.cs">
       <DependentUpon>TaskOrderEditView.xaml</DependentUpon>
     </Compile>
@@ -202,7 +214,15 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="StatusControl.xaml">
+    <Page Include="Common\StatusControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\ErrMessageView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\ReportView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -223,6 +243,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="View\SystemLogView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\TaskOrderFinishView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

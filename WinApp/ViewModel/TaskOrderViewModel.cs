@@ -1,13 +1,9 @@
 ﻿using GalaSoft.MvvmLight;
-using iFactory.CommonLibrary;
 using iFactory.DataService.IService;
 using iFactory.DataService.Model;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace iFactoryApp.ViewModel
 {
@@ -53,6 +49,7 @@ namespace iFactoryApp.ViewModel
 
         public void LoadParameters()
         {
+            ParameterList.Clear();
             var list = _productParameterService.QueryableToList(x => x.id > 0).OrderBy(x => x.product_name).ToList();
             if (list != null && list.Count > 0)
             {
@@ -66,7 +63,7 @@ namespace iFactoryApp.ViewModel
         public void LoadAllInfos()
         {
             ModelList.Clear();
-            _SelectedModel = _taskOrderService.QueryableToEntity(x => x.id > 0);
+            SelectedModel = _taskOrderService.QueryableToEntity(x => x.id > 0);
         }
         #region 对象操作
         public bool Insert(TaskOrder model)

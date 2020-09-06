@@ -3,12 +3,9 @@ using GalaSoft.MvvmLight.Command;
 using iFactory.CommonLibrary;
 using iFactory.CommonLibrary.Interface;
 using iFactory.DataService.Model;
+using iFactoryApp.Common;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace iFactoryApp.ViewModel
 {
@@ -72,7 +69,12 @@ namespace iFactoryApp.ViewModel
         {
             return true;
         }
-
+        /// <summary>
+        /// 新增状态
+        /// </summary>
+        /// <param name="Content"></param>
+        /// <param name="logTypeEnum"></param>
+        /// <param name="IsRecordToFile"></param>
         public void AddMewStatus(string Content, LogTypeEnum logTypeEnum = LogTypeEnum.Info, bool IsRecordToFile = true)
         {
             if (operatesCollection.Count >= 500)
@@ -84,6 +86,10 @@ namespace iFactoryApp.ViewModel
             if (IsRecordToFile)
             {
                 _log.WriteLog(Content);
+            }
+            if(logTypeEnum== LogTypeEnum.Error)
+            {
+                GlobalData.ErrMsgObject.SendErrorMessage(Content);//错误消息自动弹窗
             }
         }
         #endregion

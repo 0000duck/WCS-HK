@@ -18,9 +18,8 @@ namespace RFIDLib
     /// </summary>
     public partial class RFIDWindow : Page
     {
-        public ObservableCollection<string> ReadCollection = new ObservableCollection<string>();
         /// <summary>
-        /// 烧录队列
+        /// 烧录写入队列
         /// </summary>
         public Queue<string> WriteQueue = new Queue<string>();
 
@@ -77,8 +76,9 @@ namespace RFIDLib
             {
                 textBox_info_box.Text = ComPortName + "打开失败";
                 logHandleUtils.writeLog(ComPortName + "打开失败");
+                SendWriteValueEvent(ComPortName + "打开失败", null, null);
             }
-
+          
             string configPath = configHandleUtils.getConfigFilePath();
             string configString = File.ReadAllText(configPath, Encoding.UTF8);
             if(1 < configString.Length)
@@ -143,7 +143,12 @@ namespace RFIDLib
 
                 try
                 {
-                    ReadCollection.Add(sn[0]);//读取到的加入队列
+                    string lastRfid=WriteQueue.Dequeue();
+                    if(lastRfid != sn[0])
+                    {
+                        logHandleUtils.writeLog($"读取到的为：{sn[0]}，上一个为：{lastRfid}，比对失败");
+                        SendWriteValueEvent(null, null, $"读取到的为：{sn[0]}，上一个为：{lastRfid}，比对失败");
+                    }
                 }
                 catch(Exception ex)
                 {
@@ -154,9 +159,8 @@ namespace RFIDLib
 
         private void button_sp_test_Click(object sender, RoutedEventArgs e)
         {
-            try {
-               
-
+            try 
+            {
                 getFilterData();
                 string[] result = dataUtils.getRecieveFilterData(recieveData);
                 string str="";
@@ -181,7 +185,6 @@ namespace RFIDLib
             {
                 textBox_info_box.Text = "串口写入错误。"+ ex.Message;
                 logHandleUtils.writeLog("串口写入错误。"+ ex.Message);     
-
             }
         }
 
@@ -648,11 +651,9 @@ namespace RFIDLib
 
         private byte[] getReturnComBytes()
         {
-            
-                byte receivebyte;
-
-                byte[] array = { };
-                ArrayList byteList = new ArrayList();
+            byte receivebyte;
+            byte[] array = { };
+            ArrayList byteList = new ArrayList();
             try
             {
                 while (serialPort.BytesToRead > 0)
@@ -861,9 +862,7 @@ namespace RFIDLib
                         soundPlay.playFail();
                         textBox_info_box.Background = new SolidColorBrush(Constans.errorColor);
                         textBox_info_box.Text = dataUtils.codeAnalyse(code);
-
                     }
-
                 }
 
                 else
@@ -968,6 +967,23 @@ namespace RFIDLib
         {
             textBox_work_command_NO.IsEnabled = false;
         }
-        
+
+        /// <summary>
+        /// RFID读取事件
+        /// </summary>
+        public delegate void RFIDInfoDelegate(string PortErrorMessage,string WriteErrorMessage,string ReadErrorMessage);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public event RFIDInfoDelegate RFIDInfoEvent;
+
+        protected virtual void SendWriteValueEvent(string PortErrorMessage, string WriteErrorMessage, string ReadErrorMessage)
+        {
+            if (this.RFIDInfoEvent != null)
+            {
+                this.RFIDInfoEvent(PortErrorMessage, WriteErrorMessage, ReadErrorMessage);
+            }
+        }
     }
 }

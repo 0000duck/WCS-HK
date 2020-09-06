@@ -1,8 +1,5 @@
-﻿using iFactory.CommonLibrary;
-using iFactory.DataService.IService;
+﻿using iFactory.DataService.IService;
 using iFactory.DataService.Model;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;

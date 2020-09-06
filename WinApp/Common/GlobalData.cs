@@ -1,18 +1,14 @@
 ﻿using iFactory.DevComServer;
-using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.IO.Ports;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace iFactoryApp.Common
 {
     /// <summary>
     /// 全局参数设置与配置
     /// </summary>
-    public class GlobalSettings
+    public class GlobalData
     {
         /// <summary>
         /// 相机参数
@@ -26,8 +22,12 @@ namespace iFactoryApp.Common
         /// 重量传感器串口参数
         /// </summary>
         public static SerialConfig WeightConfig = new SerialConfig();
+        /// <summary>
+        /// 全局消息事件
+        /// </summary>
+        public static ErrorMessageEventClass ErrMsgObject = new ErrorMessageEventClass();
 
-        public GlobalSettings()
+        public GlobalData()
         { }
 
         public static void LoadSettings()
@@ -101,5 +101,6 @@ namespace iFactoryApp.Common
             config.DataFormat = SerialDataFormatEnum.Ascii;
             config.DecimalNum = int.Parse(ConfigurationManager.AppSettings["DecimalNum"]);
         }
+
     }
 }

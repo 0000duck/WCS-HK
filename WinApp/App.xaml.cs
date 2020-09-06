@@ -19,7 +19,7 @@ namespace iFactoryApp
         private ILogWrite log;
         private void Application_Startup(object sender, StartupEventArgs e)
         {
-            GlobalSettings.LoadSettings();//加载参数
+            GlobalData.LoadSettings();//加载参数
             IoC.SetupIoC();//IoC容器启用
             log = IoC.Get<ILogWrite>();
             var service1 = IoC.Get<IDatabaseTagGroupService>();

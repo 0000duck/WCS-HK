@@ -12,7 +12,7 @@ using System.Windows.Threading;
 
 namespace iFactoryApp.Service
 {
-    public class TaskOrderManager
+    public class TaskOrderManager: ErrorMessageEventClass
     {
         private readonly ITaskOrderService _taskOrderService;
         private readonly ITaskOrderHistoryService _taskOrderHistoryService;
@@ -21,10 +21,11 @@ namespace iFactoryApp.Service
         private readonly IProductParameterService _productParameterService;
         private readonly ISystemLogViewModel _systemLogViewModel;
         private readonly TaskOrderViewModel _taskOrderViewModel;
+        private readonly RFIDViewModel _RFIDViewModel;
         public List<KeyenceCameraHelper> cameraList = new List<KeyenceCameraHelper>();
-
-        private DispatcherTimer barcodeCheckTimer=new DispatcherTimer();
-        private string lastBarcode1, lastBarcode2;
+        private Tag<short> RFID_WriteTag, RFID_ReadTag,Barcode1Tag, Barcode2Tag;
+        private DispatcherTimer barcodeCheckTimer;
+        private readonly DispatcherTimer timer;
 
         public TaskOrderManager(ITaskOrderService taskOrderService,
                                 ITaskOrderHistoryService taskOrderHistoryService,
@@ -32,7 +33,8 @@ namespace iFactoryApp.Service
                                 ITaskOrderDetailHistoryService taskOrderDetailHistoryService,
                                 IProductParameterService productParameterService,
                                 ISystemLogViewModel systemLogViewModel,
-                                TaskOrderViewModel taskOrderViewModel)
+                                TaskOrderViewModel taskOrderViewModel,
+                                RFIDViewModel RfidViewModel)
         {
             _taskOrderService = taskOrderService;
             _taskOrderDetailService = taskOrderDetailService;
@@ -41,26 +43,91 @@ namespace iFactoryApp.Service
             _productParameterService = productParameterService;
             _systemLogViewModel = systemLogViewModel;
             _taskOrderViewModel = taskOrderViewModel;
-
-            barcodeCheckTimer.Interval = TimeSpan.FromSeconds(5);//5秒
+            _RFIDViewModel = RfidViewModel;
+            _RFIDViewModel.ReadRFIDWindow.RFIDInfoEvent += ReadRFIDWindow_RFIDInfoEvent;
+            barcodeCheckTimer = new DispatcherTimer() { IsEnabled = false, Interval = TimeSpan.FromSeconds(5) };//5秒超时判断
             barcodeCheckTimer.Tick += barcodeCheckTimer_Tick;
+            TagInitial();
+            timer = new DispatcherTimer() { IsEnabled=true,Interval = TimeSpan.FromSeconds(5) };//5秒周期读取产量数据
+            timer.Tick += Timer_Tick;
         }
-        private void InitialRfid()
+        /// <summary>
+        /// 标签初始化
+        /// </summary>
+        private void TagInitial()
         {
-            Tag<short> tag;
-            TagList.GetTag("rfid_write", out tag, "FxPLC");
-            if(tag !=null)
+            TagList.GetTag("rfid_read", out RFID_ReadTag, "FxPLC");//RFID读取
+            TagList.GetTag("rfid_write", out RFID_WriteTag, "FxPLC");//RFID写入
+            TagList.GetTag("graphic_carton_sn", out Barcode1Tag, "FxPLC");//彩箱SN检测
+            TagList.GetTag("product_sn", out Barcode2Tag, "FxPLC");//产品SN检测
+            if (RFID_WriteTag != null)
             {
-                tag.PropertyChanged += Tag_PropertyChanged;
+                RFID_WriteTag.PropertyChanged += Tag_PropertyChanged;
+            }
+        }
+        /// <summary>
+        /// 周期刷新
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Timer_Tick(object sender, EventArgs e)
+        {
+            if (_taskOrderViewModel.SelectedModel != null)
+            {
+                _taskOrderViewModel.SelectedModel.product_count += 1;//读取完成数量
+                _taskOrderViewModel.Update(_taskOrderViewModel.SelectedModel);
+            }
+        }
+
+        #region RFID处理
+        //RFID操作消息
+        private void ReadRFIDWindow_RFIDInfoEvent(string PortErrorMessage, string WriteErrorMessage, string ReadErrorMessage)
+        {
+            if(!string.IsNullOrEmpty(PortErrorMessage))
+            {
+                _systemLogViewModel.AddMewStatus(PortErrorMessage, LogTypeEnum.Error);
+            }
+            else if (!string.IsNullOrEmpty(WriteErrorMessage))
+            {
+                _systemLogViewModel.AddMewStatus(WriteErrorMessage, LogTypeEnum.Error);
+            }
+            else if (!string.IsNullOrEmpty(ReadErrorMessage))
+            {
+                _systemLogViewModel.AddMewStatus(ReadErrorMessage, LogTypeEnum.Error);
+                RFID_ReadTag.Write(2);
+                if (_taskOrderViewModel.SelectedModel != null)
+                {
+                    _taskOrderViewModel.SelectedModel.defective_count += 1;//更新异常数量
+                    _taskOrderViewModel.Update(_taskOrderViewModel.SelectedModel);
+                }
             }
         }
 
         //写入rfid标签值变化
         private void Tag_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            
+            int count= _RFIDViewModel.WriteRFIDWindow.WriteQueue.Count;
+            _RFIDViewModel.WriteRFIDWindow.button_burn_Click(null,null);
+            if(_RFIDViewModel.WriteRFIDWindow.WriteQueue.Count> count)//写入成功
+            {
+                string newRfid = _RFIDViewModel.WriteRFIDWindow.WriteQueue.Dequeue();
+                _RFIDViewModel.ReadRFIDWindow.WriteQueue.Enqueue(newRfid);//加入到读取的分组里面
+                RFID_WriteTag.Write(0);
+            }
+            else
+            {
+                _systemLogViewModel.AddMewStatus("RFID写入失败",LogTypeEnum.Error);
+                RFID_WriteTag.Write(2);
+                if( _taskOrderViewModel.SelectedModel !=null)
+                {
+                    _taskOrderViewModel.SelectedModel.defective_count += 1;//更新异常数量
+                    _taskOrderViewModel.Update(_taskOrderViewModel.SelectedModel);
+                }
+            }
         }
+        #endregion
 
+        #region 产品与彩箱sn比对
         /// <summary>
         /// 初始化相机
         /// </summary>
@@ -69,7 +136,7 @@ namespace iFactoryApp.Service
         public void InitialCamera(LiveviewForm liveviewForm, int index)
         {
             KeyenceCameraHelper keyenceCameraHelper = new KeyenceCameraHelper(liveviewForm, index);
-            keyenceCameraHelper.ConnectToCammera(GlobalSettings.CameraConfig[index - 1].Ip);
+            keyenceCameraHelper.ConnectToCammera(GlobalData.CameraConfig[index - 1].Ip);
             if (keyenceCameraHelper != null)
             {
                 switch (index)
@@ -84,106 +151,92 @@ namespace iFactoryApp.Service
             }
             cameraList.Add(keyenceCameraHelper);
         }
-
-        #region 产品与彩箱sn比对
         //产品条码
         private void KeyenceCamera1_NewReaderDataEvent(string receivedData, int index)
         {
-            lastBarcode1 = receivedData;
-            _taskOrderViewModel.cameraBarcode.product_barcode = lastBarcode1;
-            _systemLogViewModel.AddMewStatus($"接收到产品sn为{lastBarcode1}");
+            _systemLogViewModel.AddMewStatus($"接收到产品sn为{receivedData}");
+            if(!string.IsNullOrEmpty(receivedData.Trim()) && !receivedData.ToLower().Contains("error"))
+            {
+                _taskOrderViewModel.cameraBarcode.product_barcode = receivedData.Trim();
+                StartToCheck();
+            }
         }
         //彩箱sn
         private void KeyenceCamera2_NewReaderDataEvent(string receivedData, int index)
         {
-            lastBarcode2 = receivedData;
-            _taskOrderViewModel.cameraBarcode.graphic_barcode = lastBarcode2;
-            _systemLogViewModel.AddMewStatus($"接收到彩箱sn为{lastBarcode2}");
+            _systemLogViewModel.AddMewStatus($"接收到彩箱sn为{receivedData}");
+            if (!string.IsNullOrEmpty(receivedData.Trim()) && !receivedData.ToLower().Contains("error"))
+            {
+                _taskOrderViewModel.cameraBarcode.graphic_barcode = receivedData.Trim();
+                StartToCheck();
+            }
         }
-        private void StartTimer()
+        /// <summary>
+        /// 任意有条码进入，开始比对。第一次不会成功
+        /// 先进入的启动计时，在计时周期以内仍然未成功，写下错误
+        /// </summary>
+        private void StartToCheck()
         {
-            Tag<short> tag1, tag2;
-            if (!string.IsNullOrEmpty(lastBarcode1) && !string.IsNullOrEmpty(lastBarcode2))
+            if (_taskOrderViewModel.cameraBarcode.product_barcode == _taskOrderViewModel.cameraBarcode.graphic_barcode)//条码一致
             {
-                TagList.GetTag("graphic_sn", out tag1, "FxPLC");
-                TagList.GetTag("product_sn", out tag2, "FxPLC");
-
-                if (lastBarcode1 == lastBarcode2)//条码一致
+                if (Barcode1Tag != null)
                 {
-                    lastBarcode1 = string.Empty;
-                    lastBarcode2 = string.Empty;
-                   
-                    if(tag1 !=null)
-                    {
-                        tag1.Write(0);
-                    }
-                    if (tag2 != null)
-                    {
-                        tag2.Write(0);
-                    }
-                    _systemLogViewModel.AddMewStatus("sn标签核对成功，复位PLC标识");
-                    return;
+                    Barcode1Tag.Write(0);
                 }
-                else
+                if (Barcode2Tag != null)
                 {
-                    lastBarcode1 = string.Empty;
-                    lastBarcode2 = string.Empty;
-
-                    if (tag1 != null)
-                    {
-                        tag1.Write(2);//对比失败
-                    }
-                    if (tag2 != null)
-                    {
-                        tag2.Write(2);//对比失败
-                    }
-                    _systemLogViewModel.AddMewStatus("sn标签核对失败");
-                    return;
+                    Barcode2Tag.Write(0);
+                }
+                _systemLogViewModel.AddMewStatus("sn标签核对成功，复位PLC标识");
+                if (barcodeCheckTimer.IsEnabled)
+                {
+                    barcodeCheckTimer.Stop();//已比对成功，计时停止
                 }
             }
-
-            if (!barcodeCheckTimer.IsEnabled)//未开始计时
+            else
             {
-                barcodeCheckTimer.Start();
+                if (!barcodeCheckTimer.IsEnabled)//未比对成功，开启计时
+                {
+                    barcodeCheckTimer.Start();
+                }
             }
         }
+        /// <summary>
+        /// 计时周期到达，仍然比对不成功则写入错误
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void barcodeCheckTimer_Tick(object sender, EventArgs e)//时间到达
         {
-            Tag<short> tag1, tag2;
-            TagList.GetTag("graphic_sn", out tag1, "FxPLC");
-            TagList.GetTag("product_sn", out tag2, "FxPLC");
             barcodeCheckTimer.Stop();
-            if (!string.IsNullOrEmpty(lastBarcode1) && !string.IsNullOrEmpty(lastBarcode2))
+            if (_taskOrderViewModel.cameraBarcode.product_barcode == _taskOrderViewModel.cameraBarcode.graphic_barcode)//条码一致
             {
-                if (lastBarcode1 == lastBarcode2)//进行比较
+                if (Barcode1Tag != null)
                 {
-                    lastBarcode1 = string.Empty;
-                    lastBarcode2 = string.Empty;
-                    if (tag1 != null)
-                    {
-                        tag1.Write(0);
-                    }
-                    if (tag2 != null)
-                    {
-                        tag2.Write(0);
-                    }
-                    _systemLogViewModel.AddMewStatus("时间到达，sn标签核对成功，复位PLC标识");
-                    return;
+                    Barcode1Tag.Write(0);
                 }
+                if (Barcode2Tag != null)
+                {
+                    Barcode2Tag.Write(0);
+                }
+                _systemLogViewModel.AddMewStatus("sn标签核对成功，复位PLC标识");
             }
-
-            _systemLogViewModel.AddMewStatus("sn标签核对超时错误，写入PLC错误信息", LogTypeEnum.Error);
-            if (tag1 != null)
+            else
             {
-                tag1.Write(2);//写入错误
-            }
-            if (tag2 != null)
-            {
-                tag2.Write(2);//写入错误
+                if (Barcode1Tag != null)
+                {
+                    Barcode1Tag.Write(2);
+                }
+                if (Barcode2Tag != null)
+                {
+                    Barcode2Tag.Write(2);
+                }
+                _systemLogViewModel.AddMewStatus("sn标签核在规定时间内仍未匹配通过，写入PLC错误信息", LogTypeEnum.Error);
             }
         }
         #endregion
 
+        #region 数据写入
         /// <summary>
         /// 开始下载参数信息
         /// </summary>
@@ -219,7 +272,7 @@ namespace iFactoryApp.Service
             }
             else
             {
-                _systemLogViewModel.AddMewStatus("Robot1机械手参数写入失败", LogTypeEnum.Error);
+                _systemLogViewModel.AddMewStatus("Robot1机械手参数写入失败，请检查网络连接后重新下载！", LogTypeEnum.Error);
                 return false;
             }
 
@@ -232,7 +285,7 @@ namespace iFactoryApp.Service
             }
             else
             {
-                _systemLogViewModel.AddMewStatus("Robot2机械手参数写入失败", LogTypeEnum.Error);
+                _systemLogViewModel.AddMewStatus("Robot2机械手参数写入失败，请检查网络连接后重新下载！", LogTypeEnum.Error);
                 return false;
             }
 
@@ -259,7 +312,7 @@ namespace iFactoryApp.Service
             }
             else
             {
-                _systemLogViewModel.AddMewStatus("Robot3机械手参数写入失败", LogTypeEnum.Error);
+                _systemLogViewModel.AddMewStatus("Robot3机械手参数写入失败，请检查网络连接后重新下载！", LogTypeEnum.Error);
                 return false;
             }
             return true;
@@ -335,5 +388,8 @@ namespace iFactoryApp.Service
 
             return false;
         }
+        #endregion
+
+        
     }
 }

@@ -1,24 +1,10 @@
 ﻿using iFactory.CommonLibrary;
 using iFactory.DataService.IService;
-using iFactory.DataService.Model;
-using iFactory.DevComServer;
 using iFactoryApp.Service;
 using iFactoryApp.ViewModel;
 using Panuon.UI.Silver;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace iFactoryApp.View
 {
@@ -94,7 +80,7 @@ namespace iFactoryApp.View
                     _viewModel.SelectedModel = _viewModel.EditModel;
                     if(!_taskOrderManager.StartToDownloadParamter(_viewModel.SelectedModel))
                     {
-                        MessageBoxX.Show("参数下载失败，请检查网络连接后重新下载！", "错误", Application.Current.MainWindow);
+                       // MessageBoxX.Show("参数下载失败，请检查网络连接后重新下载！", "错误", Application.Current.MainWindow);
                     }
                 }
             }
@@ -109,7 +95,7 @@ namespace iFactoryApp.View
                     _viewModel.SelectedModel = _viewModel.EditModel;
                     if (!_taskOrderManager.StartToDownloadParamter(_viewModel.SelectedModel))
                     {
-                        MessageBoxX.Show("参数下载失败，请检查网络连接后重新下载！", "错误", Application.Current.MainWindow);
+                        //MessageBoxX.Show("参数下载失败，请检查网络连接后重新下载！", "错误", Application.Current.MainWindow);
                     }
                 }
             }

@@ -1,7 +1,9 @@
 ﻿using iFactory.CommonLibrary;
 using iFactory.UserManage;
+using iFactoryApp.Common;
 using iFactoryApp.ViewModel;
 using Panuon.UI.Silver;
+using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -16,6 +18,7 @@ namespace iFactoryApp.View
         private readonly MainViewModel viewModel;
         private readonly RFIDView rfidView = new RFIDView();
         private readonly TaskOrderView taskOrderView = new TaskOrderView();
+        private readonly ReportView reportView = new ReportView();
         private IContextMenuView lastView;
 
         public MainWindow()
@@ -24,6 +27,7 @@ namespace iFactoryApp.View
             viewModel = IoC.GetViewModel<MainViewModel>(this);
             this.DataContext = viewModel;
             lastView = taskOrderView;
+            GlobalData.ErrMsgObject.ErrorMessageEvent += ErrorMessageEvent;//错误信息弹窗
         }
 
         private void MenuItem_Click(object sender, RoutedEventArgs e)
@@ -41,10 +45,15 @@ namespace iFactoryApp.View
                     {
                         rfidView.Activate();
                     }
+                    GlobalData.ErrMsgObject.SendErrorMessage("这是一条错误消息测试2");
                     break;
                 case "TaskOrder":
                     frame1.NavigateToPage(taskOrderView, false);
                     lastView = taskOrderView;
+                    break;
+                case "Report":
+                    frame1.NavigateToPage(reportView, false);
+                    lastView = null;
                     break;
                 case "Product":
                     ProductParameterView productParameterView = new ProductParameterView();
@@ -130,6 +139,19 @@ namespace iFactoryApp.View
             {
                 this.WindowState = WindowState.Normal;
             }
+        }
+        /// <summary>
+        /// 错误消息弹窗处理
+        /// </summary>
+        /// <param name="errMessageViewModel"></param>
+        private void ErrorMessageEvent(ErrMessageViewModel errMessageViewModel)
+        {
+            Application.Current.Dispatcher.BeginInvoke(new Action(() =>
+            {
+                ErrMessageView messageBoxView = new ErrMessageView(errMessageViewModel);
+                messageBoxView.Topmost = true;
+                messageBoxView.Show();
+            }));
         }
     }
 }

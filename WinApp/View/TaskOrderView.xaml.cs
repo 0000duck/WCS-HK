@@ -27,6 +27,8 @@ namespace iFactoryApp.View
             viewModel.LoadAllInfos();
             _taskOrderManager.InitialCamera(liveviewForm1, 1);
             _taskOrderManager.InitialCamera(liveviewForm1, 2);
+           string s= led1.PlcName;
+            string s1 = led1.TagName;
         }
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
@@ -120,18 +122,8 @@ namespace iFactoryApp.View
             {
                 if (viewModel.SelectedModel != null)
                 {
-                    MessageBoxResult result = MessageBoxX.Show($"确定完成任务吗？", "确认", Application.Current.MainWindow, MessageBoxButton.YesNo);
-                    if (result == MessageBoxResult.Yes)
-                    {
-                        if (viewModel.Finish(viewModel.SelectedModel) == false)
-                        {
-                            MessageBoxX.Show("任务完成失败！", "错误", Application.Current.MainWindow);
-                        }
-                        else
-                        {
-                            viewModel.SelectedModel = null;
-                        }
-                    }
+                    TaskOrderFinishView taskOrderFinishView = new TaskOrderFinishView();
+                    taskOrderFinishView.ShowDialog();
                 }
                 else
                 {
