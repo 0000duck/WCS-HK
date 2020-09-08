@@ -70,10 +70,9 @@
                 </Grid>
             </GroupBox>
         </Grid>
-        <Image Grid.Row="1" Source="/WinApp;component/Resources/flow.jpg" Stretch="Fill" Margin="0,2,0,0"/>
+        <Image  Grid.Row="1" Source="/WinApp;component/Resources/flow.jpg" Stretch="Fill"/>
         <iFactoryApp:StatusControl x:Name="led1" HorizontalAlignment="Left" Height="16" Margin="532,309,0,0" Grid.Row="1" VerticalAlignment="Top" Width="16" PlcName="FxPLC" TagName="RFID" RenderTransformOrigin="0.417,-2.337" />
-        <iFactoryApp:StatusControl x:Name="led1_Copy" HorizontalAlignment="Left" Height="16" Margin="796,93,0,0" Grid.Row="1" VerticalAlignment="Top" Width="16" PlcName="FxPLC" TagName="RFID" RenderTransformOrigin="0.417,-2.337" />
-        <iFactoryApp:StatusControl x:Name="led1_Copy1" HorizontalAlignment="Left" Height="16" Margin="180,172,0,0" Grid.Row="1" VerticalAlignment="Top" Width="16" PlcName="FxPLC" TagName="RFID" RenderTransformOrigin="0.417,-2.337" />
-        <iFactoryApp:StatusControl x:Name="led1_Copy2" HorizontalAlignment="Left" Height="16" Margin="818,344,0,0" Grid.Row="1" VerticalAlignment="Top" Width="16" PlcName="FxPLC" TagName="RFID" RenderTransformOrigin="0.417,-2.337" />
+        <iFactoryApp:StatusControl x:Name="led2" HorizontalAlignment="Left" Height="16" Margin="796,93,0,0" Grid.Row="1" VerticalAlignment="Top" Width="16" PlcName="FxPLC" TagName="RFID" RenderTransformOrigin="0.417,-2.337" />
+        <iFactoryApp:StatusControl x:Name="led3" HorizontalAlignment="Left" Height="16" Margin="180,172,0,0" Grid.Row="1" VerticalAlignment="Top" Width="16" PlcName="FxPLC" TagName="RFID" RenderTransformOrigin="0.417,-2.337" MouseUp="led3_MouseUp" />
     </Grid>
 </Page>

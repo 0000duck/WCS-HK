@@ -6,7 +6,7 @@
         xmlns:pu="clr-namespace:Panuon.UI.Silver;assembly=Panuon.UI.Silver"
         xmlns:local="clr-namespace:iFactoryApp.View"
         mc:Ignorable="d"
-        Title="WCS设备管理系统" Height="900" Width="1400" WindowStartupLocation="CenterScreen" Background="WhiteSmoke" Closing="Window_ClosingAsync" MouseDoubleClick="WindowX_MouseDoubleClick" >
+        Title="WCS设备管理系统" Height="768" Width="1024" WindowStartupLocation="CenterScreen" Background="WhiteSmoke" Closing="Window_ClosingAsync" MouseDoubleClick="WindowX_MouseDoubleClick" >
     <pu:WindowXCaption.Header>
         <Grid>
             <Grid.ColumnDefinitions>

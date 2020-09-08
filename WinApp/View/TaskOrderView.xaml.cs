@@ -27,8 +27,6 @@ namespace iFactoryApp.View
             viewModel.LoadAllInfos();
             _taskOrderManager.InitialCamera(liveviewForm1, 1);
             _taskOrderManager.InitialCamera(liveviewForm1, 2);
-           string s= led1.PlcName;
-            string s1 = led1.TagName;
         }
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
@@ -155,6 +153,11 @@ namespace iFactoryApp.View
             this.DataContext = null;
             viewModel.LoadAllInfos();
             this.DataContext = viewModel;
+        }
+
+        private void led3_MouseUp(object sender, MouseButtonEventArgs e)
+        {
+            MessageBox.Show(this.Width.ToString());
         }
     }
 }

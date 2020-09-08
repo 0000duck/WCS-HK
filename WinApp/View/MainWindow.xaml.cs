@@ -45,7 +45,6 @@ namespace iFactoryApp.View
                     {
                         rfidView.Activate();
                     }
-                    GlobalData.ErrMsgObject.SendErrorMessage("这是一条错误消息测试2");
                     break;
                 case "TaskOrder":
                     frame1.NavigateToPage(taskOrderView, false);
