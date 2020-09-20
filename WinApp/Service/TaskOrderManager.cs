@@ -5,6 +5,7 @@ using iFactory.DevComServer;
 using iFactoryApp.Common;
 using iFactoryApp.ViewModel;
 using Keyence.AutoID.SDK;
+using RFIDLib;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,11 +15,6 @@ namespace iFactoryApp.Service
 {
     public class TaskOrderManager: ErrorMessageEventClass
     {
-        private readonly ITaskOrderService _taskOrderService;
-        private readonly ITaskOrderHistoryService _taskOrderHistoryService;
-        private readonly ITaskOrderDetailService _taskOrderDetailService;
-        private readonly ITaskOrderDetailHistoryService _taskOrderDetailHistoryService;
-        private readonly IProductParameterService _productParameterService;
         private readonly ISystemLogViewModel _systemLogViewModel;
         private readonly TaskOrderViewModel _taskOrderViewModel;
         private readonly RFIDViewModel _RFIDViewModel;
@@ -27,20 +23,10 @@ namespace iFactoryApp.Service
         private DispatcherTimer barcodeCheckTimer;
         private readonly DispatcherTimer timer;
 
-        public TaskOrderManager(ITaskOrderService taskOrderService,
-                                ITaskOrderHistoryService taskOrderHistoryService,
-                                ITaskOrderDetailService taskOrderDetailService,
-                                ITaskOrderDetailHistoryService taskOrderDetailHistoryService,
-                                IProductParameterService productParameterService,
-                                ISystemLogViewModel systemLogViewModel,
+        public TaskOrderManager(ISystemLogViewModel systemLogViewModel,
                                 TaskOrderViewModel taskOrderViewModel,
                                 RFIDViewModel RfidViewModel)
         {
-            _taskOrderService = taskOrderService;
-            _taskOrderDetailService = taskOrderDetailService;
-            _taskOrderHistoryService = taskOrderHistoryService;
-            _taskOrderDetailHistoryService = taskOrderDetailHistoryService;
-            _productParameterService = productParameterService;
             _systemLogViewModel = systemLogViewModel;
             _taskOrderViewModel = taskOrderViewModel;
             _RFIDViewModel = RfidViewModel;
@@ -62,7 +48,7 @@ namespace iFactoryApp.Service
             TagList.GetTag("product_sn", out Barcode2Tag, "FxPLC");//产品SN检测
             if (RFID_WriteTag != null)
             {
-                RFID_WriteTag.PropertyChanged += Tag_PropertyChanged;
+                RFID_WriteTag.PropertyChanged += RFIDWriteTag_PropertyChanged;
             }
         }
         /// <summary>
@@ -80,49 +66,77 @@ namespace iFactoryApp.Service
         }
 
         #region RFID处理
-        //RFID操作消息
-        private void ReadRFIDWindow_RFIDInfoEvent(string PortErrorMessage, string WriteErrorMessage, string ReadErrorMessage)
+        /// <summary>
+        /// RFID读取后的消息
+        /// </summary>
+        /// <param name="PortErrorMessage"></param>
+        /// <param name="WriteErrorMessage"></param>
+        /// <param name="ReadErrorMessage"></param>
+        private void ReadRFIDWindow_RFIDInfoEvent(RDIDInfo info)
         {
-            if(!string.IsNullOrEmpty(PortErrorMessage))
+            if(info.InfoType== RFIDInfoEnum.PortError)
             {
-                _systemLogViewModel.AddMewStatus(PortErrorMessage, LogTypeEnum.Error);
+                _systemLogViewModel.AddMewStatus(info.Content, LogTypeEnum.Error);
             }
-            else if (!string.IsNullOrEmpty(WriteErrorMessage))
+            else if (info.InfoType == RFIDInfoEnum.WriteError)//写入失败
             {
-                _systemLogViewModel.AddMewStatus(WriteErrorMessage, LogTypeEnum.Error);
-            }
-            else if (!string.IsNullOrEmpty(ReadErrorMessage))
-            {
-                _systemLogViewModel.AddMewStatus(ReadErrorMessage, LogTypeEnum.Error);
-                RFID_ReadTag.Write(2);
+                _systemLogViewModel.AddMewStatus(info.Content, LogTypeEnum.Error);
+                if(RFID_WriteTag !=null)
+                {
+                    RFID_WriteTag.Write(2);
+                }
                 if (_taskOrderViewModel.SelectedModel != null)
                 {
                     _taskOrderViewModel.SelectedModel.defective_count += 1;//更新异常数量
                     _taskOrderViewModel.Update(_taskOrderViewModel.SelectedModel);
                 }
             }
-        }
-
-        //写入rfid标签值变化
-        private void Tag_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-        {
-            int count= _RFIDViewModel.WriteRFIDWindow.WriteQueue.Count;
-            _RFIDViewModel.WriteRFIDWindow.button_burn_Click(null,null);
-            if(_RFIDViewModel.WriteRFIDWindow.WriteQueue.Count> count)//写入成功
+            else if (info.InfoType == RFIDInfoEnum.WriteSuccess)//写入成功
             {
+                _systemLogViewModel.AddMewStatus(info.Content);
                 string newRfid = _RFIDViewModel.WriteRFIDWindow.WriteQueue.Dequeue();
                 _RFIDViewModel.ReadRFIDWindow.WriteQueue.Enqueue(newRfid);//加入到读取的分组里面
-                RFID_WriteTag.Write(0);
+                if (RFID_WriteTag != null)
+                {
+                    RFID_WriteTag.Write(0);
+                }
+                _systemLogViewModel.AddMewStatus(info.Content);
             }
-            else
+            else if (info.InfoType == RFIDInfoEnum.ReadError)//读取失败
             {
-                _systemLogViewModel.AddMewStatus("RFID写入失败",LogTypeEnum.Error);
-                RFID_WriteTag.Write(2);
-                if( _taskOrderViewModel.SelectedModel !=null)
+                _systemLogViewModel.AddMewStatus(info.Content, LogTypeEnum.Error);
+                if(RFID_ReadTag !=null)
+                {
+                    RFID_ReadTag.Write(2);
+                }
+                if (_taskOrderViewModel.SelectedModel != null)
                 {
                     _taskOrderViewModel.SelectedModel.defective_count += 1;//更新异常数量
                     _taskOrderViewModel.Update(_taskOrderViewModel.SelectedModel);
                 }
+            }
+            else if (info.InfoType == RFIDInfoEnum.ReadSuccess)//读取成功
+            {
+                _systemLogViewModel.AddMewStatus(info.Content);
+                if (RFID_ReadTag != null)
+                {
+                    RFID_ReadTag.Write(0);//标识复位
+                }
+            }
+        }
+
+        /// <summary>
+        /// 写入rfid标签值变化
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void RFIDWriteTag_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            Tag<short> tag = sender as Tag<short>;
+            if(tag.TagValue==1)
+            {
+                _systemLogViewModel.AddMewStatus($"识别到PLC写入信号，开始写入");
+                _RFIDViewModel.WriteRFIDWindow.button_burn_Click(null, null);//调用写入
             }
         }
         #endregion

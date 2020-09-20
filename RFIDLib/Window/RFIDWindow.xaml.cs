@@ -21,7 +21,7 @@ namespace RFIDLib
         /// <summary>
         /// 烧录写入队列
         /// </summary>
-        public Queue<string> WriteQueue = new Queue<string>();
+        public volatile Queue<string> WriteQueue = new Queue<string>();
 
         SerialPortUtils serialPortUtils = new SerialPortUtils();
         SerialPort serialPort = new SerialPort();//当前选择的串口
@@ -76,7 +76,8 @@ namespace RFIDLib
             {
                 textBox_info_box.Text = ComPortName + "打开失败";
                 logHandleUtils.writeLog(ComPortName + "打开失败");
-                SendWriteValueEvent(ComPortName + "打开失败", null, null);
+                RDIDInfo info = new RDIDInfo() { InfoType = RFIDInfoEnum.PortError, Content = $"RFID端口{ComPortName}打开失败" };
+                SendWriteValueEvent(info);
             }
           
             string configPath = configHandleUtils.getConfigFilePath();
@@ -147,12 +148,20 @@ namespace RFIDLib
                     if(lastRfid != sn[0])
                     {
                         logHandleUtils.writeLog($"读取到的为：{sn[0]}，上一个为：{lastRfid}，比对失败");
-                        SendWriteValueEvent(null, null, $"读取到的为：{sn[0]}，上一个为：{lastRfid}，比对失败");
+                        RDIDInfo info = new RDIDInfo() { InfoType = RFIDInfoEnum.ReadError, Content = $"读取到的为：{sn[0]}，上一个为：{lastRfid}，比对失败" };
+                        SendWriteValueEvent(info);
+                    }
+                    else
+                    {
+                        RDIDInfo info = new RDIDInfo() { InfoType = RFIDInfoEnum.ReadSuccess, Content = $"读取到的为：{sn[0]}，上一个为：{lastRfid}，比对成功" };
+                        SendWriteValueEvent(info);
                     }
                 }
                 catch(Exception ex)
                 {
-
+                    logHandleUtils.writeLog($"连续读取错误:{ex.Message}");
+                    RDIDInfo info = new RDIDInfo() { InfoType = RFIDInfoEnum.ReadError, Content = $"连续读取错误:{ex.Message}" };
+                    SendWriteValueEvent(info);
                 }
             }
         }
@@ -248,12 +257,16 @@ namespace RFIDLib
                         textBox_serial_NO.Text = serial_num_int.ToString();
                         string config = factory_num + "-" + product_num + "-" + textBox_serial_NO.Text + "-" + Check_WorkCommand.IsChecked.ToString() + "-" + work_command_num + "-";
                         configHandleUtils.writeConfig(config);
+                        RDIDInfo info = new RDIDInfo() { InfoType = RFIDInfoEnum.WriteSuccess, Content = $"写入RFID成功{factory_num},{ product_num },{textBox_serial_NO.Text},{product_date},{sn[0]}" };
+                        SendWriteValueEvent(info);
                     }
                     else
                     {
                         soundPlay.playFail();
                         textBox_info_box.Background = new SolidColorBrush(Constans.errorColor);
                         textBox_info_box.Text = dataUtils.codeAnalyse(code);
+                        RDIDInfo info = new RDIDInfo() { InfoType = RFIDInfoEnum.WriteError, Content = $"写入RFID失败{factory_num},{ product_num },{textBox_serial_NO.Text},{product_date}"};
+                        SendWriteValueEvent(info);
                     }
                 }
             }
@@ -971,19 +984,63 @@ namespace RFIDLib
         /// <summary>
         /// RFID读取事件
         /// </summary>
-        public delegate void RFIDInfoDelegate(string PortErrorMessage,string WriteErrorMessage,string ReadErrorMessage);
+        public delegate void RFIDInfoDelegate(RDIDInfo info);
 
         /// <summary>
         /// 
         /// </summary>
         public event RFIDInfoDelegate RFIDInfoEvent;
 
-        protected virtual void SendWriteValueEvent(string PortErrorMessage, string WriteErrorMessage, string ReadErrorMessage)
+        protected virtual void SendWriteValueEvent(RDIDInfo info)
         {
             if (this.RFIDInfoEvent != null)
             {
-                this.RFIDInfoEvent(PortErrorMessage, WriteErrorMessage, ReadErrorMessage);
+                this.RFIDInfoEvent(info);
             }
         }
+    }
+    /// <summary>
+    /// RFID消息
+    /// </summary>
+    public class RDIDInfo
+    {
+        /// <summary>
+        /// 消息类型
+        /// </summary>
+        public RFIDInfoEnum InfoType { set; get; }
+        /// <summary>
+        /// 消息内容
+        /// </summary>
+        public string Content { set; get; }
+    }
+    /// <summary>
+    /// RFID消息类型枚举
+    /// </summary>
+    public enum RFIDInfoEnum
+    {
+        /// <summary>
+        /// 端口错误
+        /// </summary>
+        PortError,
+        /// <summary>
+        /// 写入错误
+        /// </summary>
+        WriteError,
+        /// <summary>
+        /// 写入成功
+        /// </summary>
+        WriteSuccess,
+        /// <summary>
+        /// 读取错误
+        /// </summary>
+        ReadError,
+        /// <summary>
+        /// 读取成功消息
+        /// </summary>
+        ReadSuccess,
+        /// <summary>
+        /// 记录型消息
+        /// </summary>
+        LogInfo
     }
 }

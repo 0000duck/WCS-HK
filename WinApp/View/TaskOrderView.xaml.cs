@@ -26,7 +26,7 @@ namespace iFactoryApp.View
             this.DataContext = viewModel;
             viewModel.LoadAllInfos();
             _taskOrderManager.InitialCamera(liveviewForm1, 1);
-            _taskOrderManager.InitialCamera(liveviewForm1, 2);
+            _taskOrderManager.InitialCamera(liveviewForm2, 2);
         }
 
         private void Page_Loaded(object sender, RoutedEventArgs e)

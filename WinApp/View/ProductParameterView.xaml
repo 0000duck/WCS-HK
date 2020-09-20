@@ -47,12 +47,6 @@
                 <Separator Margin="5,13,5,12"/>
                 <Button Command="{x:Static comLib:MyCommands.Delete}" ToolTip="删除参数" HorizontalAlignment="Center" Content="删除" HorizontalContentAlignment="Center" />
                 <Separator/>
-                <TextBox x:Name="txtProId" TextAlignment="Center" Margin="20,7,0,7" Width="123" ToolTip="请输入需要检索的产品名称，输入完毕按下回车键确定" HorizontalContentAlignment="Center"/>
-                <Button Command="{x:Static comLib:MyCommands.Query}" ToolTip="快速查找" HorizontalAlignment="Center" Content="查找" HorizontalContentAlignment="Center" Margin="5,7,0,7" Width="66" >
-                    <Button.Background>
-                        <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.InfoColorKey}}"/>
-                    </Button.Background>
-                </Button>
             </ToolBar>
             <GroupBox x:Name="group1" Grid.Row="1" Header="参数信息" Background="WhiteSmoke" pu:GroupBoxHelper.HeaderPadding="2,5" pu:GroupBoxHelper.HeaderBackground="DarkGray" 
                       pu:GroupBoxHelper.CornerRadius="5" Margin="0">

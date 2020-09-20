@@ -15,8 +15,8 @@ namespace iFactoryApp.ViewModel
         /// </summary>
         public RFIDViewModel()
         {
-            WriteRFIDWindow = new RFIDLib.RFIDWindow("COM1", false);//写入端口号
-            ReadRFIDWindow = new RFIDLib.RFIDWindow("COM2");//读取端口号
+            WriteRFIDWindow = new RFIDLib.RFIDWindow("COM1", Readmode: false);//写入端口号
+            ReadRFIDWindow = new RFIDLib.RFIDWindow("COM2",Readmode:true);    //读取端口号
             ReadRFIDWindow.button_read_successive_Click(null, null);//连续读取
         }
     }
