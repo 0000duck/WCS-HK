@@ -135,9 +135,10 @@ namespace iFactory.DevComServer
                                     bool[] values;
                                     if(plcDriverHelper.BatchReadValue(section.StartAddr, section.ReadLength,out values))
                                     {
-                                        for(int i=0;i< section.TagPosList.Count; i++)
+                                        for(int i=0;i< section.TagValuePosList.Count; i++)
                                         {
-                                            boolGroup.Tags[section.StartIndex + i].TagValue = values[section.TagPosList[i]];
+                                            TagIndexAndPos indexPost = section.TagValuePosList[i];
+                                            boolGroup.Tags[indexPost.Index].TagValue = values[indexPost.Pos];
                                         }
                                     }
                                 }
@@ -149,9 +150,10 @@ namespace iFactory.DevComServer
                                     short[] values;
                                     if (plcDriverHelper.BatchReadValue(section.StartAddr, section.ReadLength, out values))
                                     {
-                                        for (int i = 0; i < section.TagPosList.Count; i++)
+                                        for (int i = 0; i < section.TagValuePosList.Count; i++)
                                         {
-                                            shortGroup.Tags[section.StartIndex + i].TagValue = values[section.TagPosList[i]];
+                                            TagIndexAndPos indexPost = section.TagValuePosList[i];
+                                            shortGroup.Tags[indexPost.Index].TagValue = values[indexPost.Pos];
                                         }
                                     }
                                 }
@@ -163,9 +165,10 @@ namespace iFactory.DevComServer
                                     int[] values;
                                     if (plcDriverHelper.BatchReadValue(section.StartAddr, section.ReadLength, out values))
                                     {
-                                        for (int i = 0; i < section.TagPosList.Count; i++)
+                                        for (int i = 0; i < section.TagValuePosList.Count; i++)
                                         {
-                                            intGroup.Tags[section.StartIndex + i].TagValue = values[section.TagPosList[i]];
+                                            TagIndexAndPos indexPost = section.TagValuePosList[i];
+                                            intGroup.Tags[indexPost.Index].TagValue = values[indexPost.Pos];
                                         }
                                     }
                                 }
@@ -177,9 +180,10 @@ namespace iFactory.DevComServer
                                     float[] values;
                                     if (plcDriverHelper.BatchReadValue(section.StartAddr, section.ReadLength, out values))
                                     {
-                                        for (int i = 0; i < section.TagPosList.Count; i++)
+                                        for (int i = 0; i < section.TagValuePosList.Count; i++)
                                         {
-                                            floatGroup.Tags[section.StartIndex + i].TagValue = values[section.TagPosList[i]];
+                                            TagIndexAndPos indexPost = section.TagValuePosList[i];
+                                            floatGroup.Tags[indexPost.Index].TagValue = values[indexPost.Pos];
                                         }
                                     }
                                 }
@@ -191,9 +195,10 @@ namespace iFactory.DevComServer
                                     string[] values;
                                     if (plcDriverHelper.BatchReadValue(section.StartAddr, section.ReadLength, out values))
                                     {
-                                        for (int i = 0; i < section.TagPosList.Count; i++)
+                                        for (int i = 0; i < section.TagValuePosList.Count; i++)
                                         {
-                                            stringGroup.Tags[section.StartIndex + i].TagValue = values[section.TagPosList[i]];
+                                            TagIndexAndPos indexPost = section.TagValuePosList[i];
+                                            stringGroup.Tags[indexPost.Index].TagValue = values[indexPost.Pos];
                                         }
                                     }
                                 }

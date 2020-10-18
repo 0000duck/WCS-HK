@@ -60,8 +60,8 @@ namespace iFactoryApp.Service
         {
             if (_taskOrderViewModel.SelectedModel != null)
             {
-                _taskOrderViewModel.SelectedModel.product_count += 1;//读取完成数量
-                _taskOrderViewModel.Update(_taskOrderViewModel.SelectedModel);
+                //_taskOrderViewModel.SelectedModel.product_count += 1;//读取完成数量
+                //_taskOrderViewModel.Update(_taskOrderViewModel.SelectedModel);
             }
         }
 
