@@ -3,6 +3,7 @@ using GalaSoft.MvvmLight.Command;
 using iFactory.CommonLibrary;
 using iFactory.CommonLibrary.Interface;
 using iFactory.DataService.Model;
+using iFactory.DevComServer;
 using iFactoryApp.Common;
 using System;
 using System.Collections.ObjectModel;
@@ -12,6 +13,13 @@ namespace iFactoryApp.ViewModel
     public interface ISystemLogViewModel
     {
         void AddMewStatus(string Content, LogTypeEnum logTypeEnum = LogTypeEnum.Info, bool IsRecordToFile = true);
+        /// <summary>
+        /// 传递错误消息通知并传递复位标签
+        /// </summary>
+        /// <param name="Content"></param>
+        /// <param name="RstTag"></param>
+        /// <param name="RstValue"></param>
+        void AddNewAutoAckWindowInfo(string Content, Tag<short>RstTag,short RstValue);
     }
     public class SystemLogViewModel : ViewModelBase, ISystemLogViewModel
     {
@@ -91,6 +99,26 @@ namespace iFactoryApp.ViewModel
             {
                 GlobalData.ErrMsgObject.SendErrorMessage(Content);//错误消息自动弹窗
             }
+        }
+        /// <summary>
+        /// 触发错误消息弹窗确认
+        /// </summary>
+        /// <param name="Content"></param>
+        /// <param name="RstTag"></param>
+        /// <param name="RstValue"></param>
+        public void AddNewAutoAckWindowInfo(string Content, Tag<short> RstTag, short RstValue)
+        {
+            if (operatesCollection.Count >= 500)
+            {
+                ObservableCollectionHelper.ClearItem<OperateStatus>(operatesCollection);
+            }
+            OperateStatus operateStatus = new OperateStatus(Content, LogTypeEnum.Error);
+            ObservableCollectionHelper.InsertItem<OperateStatus>(operatesCollection, operateStatus);//增加记录
+            _log.WriteLog(Content);
+            ErrMessageViewModel errMessageViewModel = new ErrMessageViewModel() { IsAutoAck = true, MessageContent = Content, RstTag = RstTag, RstValue = RstValue };
+
+            GlobalData.ErrMsgObject.SendErrorMessage(errMessageViewModel);//错误消息自动弹窗
+
         }
         #endregion
     }

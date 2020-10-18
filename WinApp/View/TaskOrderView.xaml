@@ -33,7 +33,7 @@
                 <ColumnDefinition Width="180*"/>
                 <ColumnDefinition Width="441*"/>
             </Grid.ColumnDefinitions>
-            <WindowsFormsHost x:Name="windowsFormsHost1" Margin="1" Grid.Column="0">
+            <WindowsFormsHost x:Name="windowsFormsHost1" Margin="1" Grid.Column="0" >
                 <ky:LiveviewForm x:Name="liveviewForm1" />
             </WindowsFormsHost>
             <WindowsFormsHost x:Name="windowsFormsHost2" Margin="1" Grid.Column="1">

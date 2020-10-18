@@ -3,6 +3,7 @@ using iFactory.DataService.IService;
 using iFactory.DevComServer;
 using iFactoryApp.Common;
 using iFactoryApp.View;
+using iFactoryApp.ViewModel;
 using System;
 using System.Threading.Tasks;
 using System.Windows;
@@ -17,11 +18,13 @@ namespace iFactoryApp
     public partial class App : Application
     {
         private ILogWrite log;
+
         private void Application_Startup(object sender, StartupEventArgs e)
         {
             GlobalData.LoadSettings();//加载参数
             IoC.SetupIoC();//IoC容器启用
             log = IoC.Get<ILogWrite>();
+
             var service1 = IoC.Get<IDatabaseTagGroupService>();
             var service2 = IoC.Get<IDatabaseTagService>();
             PLCManager.SetService(service1, service2, log);

@@ -21,7 +21,7 @@ namespace iFactoryApp.View
             if(viewModel.IsAutoAck)
             {
                 timer = new DispatcherTimer();
-                timer.Interval = TimeSpan.FromSeconds(3);
+                timer.Interval = TimeSpan.FromSeconds(5);
                 timer.IsEnabled = true;
                 timer.Tick += Timer_Tick;
                 timer.Start();

@@ -1,4 +1,5 @@
 ﻿using iFactory.CommonLibrary;
+using iFactory.DevComServer;
 using iFactory.UserManage;
 using iFactoryApp.Common;
 using iFactoryApp.ViewModel;
@@ -19,15 +20,24 @@ namespace iFactoryApp.View
         private readonly RFIDView rfidView = new RFIDView();
         private readonly TaskOrderView taskOrderView = new TaskOrderView();
         private readonly ReportView reportView = new ReportView();
+        private readonly ISystemLogViewModel _systemLogViewModel;
         private IContextMenuView lastView;
 
         public MainWindow()
         {
             InitializeComponent();
             viewModel = IoC.GetViewModel<MainViewModel>(this);
+            _systemLogViewModel = IoC.GetViewModel<ISystemLogViewModel>(this);
             this.DataContext = viewModel;
             lastView = taskOrderView;
             GlobalData.ErrMsgObject.ErrorMessageEvent += ErrorMessageEvent;//错误信息弹窗
+            if (TagList.PLCGroups != null && TagList.PLCGroups.Count > 0)
+            {
+                if (TagList.PLCGroups[0].PlcDevice.IsConnected == false)
+                {
+                    _systemLogViewModel.AddMewStatus("PLC连接失败，请检查设置！",LogTypeEnum.Error);
+                }
+            }
         }
 
         private void MenuItem_Click(object sender, RoutedEventArgs e)

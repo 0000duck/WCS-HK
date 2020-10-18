@@ -24,19 +24,20 @@ namespace iFactory.UserManage
             string _old = txt_Old.Text.Trim();
             string _new = txt_New.Text.Trim();
 
-            if (_old == string.Empty || _new == string.Empty)
+            if (string.IsNullOrEmpty(_old) || string.IsNullOrEmpty(_new))
             {
                 MyFormExtensionMethods.MessageBoxShow("内容不能为空!", "错误");
                 return;
             }
             var user = viewModel.userService.QueryableToEntity(x=>x.id== viewModel.EditModel.id);
-            if (user.user_password != viewModel.EditModel.old_password)
+            if (user.user_password != _old)
             {
                 MyFormExtensionMethods.MessageBoxShow("原密码错误!", "错误");
                 return;
             }
             else
             {
+                viewModel.EditModel.user_password = _new;
                 bool re = viewModel.userService.UpdateEntity(viewModel.EditModel);
                 if (re)
                 {

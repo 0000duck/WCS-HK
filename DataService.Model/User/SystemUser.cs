@@ -26,11 +26,6 @@ namespace iFactory.DataService.Model
         [SugarColumn(Length = 20)]
         public string user_password { get; set; }
         /// <summary>
-        /// 原密码
-        /// </summary>
-        [SugarColumn(IsIgnore =true)]
-        public string old_password { get; set; }
-        /// <summary>
         /// 用户类别
         /// </summary>
         public int user_type { get; set; }

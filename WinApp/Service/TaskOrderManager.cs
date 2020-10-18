@@ -1,5 +1,4 @@
 ﻿using iFactory.CommonLibrary;
-using iFactory.DataService.IService;
 using iFactory.DataService.Model;
 using iFactory.DevComServer;
 using iFactoryApp.Common;
@@ -258,7 +257,7 @@ namespace iFactoryApp.Service
         public bool StartToDownloadParamter(TaskOrder taskOrder)
         {
             List<short> ValueList = new List<short>();
-            _systemLogViewModel.AddMewStatus("开始写入PLC参数");
+            _systemLogViewModel.AddMewStatus($"开始写入{taskOrder.product_name}的PLC参数");
             #region 写入PLC信号
             var plc = TagList.PLCGroups.FirstOrDefault(x => x.PlcDevice.Name == "FxPLC");
             if (plc != null && plc.PlcDevice.IsConnected)
@@ -272,10 +271,11 @@ namespace iFactoryApp.Service
             }
             else
             {
-                _systemLogViewModel.AddMewStatus("PLC参数写入失败",LogTypeEnum.Error);
+                _systemLogViewModel.AddMewStatus("PLC当前未连接，参数写入失败",LogTypeEnum.Error);
                 return false;
             }
             #endregion
+            _systemLogViewModel.AddMewStatus($"开始写入{taskOrder.product_name}的Robot1参数");
             var robot1 = TagList.PLCGroups.FirstOrDefault(x => x.PlcDevice.Name == "Robot1");
             if (robot1 != null && robot1.PlcDevice.IsConnected)
             {
@@ -289,7 +289,7 @@ namespace iFactoryApp.Service
                 _systemLogViewModel.AddMewStatus("Robot1机械手参数写入失败，请检查网络连接后重新下载！", LogTypeEnum.Error);
                 return false;
             }
-
+            _systemLogViewModel.AddMewStatus($"开始写入{taskOrder.product_name}的Robot2参数");
             var robot2 = TagList.PLCGroups.FirstOrDefault(x => x.PlcDevice.Name == "Robot2");
             if (robot2 != null && robot2.PlcDevice.IsConnected)
             {
@@ -302,7 +302,7 @@ namespace iFactoryApp.Service
                 _systemLogViewModel.AddMewStatus("Robot2机械手参数写入失败，请检查网络连接后重新下载！", LogTypeEnum.Error);
                 return false;
             }
-
+            _systemLogViewModel.AddMewStatus($"开始写入{taskOrder.product_name}的Robot3参数");
             var robot3 = TagList.PLCGroups.FirstOrDefault(x => x.PlcDevice.Name == "Robot3");
             if (robot3 != null && robot2.PlcDevice.IsConnected)
             {
@@ -329,6 +329,7 @@ namespace iFactoryApp.Service
                 _systemLogViewModel.AddMewStatus("Robot3机械手参数写入失败，请检查网络连接后重新下载！", LogTypeEnum.Error);
                 return false;
             }
+            _systemLogViewModel.AddMewStatus($"{taskOrder.product_name}所有参数已下载完毕");
             return true;
         }
         private void WritePlcValue(string plcName, string TagName,int value=-1,bool boolValue=false)
