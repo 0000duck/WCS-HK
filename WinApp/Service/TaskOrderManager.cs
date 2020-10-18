@@ -66,7 +66,21 @@ namespace iFactoryApp.Service
 
         #region RFID处理
         /// <summary>
-        /// RFID读取后的消息
+        /// 写入rfid标签值变化
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void RFIDWriteTag_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            Tag<short> tag = sender as Tag<short>;
+            if (tag.TagValue == 1)
+            {
+                _systemLogViewModel.AddMewStatus($"识别到PLC写入信号，开始写入");
+                _RFIDViewModel.WriteRFIDWindow.button_burn_Click(null, null);//调用写入
+            }
+        }
+        /// <summary>
+        /// RFID消息处理
         /// </summary>
         /// <param name="PortErrorMessage"></param>
         /// <param name="WriteErrorMessage"></param>
@@ -94,12 +108,20 @@ namespace iFactoryApp.Service
             {
                 _systemLogViewModel.AddMewStatus(info.Content);
                 string newRfid = _RFIDViewModel.WriteRFIDWindow.WriteQueue.Dequeue();
-                _RFIDViewModel.ReadRFIDWindow.WriteQueue.Enqueue(newRfid);//加入到读取的分组里面
-                if (RFID_WriteTag != null)
+                if(string.IsNullOrEmpty(newRfid)==false)
                 {
-                    RFID_WriteTag.Write(0);
+                    _RFIDViewModel.ReadRFIDWindow.WriteQueue.Enqueue(newRfid);//加入到读取的分组里面
+                    if (RFID_WriteTag != null)
+                    {
+                        RFID_WriteTag.Write(0);
+                    }
+                    _systemLogViewModel.AddMewStatus($"RFID信息写入的为{newRfid},加入读取队列中");
                 }
-                _systemLogViewModel.AddMewStatus(info.Content);
+                else
+                {
+                    _systemLogViewModel.AddMewStatus($"RFID信息写入的为空值，加入读取失败",LogTypeEnum.Error);
+                    RFID_WriteTag.Write(2);
+                }
             }
             else if (info.InfoType == RFIDInfoEnum.ReadError)//读取失败
             {
@@ -111,7 +133,10 @@ namespace iFactoryApp.Service
                 if (_taskOrderViewModel.SelectedModel != null)
                 {
                     _taskOrderViewModel.SelectedModel.defective_count += 1;//更新异常数量
-                    _taskOrderViewModel.Update(_taskOrderViewModel.SelectedModel);
+                    if(_taskOrderViewModel.Update(_taskOrderViewModel.SelectedModel))
+                    {
+                        _systemLogViewModel.AddMewStatus($"RFID信息读取失败，更新不良品数量，当前不良品数量为{_taskOrderViewModel.SelectedModel.defective_count}", LogTypeEnum.Info);
+                    }
                 }
             }
             else if (info.InfoType == RFIDInfoEnum.ReadSuccess)//读取成功
@@ -121,21 +146,6 @@ namespace iFactoryApp.Service
                 {
                     RFID_ReadTag.Write(0);//标识复位
                 }
-            }
-        }
-
-        /// <summary>
-        /// 写入rfid标签值变化
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void RFIDWriteTag_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-        {
-            Tag<short> tag = sender as Tag<short>;
-            if(tag.TagValue==1)
-            {
-                _systemLogViewModel.AddMewStatus($"识别到PLC写入信号，开始写入");
-                _RFIDViewModel.WriteRFIDWindow.button_burn_Click(null, null);//调用写入
             }
         }
         #endregion
@@ -200,7 +210,7 @@ namespace iFactoryApp.Service
                 {
                     Barcode2Tag.Write(0);
                 }
-                _systemLogViewModel.AddMewStatus("sn标签核对成功，复位PLC标识");
+                _systemLogViewModel.AddMewStatus("标签核对成功，开始复位PLC标识");
                 if (barcodeCheckTimer.IsEnabled)
                 {
                     barcodeCheckTimer.Stop();//已比对成功，计时停止
@@ -232,7 +242,7 @@ namespace iFactoryApp.Service
                 {
                     Barcode2Tag.Write(0);
                 }
-                _systemLogViewModel.AddMewStatus("sn标签核对成功，复位PLC标识");
+                _systemLogViewModel.AddMewStatus("计时周期到达，标签核对成功，开始复位PLC标识");
             }
             else
             {
@@ -244,7 +254,7 @@ namespace iFactoryApp.Service
                 {
                     Barcode2Tag.Write(2);
                 }
-                _systemLogViewModel.AddMewStatus("sn标签核在规定时间内仍未匹配通过，写入PLC错误信息", LogTypeEnum.Error);
+                _systemLogViewModel.AddMewStatus("标签核对在规定时间内仍未匹配通过，写入PLC错误信息", LogTypeEnum.Error);
             }
         }
         #endregion
