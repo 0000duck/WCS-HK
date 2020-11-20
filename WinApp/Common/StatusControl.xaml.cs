@@ -46,14 +46,14 @@ namespace iFactoryApp
                 }
             }));
         }
-        //public static readonly DependencyProperty TagNameProperty = DependencyProperty.Register(
-        //   "TagName", typeof(String), typeof(StatusControl), new PropertyMetadata(default(string)));
+        public static readonly DependencyProperty PlcTagNameProperty = DependencyProperty.Register(
+           "PlcTagName", typeof(String), typeof(StatusControl), new PropertyMetadata(default(string)));
 
-        //public string TagName
-        //{
-        //    get => (string)GetValue(TagNameProperty);
-        //    set => SetValue(TagNameProperty, value);
-        //}
+        public string PlcTagName
+        {
+            get => (string)GetValue(PlcTagNameProperty);
+            set => SetValue(PlcTagNameProperty, value);
+        }
 
         //public static readonly DependencyProperty PlcNameProperty = DependencyProperty.Register(
         //  "PlcName", typeof(string), typeof(StatusControl), new PropertyMetadata(default(string)));

@@ -54,6 +54,8 @@ namespace iFactoryApp
             Container.RegisterSingleton<TaskOrderViewModel>();
             Container.RegisterSingleton<RFIDViewModel>();
             Container.RegisterSingleton<ReportViewModel>();
+            Container.RegisterSingleton<TagsViewModel>();
+
             //用户权限
             Container.RegisterSingleton<UserManageViewModel>();
 

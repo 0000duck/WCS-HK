@@ -202,19 +202,12 @@ namespace iFactoryApp.Service
         {
             if (_taskOrderViewModel.cameraBarcode.product_barcode == _taskOrderViewModel.cameraBarcode.graphic_barcode)//条码一致
             {
-                if (Barcode1Tag != null)
-                {
-                    Barcode1Tag.Write(0);
-                }
-                if (Barcode2Tag != null)
-                {
-                    Barcode2Tag.Write(0);
-                }
-                _systemLogViewModel.AddMewStatus("标签核对成功，开始复位PLC标识");
                 if (barcodeCheckTimer.IsEnabled)
                 {
                     barcodeCheckTimer.Stop();//已比对成功，计时停止
                 }
+                flagWrite(0);
+                _systemLogViewModel.AddMewStatus("标签核对成功，开始复位PLC标识");
             }
             else
             {
@@ -234,32 +227,29 @@ namespace iFactoryApp.Service
             barcodeCheckTimer.Stop();
             if (_taskOrderViewModel.cameraBarcode.product_barcode == _taskOrderViewModel.cameraBarcode.graphic_barcode)//条码一致
             {
-                if (Barcode1Tag != null)
-                {
-                    Barcode1Tag.Write(0);
-                }
-                if (Barcode2Tag != null)
-                {
-                    Barcode2Tag.Write(0);
-                }
+                flagWrite(0);
                 _systemLogViewModel.AddMewStatus("计时周期到达，标签核对成功，开始复位PLC标识");
             }
             else
             {
-                if (Barcode1Tag != null)
-                {
-                    Barcode1Tag.Write(2);
-                }
-                if (Barcode2Tag != null)
-                {
-                    Barcode2Tag.Write(2);
-                }
+                flagWrite(2);
                 _systemLogViewModel.AddMewStatus("标签核对在规定时间内仍未匹配通过，写入PLC错误信息", LogTypeEnum.Error);
+            }
+        }
+        private void flagWrite(int value)
+        {
+            if (Barcode1Tag != null)
+            {
+                Barcode1Tag.Write((short)value);
+            }
+            if (Barcode2Tag != null)
+            {
+                Barcode2Tag.Write((short)value);
             }
         }
         #endregion
 
-        #region 数据写入
+        #region 参数下载写入
         /// <summary>
         /// 开始下载参数信息
         /// </summary>
@@ -332,7 +322,7 @@ namespace iFactoryApp.Service
                     ValueList.Add(0);
                 }
                 ValueList.Add((short)taskOrder.pack_mode);
-                WriteRobot("Robot3", "graphic_carton_size", ValueList);//首地址写入
+                WriteRobot("Robot3", "graphic_carton_size_x", ValueList);//首地址写入
             }
             else
             {

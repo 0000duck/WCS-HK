@@ -15,10 +15,6 @@ namespace iFactoryApp.Common
         /// </summary>
         public static List<TcpParmeters> CameraConfig = new List<TcpParmeters>();
         /// <summary>
-        /// 机械手参数
-        /// </summary>
-        public static List<TcpParmeters> RobotConfig = new List<TcpParmeters>();
-        /// <summary>
         /// 重量传感器串口参数
         /// </summary>
         public static SerialConfig WeightConfig = new SerialConfig();
@@ -41,17 +37,6 @@ namespace iFactoryApp.Common
                 tcpParmeters.Ratio = decimal.Parse(ConfigurationManager.AppSettings[$"Port{i}_Ratio"]);
                 CameraConfig.Add(tcpParmeters);
             }
-
-            for (int i = 3; i <= 5; i++)
-            {
-                TcpParmeters tcpParmeters = new TcpParmeters();
-                tcpParmeters.Ip = ConfigurationManager.AppSettings[$"Port{i}_Ip"];
-                tcpParmeters.Port = int.Parse(ConfigurationManager.AppSettings[$"Port{i}_Number"]);
-                tcpParmeters.DecimalNum = int.Parse(ConfigurationManager.AppSettings[$"Port{i}_DecimalNum"]);
-                tcpParmeters.Ratio = decimal.Parse(ConfigurationManager.AppSettings[$"Port{i}_Ratio"]);
-                RobotConfig.Add(tcpParmeters);
-            }
-
         }
 
         /// <summary>

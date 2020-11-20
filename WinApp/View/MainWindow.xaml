@@ -155,6 +155,7 @@
             <MenuItem Header="RFID监控  " Icon="&#xf2c3;" Tag="RFID" Padding="5,0" ToolTip=""  Click="MenuItem_Click" />
             <MenuItem Header="系统信息" Icon="&#xf15c;"  Padding="5,0">
                 <MenuItem Header="系统运行日志" Tag="SystemLog"  Click="MenuItem_Click"  ToolTip="系统操作过程中的一些日志记录信息，可在运行目录下log做进一步查询"/>
+                <MenuItem Header="标签监控" Tag="TagsView"  Click="MenuItem_Click"  ToolTip="标签信息监控"/>
                 <MenuItem Header="关于系统" Tag="SystemInfo"  Click="MenuItem_Click" ToolTip="关于系统的信息"/>
             </MenuItem>
         </Menu>

@@ -3,11 +3,9 @@ using iFactory.DataService.IService;
 using iFactory.DevComServer;
 using iFactoryApp.Common;
 using iFactoryApp.View;
-using iFactoryApp.ViewModel;
 using System;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Input;
 using System.Windows.Threading;
 
 namespace iFactoryApp

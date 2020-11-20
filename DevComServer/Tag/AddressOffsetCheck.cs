@@ -112,6 +112,9 @@ namespace iFactory.DevComServer
                     }
                 }
             }
+
+            addrOffset.IsContinuous = false;
+
             return addrOffset;
         }
         /// <summary>
@@ -141,7 +144,7 @@ namespace iFactory.DevComServer
                 addrSpan = addr2D - addr1D;
                 if (addrSpan <= 10)//间隔10个以内
                 {
-                    addrOffset.OffsetLength = (int)(addrSpan / 2);
+                    addrOffset.OffsetLength = (int)addrSpan;
                     return addrOffset;
                 }
             }
@@ -149,6 +152,7 @@ namespace iFactory.DevComServer
             {
 
             }
+            addrOffset.IsContinuous = false;
             return addrOffset;
         }
         /// <summary>
@@ -158,6 +162,20 @@ namespace iFactory.DevComServer
         public static AddrOffset ModbusContinuousCheck<T>(Tag<T> previousTag, Tag<T> currentTag)
         {
             AddrOffset addrOffset = new AddrOffset(true, 1);
+            int addr1, addr2, addrSpan;
+
+            int.TryParse(previousTag.TagAddr, out addr1);
+            int.TryParse(currentTag.TagAddr, out addr2);
+            addrSpan = addr2 - addr1;
+            if (addrSpan <= 30)//间隔30个以内
+            {
+                addrOffset.OffsetLength = (int)addrSpan;
+            }
+            else
+            {
+                addrOffset.IsContinuous = false;
+            }
+
             return addrOffset;
         }
     }

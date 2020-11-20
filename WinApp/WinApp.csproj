@@ -178,6 +178,7 @@
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="ViewModel\ProductParameterViewModel.cs" />
     <Compile Include="ViewModel\SystemLogViewModel.cs" />
+    <Compile Include="ViewModel\TagsViewModel.cs" />
     <Compile Include="ViewModel\TaskOrderViewModel.cs" />
     <Compile Include="ViewModel\ViewModelLocator.cs" />
     <Compile Include="View\ErrMessageView.xaml.cs">
@@ -200,6 +201,9 @@
     </Compile>
     <Compile Include="View\SystemLogView.xaml.cs">
       <DependentUpon>SystemLogView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\TagsView.xaml.cs">
+      <DependentUpon>TagsView.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\TaskOrderFinishView.xaml.cs">
       <DependentUpon>TaskOrderFinishView.xaml</DependentUpon>
@@ -243,6 +247,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="View\SystemLogView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\TagsView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

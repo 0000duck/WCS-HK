@@ -76,6 +76,10 @@ namespace iFactoryApp.View
                     SystemInfoView systemInfoView = new SystemInfoView();
                     systemInfoView.ShowDialog();
                     break;
+                case "TagsView":
+                    TagsView tagsView = new TagsView();
+                    tagsView.ShowDialog();
+                    break;
                 case "New":
                 case "Edit":
                 case "Delete":

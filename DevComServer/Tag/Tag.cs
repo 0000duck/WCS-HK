@@ -93,6 +93,7 @@ namespace iFactory.DevComServer
                 {
                     _TagValue = value;
                     this.SendPropertyChanged("TagValue");
+                    LastTime = DateTime.Now;//最近一次更新时间
                 }
             }
             get { return _TagValue; }
@@ -125,6 +126,19 @@ namespace iFactory.DevComServer
 
             }
             set => dataType=value;
+        }
+        private DateTime _LastTime;
+        /// <summary>
+        /// 最近一次刷新时间
+        /// </summary>
+        public DateTime LastTime
+        {
+            set
+            {
+                _LastTime = value;
+                this.SendPropertyChanged("LastTime");
+            }
+            get { return _LastTime; }
         }
         /// <summary>
         /// 确定标签类型
