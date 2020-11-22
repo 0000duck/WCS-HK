@@ -26,16 +26,16 @@ namespace iFactory.DevComServer
             _deviceDriver.DataFormat = HslCommunication.Core.DataFormat.ABCD;
             _deviceDriver.IsStringReverse = false; //字符串跌倒
             _deviceDriver.SetPersistentConnection();
-            OperateResult res= _deviceDriver.ConnectServer();
-            if(res.IsSuccess)
-            {
-                _log.WriteLog($"{_device.Name}{_device.Ip}连接成功");
-            }
-            else
-            {
-                _log.WriteLog($"{_device.Name}{_device.Ip}连接失败");
-            }
-            _device.IsConnected = res.IsSuccess;
+            //OperateResult res= _deviceDriver.ConnectServer();
+            //if(res.IsSuccess)
+            //{
+            //    _log.WriteLog($"{_device.Name}{_device.Ip}连接成功");
+            //}
+            //else
+            //{
+            //    _log.WriteLog($"{_device.Name}{_device.Ip}连接失败");
+            //}
+            //_device.IsConnected = res.IsSuccess;
         }
         /// <summary>
         /// 检查连接，并将结果写入ConnectStatus
