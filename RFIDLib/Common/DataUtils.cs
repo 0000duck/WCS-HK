@@ -12,7 +12,7 @@ namespace RFIDLib
             char[] dataChar = new char[4];
             dataChar = data.ToCharArray();
             Array.Reverse(dataChar);
-            byte[] dataByte = new byte[4];
+            byte[] dataByte = new byte[dataChar.Length];
             for (int i = 0; i < dataChar.Length; i++)
             {
                 dataByte[i] = (byte)dataChar[i];
