@@ -118,6 +118,7 @@ namespace iFactory.DevComServer
         /// </summary>
         private void CycReadTagTask()
         {
+            int count = 0;
             Thread.Sleep(3000);//延时等待其他任务加载，然后再启动刷新
             plcDriverHelper.ConnectToPlc();//连接放在线程里面，开始连接
 
@@ -218,8 +219,13 @@ namespace iFactory.DevComServer
                     if (NetworkHelper.IsNetWorkConnect(PlcDevice.Ip))//plc可以ping通
                     {
                         Thread.Sleep(1000);
-                        _log.WriteLog($"{PlcDevice.Name} {PlcDevice.Ip}重新连接并初始化！");
-                        plcDriverHelper.ConnectToPlc();
+                        ++count;
+                        if(count>=10)
+                        {
+                            count = 0;
+                            _log.WriteLog($"{PlcDevice.Name} {PlcDevice.Ip}重新连接并初始化！");
+                            plcDriverHelper.ConnectToPlc();
+                        }
                     }
                     else
                     {

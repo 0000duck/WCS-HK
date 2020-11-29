@@ -11,7 +11,7 @@ namespace iFactory.DevComServer
         /// <summary>
         /// 操作对象.Fx3U使用MelsecA1ENet
         /// </summary>
-        public MelsecMcNet deviceDriver { set; get; }
+        public MelsecMcAsciiNet deviceDriver { set; get; }
        
         private readonly ILogWrite _log;
 
@@ -22,10 +22,11 @@ namespace iFactory.DevComServer
         }
         public void ConnectToPlc()
         {
-            deviceDriver = new MelsecMcNet(_device.Ip, _device.Port);
+            deviceDriver = new MelsecMcAsciiNet(_device.Ip, _device.Port);
             deviceDriver.ConnectTimeOut = 2000; // 网络连接的超时时间
             deviceDriver.NetworkNumber = 0x00;  // 网络号
-            deviceDriver.NetworkStationNumber = 0x00; // 网络站号    
+            deviceDriver.NetworkStationNumber = 0x00; // 网络站号 
+            deviceDriver.ConnectClose();
             deviceDriver.SetPersistentConnection();
             OperateResult res = deviceDriver.ConnectServer();
             if (res.IsSuccess)
@@ -56,7 +57,7 @@ namespace iFactory.DevComServer
             {
                 if (deviceDriver != null)
                 {
-                    OperateResult<short> res = deviceDriver.ReadInt16("D100");
+                    var res = deviceDriver.ReadUInt16("D110");
                     _device.IsConnected = res.IsSuccess;
                 }
                 else
