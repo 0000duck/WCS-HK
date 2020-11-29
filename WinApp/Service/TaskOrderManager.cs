@@ -29,7 +29,7 @@ namespace iFactoryApp.Service
             _systemLogViewModel = systemLogViewModel;
             _taskOrderViewModel = taskOrderViewModel;
             _RFIDViewModel = RfidViewModel;
-            _RFIDViewModel.ReadRFIDWindow.RFIDInfoEvent += ReadRFIDWindow_RFIDInfoEvent;
+         
             barcodeCheckTimer = new DispatcherTimer() { IsEnabled = false, Interval = TimeSpan.FromSeconds(5) };//5秒超时判断
             barcodeCheckTimer.Tick += barcodeCheckTimer_Tick;
             TagInitial();
@@ -76,7 +76,7 @@ namespace iFactoryApp.Service
             if (tag.TagValue == 1)
             {
                 _systemLogViewModel.AddMewStatus($"识别到PLC写入信号，开始写入");
-                _RFIDViewModel.WriteRFIDWindow.button_burn_Click(null, null);//调用写入
+                _RFIDViewModel.WriteRFIDWindow.button_reburn_Click(null, null);//调用写入
             }
         }
         /// <summary>
@@ -85,7 +85,7 @@ namespace iFactoryApp.Service
         /// <param name="PortErrorMessage"></param>
         /// <param name="WriteErrorMessage"></param>
         /// <param name="ReadErrorMessage"></param>
-        private void ReadRFIDWindow_RFIDInfoEvent(RDIDInfo info)
+        private void ReadRFIDWindow_RFIDInfoEvent(RfidInfo info)
         {
             if(info.InfoType== RFIDInfoEnum.PortError)
             {
@@ -104,31 +104,16 @@ namespace iFactoryApp.Service
                     _taskOrderViewModel.Update(_taskOrderViewModel.SelectedModel);
                 }
             }
-            else if (info.InfoType == RFIDInfoEnum.WriteSuccess)//写入成功
+            else if (info.InfoType == RFIDInfoEnum.WriteSuccess)//写入成功,直接显示信息
             {
                 _systemLogViewModel.AddMewStatus(info.Content);
-                string newRfid = _RFIDViewModel.WriteRFIDWindow.WriteQueue.Dequeue();
-                if(string.IsNullOrEmpty(newRfid)==false)
-                {
-                    _RFIDViewModel.ReadRFIDWindow.WriteQueue.Enqueue(newRfid);//加入到读取的分组里面
-                    if (RFID_WriteTag != null)
-                    {
-                        RFID_WriteTag.Write(0);
-                    }
-                    _systemLogViewModel.AddMewStatus($"RFID信息写入的为{newRfid},加入读取队列中");
-                }
-                else
-                {
-                    _systemLogViewModel.AddMewStatus($"RFID信息写入的为空值，加入读取失败",LogTypeEnum.Error);
-                    RFID_WriteTag.Write(2);
-                }
             }
             else if (info.InfoType == RFIDInfoEnum.ReadError)//读取失败
             {
                 _systemLogViewModel.AddMewStatus(info.Content, LogTypeEnum.Error);
-                if(RFID_ReadTag !=null)
+                if(RFID_WriteTag !=null)
                 {
-                    RFID_ReadTag.Write(2);
+                    RFID_WriteTag.Write(2);
                 }
                 if (_taskOrderViewModel.SelectedModel != null)
                 {
@@ -142,9 +127,9 @@ namespace iFactoryApp.Service
             else if (info.InfoType == RFIDInfoEnum.ReadSuccess)//读取成功
             {
                 _systemLogViewModel.AddMewStatus(info.Content);
-                if (RFID_ReadTag != null)
+                if (RFID_WriteTag != null)
                 {
-                    RFID_ReadTag.Write(0);//标识复位
+                    RFID_WriteTag.Write(0);//标识复位
                 }
             }
         }

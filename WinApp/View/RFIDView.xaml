@@ -6,15 +6,12 @@
         xmlns:pu="clr-namespace:Panuon.UI.Silver;assembly=Panuon.UI.Silver"
         xmlns:local="clr-namespace:iFactoryApp.View"
         mc:Ignorable="d"
-        Title="RFID操作界面" Height="540" Width="940" Background="WhiteSmoke" ResizeMode="NoResize" ShowInTaskbar="False">
+        Title="RFID操作界面" Height="520" Width="500" Background="WhiteSmoke" ResizeMode="NoResize" ShowInTaskbar="False">
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition/>
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
         <Frame x:Name="fram1" Grid.Column="0"  NavigationUIVisibility="Hidden" BorderBrush="LightGray" Margin="0.5"/>
         <Border Grid.Column="0" BorderBrush="LightGray" BorderThickness="0.5"/>
-        <Frame x:Name="fram2" Grid.Column="1"  NavigationUIVisibility="Hidden" BorderBrush="LightGray" Margin="0.5"/>
-        <Border Grid.Column="1" BorderBrush="LightGray" BorderThickness="0.5"/>
     </Grid>
 </Window>
