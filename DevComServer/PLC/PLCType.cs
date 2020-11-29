@@ -36,8 +36,8 @@ namespace iFactory.DevComServer
         /// </summary>
         Modbus = 7,
         /// <summary>
-        /// 
+        /// TCP服务端模式
         /// </summary>
-        Undefined2 =8
+        TcpServer =8
     }
 }

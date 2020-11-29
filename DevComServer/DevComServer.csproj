@@ -91,6 +91,7 @@
     <Compile Include="Tag\TagDataType.cs" />
     <Compile Include="Tag\TagGroup.cs" />
     <Compile Include="Tag\TagList.cs" />
+    <Compile Include="Tcp\TcpServer.cs" />
     <Compile Include="Tcp\TcpSocketClient.cs" />
   </ItemGroup>
   <ItemGroup>

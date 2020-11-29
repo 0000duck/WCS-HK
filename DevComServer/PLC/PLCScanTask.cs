@@ -41,6 +41,9 @@ namespace iFactory.DevComServer
                     case PLCType.Modbus:
                         plcDriverHelper = new ModbusTcpHelper(plcDevice, _log);//指定为Modbus连接(Robot机械手)
                         break;
+                    case PLCType.TcpServer:
+                        plcDriverHelper = new TcpServer(plcDevice, _log);//指定为Modbus连接(Robot机械手)
+                        break;
                     default://默认西门子
                         plcDriverHelper = new SimensPLCHelper(plcDevice, _log);//指定为西门子PLC连接
                         

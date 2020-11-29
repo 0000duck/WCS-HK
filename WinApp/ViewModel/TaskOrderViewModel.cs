@@ -25,6 +25,7 @@ namespace iFactoryApp.ViewModel
             { 
                 _SelectedModel = value;
                 RaisePropertyChanged<TaskOrder>("SelectedModel");
+               // RaisePropertyChanged();
             }
             get { return _SelectedModel; } 
         }
