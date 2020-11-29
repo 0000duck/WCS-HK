@@ -101,7 +101,7 @@ namespace iFactory.DevComServer
             {
                 while (!tokenSource.IsCancellationRequested)
                 {
-                    if (stream.CanRead)
+                    if (stream.CanRead && stream.DataAvailable)
                     {
                         byte[] myReadBuffer = new byte[1000];//限定读取32个
                         string myCompleteMessage = string.Empty;
@@ -145,7 +145,7 @@ namespace iFactory.DevComServer
         /// </summary>
         /// <param name="Message"></param>
         /// <param name="client"></param>
-        public void SendMessageToClient(string Message,TcpClient client=null)
+        public bool SendMessageToClient(string Message,TcpClient client=null)
         {
             try
             {
@@ -153,19 +153,27 @@ namespace iFactory.DevComServer
                 {
                     client = ClientDic.FirstOrDefault().Value;
                 }
-                var stream = client.GetStream();
-                if (stream != null && stream.CanWrite)
+                if (client != null)
                 {
-                    Byte[] reply = System.Text.Encoding.ASCII.GetBytes(Message);
-                    stream.Write(reply, 0, reply.Length);
-                    stream.Flush();
-                    _log.WriteLog($"{client.Client.RemoteEndPoint}: 发送消息: {Message}");
+                    var stream = client.GetStream();
+                    if (stream != null && stream.CanWrite)
+                    {
+                        Byte[] reply = System.Text.Encoding.ASCII.GetBytes(Message);
+                        stream.Write(reply, 0, reply.Length);
+                        stream.Flush();
+                        _log.WriteLog($"{client.Client.RemoteEndPoint}: 发送消息: {Message}");
+                    }
+                }
+                else
+                {
+                    _log.WriteLog($"当前未有客户端连接，发送信息{Message} 失败");
                 }
             }
             catch (Exception ex)
             {
                 _log.WriteLog($"{client.Client.RemoteEndPoint}: 发送消息错误: {ex.Message}");
             }
+            return false;
         }
         public void Dispose()
         {
