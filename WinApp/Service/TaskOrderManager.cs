@@ -282,7 +282,8 @@ namespace iFactoryApp.Service
                 //写入尺寸信息
                 ValueList = new List<short>();
                 GetPropertyToList(taskOrder.product_size, ValueList);
-                WriteRobot("Robot1", "product_size", ValueList);
+                WriteTcpClientRobot("Robot1", "chanpinwaijin", ValueList[0]);
+                WriteTcpClientRobot("Robot1", "chanpingaodu", ValueList[1]);
             }
             else
             {
@@ -349,6 +350,25 @@ namespace iFactoryApp.Service
                 else
                 {
                     tag.Write(0);
+                }
+            }
+        }
+        /// <summary>
+        /// 写入尺寸信息
+        /// </summary>
+        /// <param name="RobotName"></param>
+        /// <param name="TagName"></param>
+        /// <param name="size"></param>
+        private void WriteTcpClientRobot(string RobotName, string TagName, int tagValue)
+        {
+            var plc = TagList.PLCGroups.FirstOrDefault(x => x.PlcDevice.Name == RobotName);
+            if (plc != null)
+            {
+                TcpServer tcpServer = plc.plcDriverHelper as TcpServer;
+                if (tcpServer != null)
+                {
+                    tcpServer.SendMessageToClient($"[CamSetVar(\"{TagName}\",{tagValue},1);id=112]");
+                    _systemLogViewModel.AddMewStatus($"写入{RobotName}地址{TagName}成功，写入值为{tagValue}", LogTypeEnum.Info);
                 }
             }
         }
