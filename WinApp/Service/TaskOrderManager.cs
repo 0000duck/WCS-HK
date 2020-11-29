@@ -18,7 +18,7 @@ namespace iFactoryApp.Service
         private readonly TaskOrderViewModel _taskOrderViewModel;
         private readonly RFIDViewModel _RFIDViewModel;
         public List<KeyenceCameraHelper> cameraList = new List<KeyenceCameraHelper>();
-        private Tag<short> RFID_WriteTag, RFID_ReadTag,Barcode1Tag, Barcode2Tag;
+        private Tag<short> RFID_SigTag, RFID_WriteTag, Barcode1Tag, Barcode2Tag;
         private DispatcherTimer barcodeCheckTimer;
         private readonly DispatcherTimer timer;
 
@@ -41,13 +41,13 @@ namespace iFactoryApp.Service
         /// </summary>
         private void TagInitial()
         {
-            TagList.GetTag("rfid_read", out RFID_ReadTag, "FxPLC");//RFID读取
+            TagList.GetTag("rfid_sig", out RFID_SigTag, "FxPLC");//RFID读取
             TagList.GetTag("rfid_write", out RFID_WriteTag, "FxPLC");//RFID写入
             TagList.GetTag("graphic_carton_sn", out Barcode1Tag, "FxPLC");//彩箱SN检测
             TagList.GetTag("product_sn", out Barcode2Tag, "FxPLC");//产品SN检测
-            if (RFID_WriteTag != null)
+            if (RFID_SigTag != null)
             {
-                RFID_WriteTag.PropertyChanged += RFIDWriteTag_PropertyChanged;
+                RFID_SigTag.PropertyChanged += RFIDWriteTag_PropertyChanged;
             }
         }
         /// <summary>
@@ -113,7 +113,7 @@ namespace iFactoryApp.Service
                 _systemLogViewModel.AddMewStatus(info.Content, LogTypeEnum.Error);
                 if(RFID_WriteTag !=null)
                 {
-                    RFID_WriteTag.Write(2);
+                    RFID_WriteTag.Write(2);//失败
                 }
                 if (_taskOrderViewModel.SelectedModel != null)
                 {

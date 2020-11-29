@@ -127,7 +127,7 @@ namespace iFactory.DevComServer
             }
             set => dataType=value;
         }
-        private DateTime _LastTime;
+        private DateTime _LastTime=DateTime.Now;
         /// <summary>
         /// 最近一次刷新时间
         /// </summary>

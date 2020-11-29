@@ -18,7 +18,6 @@ namespace iFactory.DevComServer
         private readonly IPAddress serverAddress;
         private readonly int serverPort;
         private CancellationTokenSource tokenSource;
-        private CancellationToken token;
         private Dictionary<string, TcpClient> ClientDic = new Dictionary<string, TcpClient>();
         private readonly ILogWrite _log;
 
@@ -40,6 +39,7 @@ namespace iFactory.DevComServer
         /// </summary>
         public void Start()
         {
+            _device.IsConnected = true;
             if (tcpListener != null)
             {
                 tcpListener.Stop();
@@ -49,10 +49,9 @@ namespace iFactory.DevComServer
             this.tcpListener = new TcpListener(serverAddress, serverPort);
             tcpListener.Start();
             tokenSource = new CancellationTokenSource();
-            token = tokenSource.Token;
             if (this.listenTask == null || this.listenTask.Status != TaskStatus.Running)
             {
-                this.listenTask = Task.Factory.StartNew(() => ListenForClients(), token);//TaskCreationOptions.LongRunning,
+                this.listenTask = Task.Factory.StartNew(() => ListenForClients(), tokenSource.Token);//TaskCreationOptions.LongRunning,
             }
            
         }
@@ -61,6 +60,7 @@ namespace iFactory.DevComServer
         /// </summary>
         public void Stop()
         {
+            _device.IsConnected = false;
             if (tcpListener != null)
             {
                 tcpListener.Stop();
@@ -171,7 +171,11 @@ namespace iFactory.DevComServer
             }
             catch (Exception ex)
             {
-                _log.WriteLog($"{client.Client.RemoteEndPoint}: 发送消息错误: {ex.Message}");
+                if (client != null)
+                {
+                    ClientDic.Remove(ClientDic.FirstOrDefault().Key);//移除客户端
+                    _log.WriteLog($"{client.Client.RemoteEndPoint}: 发送消息错误: {ex.Message}");
+                }
             }
             return false;
         }
@@ -187,7 +191,7 @@ namespace iFactory.DevComServer
 
         public void CheckConnect()
         {
-            
+            _device.IsConnected = true;
         }
 
         public bool WriteValue(string Address, bool value)
@@ -242,12 +246,14 @@ namespace iFactory.DevComServer
 
         public bool BatchReadValue(string Address, ushort length, out short[] value)
         {
-            throw new NotImplementedException();
+            value = new short[] { };
+            return false;
         }
 
         public bool BatchReadValue(string Address, ushort length, out int[] value)
         {
-            throw new NotImplementedException();
+            value = new int[] { };
+            return false;
         }
 
         public bool BatchReadValue(string Address, ushort length, out float[] value)
