@@ -8,6 +8,7 @@ using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
 
 namespace iFactoryApp.View
 {
@@ -22,7 +23,7 @@ namespace iFactoryApp.View
         private readonly ReportView reportView = new ReportView();
         private readonly ISystemLogViewModel _systemLogViewModel;
         private IContextMenuView lastView;
-
+        private Tag<short> runTag;
         public MainWindow()
         {
             InitializeComponent();
@@ -38,6 +39,31 @@ namespace iFactoryApp.View
                     _systemLogViewModel.AddMewStatus("PLC连接失败，请检查设置！",LogTypeEnum.Error);
                 }
             }
+            TagList.GetTag("system_run", out runTag, "FxPLC");
+            if(runTag !=null)
+            {
+                runTag.PropertyChanged += RunTag_PropertyChanged;
+            }
+        }
+
+        private void RunTag_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            Tag<short> tag = sender as Tag<short>;
+            this.Dispatcher.Invoke(() =>
+            {
+                if (tag.TagValue == 1)
+                {
+                    Menustart.IsEnabled = false;
+                    Menustop.IsEnabled = true;
+                    Menustart.Foreground = Brushes.LimeGreen;
+                }
+                else
+                {
+                    Menustart.IsEnabled = true;
+                    Menustop.IsEnabled = false;
+                    Menustart.Foreground = Brushes.Black;
+                }
+            });
         }
 
         private void MenuItem_Click(object sender, RoutedEventArgs e)
@@ -79,6 +105,12 @@ namespace iFactoryApp.View
                 case "TagsView":
                     TagsView tagsView = new TagsView();
                     tagsView.ShowDialog();
+                    break;
+                case "Start":
+                    runTag.Write(1);
+                    break;
+                case "Stop":
+                    runTag.Write(0);
                     break;
                 case "New":
                 case "Edit":

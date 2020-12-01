@@ -151,7 +151,8 @@
                 <MenuItem Header="删除任务" Tag="Delete"  Click="MenuItem_Click" ToolTip="删除当前选择的任务"/>
                 <MenuItem Header="完成任务" Tag="Finish"  Click="MenuItem_Click" ToolTip="完成正在进行的任务"/>-->
             </MenuItem>
-            <MenuItem Header="数据记录查询  " Icon="&#xf009;" Tag="Report" Padding="5,0" ToolTip=""  Click="MenuItem_Click" />
+            <MenuItem x:Name="Menustart" IsEnabled="True" Header="启动" Icon="&#xf04b;" Tag="Start" Padding="5,0" ToolTip=""  Click="MenuItem_Click" />
+            <MenuItem x:Name="Menustop" IsEnabled="True" Header="停止" Icon="&#xf04d;" Tag="Stop" Padding="5,0" ToolTip=""  Click="MenuItem_Click" />
             <MenuItem Header="RFID监控  " Icon="&#xf2c3;" Tag="RFID" Padding="5,0" ToolTip=""  Click="MenuItem_Click" />
             <MenuItem Header="系统信息" Icon="&#xf15c;"  Padding="5,0">
                 <MenuItem Header="系统运行日志" Tag="SystemLog"  Click="MenuItem_Click"  ToolTip="系统操作过程中的一些日志记录信息，可在运行目录下log做进一步查询"/>
