@@ -43,18 +43,11 @@ namespace RFIDLib
 
         private char[] HexChar = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
 
-        public RFIDWindow(string ComPortName, bool Readmode = true)
+        public RFIDWindow(string ComPortName)
         {
+            
             InitializeComponent();
-            if (Readmode)
-            {
-                labelMode.Content = "当前模式为连续读取";
-            }
-            else
-            {
-                labelMode.Content = "当前模式为写入";
-            }
-
+            
             logHandleUtils.createLogPath();
             dataHandleUtils.createDataPath();
             configHandleUtils.createConfigPath();
@@ -162,7 +155,6 @@ namespace RFIDLib
                 }
             }
         }
-
         private void button_sp_test_Click(object sender, RoutedEventArgs e)
         {
             try

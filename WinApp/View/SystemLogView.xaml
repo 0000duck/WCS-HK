@@ -7,7 +7,7 @@
         xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
         xmlns:local="clr-namespace:iFactoryApp.View"
         mc:Ignorable="d"
-        Title="系统运行日志" Height="433.5" Width="561.5" WindowStartupLocation="CenterOwner" ResizeMode="NoResize">
+        Title="系统运行日志" Height="450" Width="650" WindowStartupLocation="CenterOwner" ResizeMode="NoResize">
     <Grid>
         <DataGrid x:Name="datagrid1" VerticalContentAlignment="Center" AutoGenerateColumns="False" ItemsSource="{Binding OperatesCollection}" ToolTip="右键双击清除" IsReadOnly="True" AlternatingRowBackground="#FFE8E5E5" FontSize="12"
                   pu:DataGridHelper.SelectedBackground="#1C86EE"

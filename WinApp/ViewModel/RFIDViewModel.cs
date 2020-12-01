@@ -1,4 +1,5 @@
 using GalaSoft.MvvmLight;
+using System.Windows;
 
 namespace iFactoryApp.ViewModel
 {
@@ -14,7 +15,7 @@ namespace iFactoryApp.ViewModel
         /// </summary>
         public RFIDViewModel()
         {
-            WriteRFIDWindow = new RFIDLib.RFIDWindow("COM3", Readmode: false);//写入端口号
+            WriteRFIDWindow = new RFIDLib.RFIDWindow("COM3");//写入端口号
         }
     }
 }

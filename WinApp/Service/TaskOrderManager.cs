@@ -75,7 +75,7 @@ namespace iFactoryApp.Service
         private void RFIDWriteTag_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             Tag<short> tag = sender as Tag<short>;
-            if (tag.TagValue == 1)
+            if (tag.TagValue == 1 && e.PropertyName== "TagValue")
             {
                 _systemLogViewModel.AddMewStatus($"识别到PLC信号{tag.TagAddr}=1，开始写入RFID信息");
                 _RFIDViewModel.WriteRFIDWindow.Dispatcher.Invoke(() =>
@@ -99,9 +99,9 @@ namespace iFactoryApp.Service
             else if (info.InfoType == RFIDInfoEnum.WriteError)//写入失败
             {
                 _systemLogViewModel.AddMewStatus(info.Content, LogTypeEnum.Error);
-                if(RFID_WriteTag !=null)
+                if(RFID_WriteTag !=null && RFID_SigTag.TagValue==1)
                 {
-                    RFID_WriteTag.Write(2);
+                    RFID_WriteTag.Write(2);//失败写入
                 }
                 if (_taskOrderViewModel.SelectedModel != null)
                 {
@@ -116,7 +116,7 @@ namespace iFactoryApp.Service
             else if (info.InfoType == RFIDInfoEnum.ReadError)//读取失败
             {
                 _systemLogViewModel.AddMewStatus(info.Content, LogTypeEnum.Error);
-                if(RFID_WriteTag !=null)
+                if(RFID_WriteTag !=null && RFID_SigTag.TagValue == 1)
                 {
                     RFID_WriteTag.Write(2);//失败
                 }
@@ -132,7 +132,7 @@ namespace iFactoryApp.Service
             else if (info.InfoType == RFIDInfoEnum.ReadSuccess)//读取成功
             {
                 _systemLogViewModel.AddMewStatus(info.Content);
-                if (RFID_WriteTag != null)
+                if (RFID_WriteTag != null && RFID_SigTag.TagValue == 1)
                 {
                     RFID_WriteTag.Write(1);//标识复位
                 }
