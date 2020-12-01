@@ -35,6 +35,8 @@ namespace iFactoryApp.Service
             TagInitial();
             timer = new DispatcherTimer() { IsEnabled=true,Interval = TimeSpan.FromSeconds(5) };//5秒周期读取产量数据
             timer.Tick += Timer_Tick;
+
+            _RFIDViewModel.WriteRFIDWindow.RFIDInfoEvent += ReadRFIDWindow_RFIDInfoEvent;
         }
         /// <summary>
         /// 标签初始化
@@ -75,8 +77,11 @@ namespace iFactoryApp.Service
             Tag<short> tag = sender as Tag<short>;
             if (tag.TagValue == 1)
             {
-                _systemLogViewModel.AddMewStatus($"识别到PLC写入信号，开始写入");
-                _RFIDViewModel.WriteRFIDWindow.button_reburn_Click(null, null);//调用写入
+                _systemLogViewModel.AddMewStatus($"识别到PLC信号{tag.TagAddr}=1，开始写入RFID信息");
+                _RFIDViewModel.WriteRFIDWindow.Dispatcher.Invoke(() =>
+                {
+                    _RFIDViewModel.WriteRFIDWindow.button_reburn_Click(null, null);//调用写入
+                });
             }
         }
         /// <summary>
@@ -129,8 +134,12 @@ namespace iFactoryApp.Service
                 _systemLogViewModel.AddMewStatus(info.Content);
                 if (RFID_WriteTag != null)
                 {
-                    RFID_WriteTag.Write(0);//标识复位
+                    RFID_WriteTag.Write(1);//标识复位
                 }
+            }
+            else//其他信息
+            {
+                _systemLogViewModel.AddMewStatus(info.Content);
             }
         }
         #endregion
