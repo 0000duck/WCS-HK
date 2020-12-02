@@ -25,26 +25,20 @@ namespace iFactoryApp.View
             _taskOrderManager= IoC.Get<TaskOrderManager>();
             this.DataContext = viewModel;
             viewModel.LoadAllInfos();
-            _taskOrderManager.InitialCamera(liveviewForm1, 1);
-            _taskOrderManager.InitialCamera(liveviewForm2, 2);
         }
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
+        {
+            _taskOrderManager.InitialCamera(liveviewForm1, 1);
+            _taskOrderManager.InitialCamera(liveviewForm2, 2);
+            CameraExecComand();
+        }
+        public void CameraExecComand()
         {
             for (int i = 0; i < _taskOrderManager.cameraList.Count; i++)
             {
                 _taskOrderManager.cameraList[i].ExecCommandLon();//触发相机
             }
-        }
-        private void Datagrid1_PreviewMouseDoubleClick(object sender, MouseButtonEventArgs e)
-        {
-            e.Handled = true;
-        }
-
-        private void datagrid1_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            viewModel.SelectedModel = null;
-          
         }
         private void ContextMenu_Click(object sender, RoutedEventArgs e)
         {
@@ -155,9 +149,5 @@ namespace iFactoryApp.View
             this.DataContext = viewModel;
         }
 
-        private void led3_MouseUp(object sender, MouseButtonEventArgs e)
-        {
-            MessageBox.Show(this.Width.ToString());
-        }
     }
 }

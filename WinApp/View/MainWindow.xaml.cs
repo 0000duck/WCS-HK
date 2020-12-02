@@ -88,7 +88,8 @@ namespace iFactoryApp.View
             switch (control.Tag.ToString())
             {
                 case "RFID":
-                    if(rfidView.Visibility !=Visibility.Visible)
+                    //taskOrderView.CameraExecComand();
+                    if (rfidView.Visibility !=Visibility.Visible)
                     {
                         rfidView.Show();
                     }
