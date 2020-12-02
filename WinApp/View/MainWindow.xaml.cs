@@ -43,6 +43,7 @@ namespace iFactoryApp.View
             if(runTag !=null)
             {
                 runTag.PropertyChanged += RunTag_PropertyChanged;
+                RunTag_PropertyChanged(runTag,null);
             }
         }
 
@@ -53,15 +54,29 @@ namespace iFactoryApp.View
             {
                 if (tag.TagValue == 1)
                 {
-                    Menustart.IsEnabled = false;
-                    Menustop.IsEnabled = true;
+                    Menustart.Header = "启动中";
+                    Menustop.Header = "停止";
+                    //Menustart.IsEnabled = false;
+                    //Menustop.IsEnabled = true;
                     Menustart.Foreground = Brushes.LimeGreen;
+                    Menustart.FontWeight = FontWeights.Bold;
+                    Menustart.FontStyle = FontStyles.Italic;
+                    Menustop.Foreground = Brushes.Black;
+                    Menustop.FontWeight = FontWeights.Normal;
+                    Menustop.FontStyle = FontStyles.Normal;
                 }
                 else
                 {
-                    Menustart.IsEnabled = true;
-                    Menustop.IsEnabled = false;
+                    Menustart.Header = "启动";
+                    Menustop.Header = "停止中";
+                    //Menustart.IsEnabled = true;
+                    //Menustop.IsEnabled = false;
+                    Menustop.Foreground = Brushes.Red;
+                    Menustop.FontWeight = FontWeights.Bold;
+                    Menustop.FontStyle = FontStyles.Italic;
                     Menustart.Foreground = Brushes.Black;
+                    Menustart.FontWeight = FontWeights.Normal;
+                    Menustart.FontStyle = FontStyles.Normal;
                 }
             });
         }

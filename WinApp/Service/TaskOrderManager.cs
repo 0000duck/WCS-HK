@@ -171,7 +171,7 @@ namespace iFactoryApp.Service
         //产品条码
         private void KeyenceCamera1_NewReaderDataEvent(string receivedData, int index)
         {
-            _systemLogViewModel.AddMewStatus($"接收到产品sn为{receivedData}");
+            _systemLogViewModel.AddMewStatus($"{index}相机接收到产品sn为{receivedData}");
             if(!string.IsNullOrEmpty(receivedData.Trim()) && !receivedData.ToLower().Contains("error"))
             {
                 _taskOrderViewModel.cameraBarcode.product_barcode = receivedData.Trim();
@@ -181,7 +181,7 @@ namespace iFactoryApp.Service
         //彩箱sn
         private void KeyenceCamera2_NewReaderDataEvent(string receivedData, int index)
         {
-            _systemLogViewModel.AddMewStatus($"接收到彩箱sn为{receivedData}");
+            _systemLogViewModel.AddMewStatus($"{index}相机接收到彩箱sn为{receivedData}");
             if (!string.IsNullOrEmpty(receivedData.Trim()) && !receivedData.ToLower().Contains("error"))
             {
                 _taskOrderViewModel.cameraBarcode.graphic_barcode = receivedData.Trim();
@@ -269,7 +269,7 @@ namespace iFactoryApp.Service
                 return false;
             }
             #endregion
-            _systemLogViewModel.AddMewStatus($"开始写入{taskOrder.product_name}的Robot1参数");
+            _systemLogViewModel.AddMewStatus($"开始写入{taskOrder.product_name}的视觉机械手参数");
             var robot1 = TagList.PLCGroups.FirstOrDefault(x => x.PlcDevice.Name == "Robot1");
             if (robot1 != null && robot1.PlcDevice.IsConnected)
             {
@@ -281,31 +281,38 @@ namespace iFactoryApp.Service
             }
             else
             {
-                _systemLogViewModel.AddMewStatus("Robot1机械手参数写入失败，请检查网络连接后重新下载！", LogTypeEnum.Error);
+                _systemLogViewModel.AddMewStatus("视觉机械手参数写入失败，请检查网络连接后重新下载！", LogTypeEnum.Error);
                 return false;
             }
-            _systemLogViewModel.AddMewStatus($"开始写入{taskOrder.product_name}的Robot2参数");
+            _systemLogViewModel.AddMewStatus($"开始写入{taskOrder.product_name}的装箱参数");
             var robot2 = TagList.PLCGroups.FirstOrDefault(x => x.PlcDevice.Name == "Robot2");
             if (robot2 != null && robot2.PlcDevice.IsConnected)
             {
                 ValueList = new List<short>();
                 GetPropertyToList(taskOrder.product_size, ValueList);
-                WriteRobot("Robot2", "product_size", ValueList);
+                WriteRobot("Robot2", "product_size_length", ValueList);
             }
             else
             {
-                _systemLogViewModel.AddMewStatus("Robot2机械手参数写入失败，请检查网络连接后重新下载！", LogTypeEnum.Error);
+                _systemLogViewModel.AddMewStatus("装箱机械手参数写入失败，请检查网络连接后重新下载！", LogTypeEnum.Error);
                 return false;
             }
-            _systemLogViewModel.AddMewStatus($"开始写入{taskOrder.product_name}的Robot3参数");
+            _systemLogViewModel.AddMewStatus($"开始写入{taskOrder.product_name}的码垛参数");
             var robot3 = TagList.PLCGroups.FirstOrDefault(x => x.PlcDevice.Name == "Robot3");
             if (robot3 != null && robot2.PlcDevice.IsConnected)
             {
                 ValueList = new List<short>();
-                GetPropertyToList(taskOrder.graphic_carton_size, ValueList);
-                GetPropertyToList(taskOrder.noraml_carton_size, ValueList);
-                GetPropertyToList(taskOrder.outer_carton_size, ValueList);
-                GetPropertyToList(taskOrder.pallet_size, ValueList);
+                ValueList.Add(2);
+                //ValueList.Add(3);
+                //GetPropertyToList(taskOrder.graphic_carton_size, ValueList);
+                //GetPropertyToList(taskOrder.noraml_carton_size, ValueList);
+                //GetPropertyToList(taskOrder.outer_carton_size, ValueList);
+                //GetPropertyToList(taskOrder.pallet_size, ValueList);
+                WriteRobot("Robot3", "graphic_carton_size_x", ValueList);//首地址写入
+                ValueList = new List<short>();
+                ValueList.Add(33);
+                WriteRobot("Robot3", "graphic_carton_size_y", ValueList);//首地址写入
+                ValueList = new List<short>();
                 ValueList.Add((short)taskOrder.robot_pg_no);
                 ValueList.Add((short)taskOrder.pallet_num);
                 if (taskOrder.plate_enable)
@@ -317,11 +324,11 @@ namespace iFactoryApp.Service
                     ValueList.Add(0);
                 }
                 ValueList.Add((short)taskOrder.pack_mode);
-                WriteRobot("Robot3", "graphic_carton_size_x", ValueList);//首地址写入
+               // WriteRobot("Robot3", "robot_pg_no", ValueList);//首地址写入
             }
             else
             {
-                _systemLogViewModel.AddMewStatus("Robot3机械手参数写入失败，请检查网络连接后重新下载！", LogTypeEnum.Error);
+                _systemLogViewModel.AddMewStatus("码垛机械手参数写入失败，请检查网络连接后重新下载！", LogTypeEnum.Error);
                 return false;
             }
             _systemLogViewModel.AddMewStatus($"{taskOrder.product_name}所有参数已下载完毕");
@@ -372,7 +379,7 @@ namespace iFactoryApp.Service
         /// <param name="RobotName"></param>
         /// <param name="TagName"></param>
         /// <param name="size"></param>
-        private void WriteRobot(string RobotName, string TagName, List<short> ValueList)
+        private bool WriteRobot(string RobotName, string TagName, List<short> ValueList)
         {
             int count = ValueList.Count;
             short[] value = new short[count];
@@ -392,6 +399,7 @@ namespace iFactoryApp.Service
                     if (plc.plcDriverHelper.BatchWriteValue(tag.TagAddr, value))
                     {
                         _systemLogViewModel.AddMewStatus($"写入{RobotName}地址{tag.TagAddr}成功，写入数量为{ValueList.Count}", LogTypeEnum.Info);
+                        return true;
                     }
                     else
                     {
@@ -399,6 +407,7 @@ namespace iFactoryApp.Service
                     }
                 }
             }
+            return false;
         }
 
         public bool GetPropertyToList(string setValue,List<short> ValueList)

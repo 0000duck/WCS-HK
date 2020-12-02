@@ -177,7 +177,10 @@ namespace iFactory.DevComServer
         {
             SendWriteValueEvent(this.TagAddr,Value);
         }
-       
+        /// <summary>
+        /// 描述信息
+        /// </summary>
+       public string description { set; get; }
     }
 
 }

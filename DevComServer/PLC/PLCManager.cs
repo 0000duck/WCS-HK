@@ -94,7 +94,7 @@ namespace iFactory.DevComServer
             tag.TagName = databaseTag.TagName;
             tag.TagAddr = databaseTag.TagAddr;
             tag.GroupId = databaseTag.GroupId;
-
+            tag.description = databaseTag.description;
             plcDevice.AddToGroup<T>(tag);
         }
     }
