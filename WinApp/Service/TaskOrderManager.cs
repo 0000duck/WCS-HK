@@ -18,8 +18,8 @@ namespace iFactoryApp.Service
         private readonly TaskOrderViewModel _taskOrderViewModel;
         private readonly RFIDViewModel _RFIDViewModel;
         public List<KeyenceCameraHelper> cameraList = new List<KeyenceCameraHelper>();
-        private Tag<short> RFID_SigTag, RFID_WriteTag, Barcode1Tag, Barcode2Tag;
-        private DispatcherTimer barcodeCheckTimer;
+        private Tag<short> RFID_SigTag, RFID_WriteTag;
+        private Tag<short> SnSig1Tag, SnSig2Tag, SnDeal1Tag, SnDeal2Tag;
         private readonly DispatcherTimer timer;
 
         public TaskOrderManager(ISystemLogViewModel systemLogViewModel,
@@ -30,8 +30,6 @@ namespace iFactoryApp.Service
             _taskOrderViewModel = taskOrderViewModel;
             _RFIDViewModel = RfidViewModel;
          
-            barcodeCheckTimer = new DispatcherTimer() { IsEnabled = false, Interval = TimeSpan.FromSeconds(5) };//5秒超时判断
-            barcodeCheckTimer.Tick += barcodeCheckTimer_Tick;
             TagInitial();
             timer = new DispatcherTimer() { IsEnabled=true,Interval = TimeSpan.FromSeconds(5) };//5秒周期读取产量数据
             timer.Tick += Timer_Tick;
@@ -45,13 +43,28 @@ namespace iFactoryApp.Service
         {
             TagList.GetTag("rfid_sig", out RFID_SigTag, "FxPLC");//RFID读取
             TagList.GetTag("rfid_write", out RFID_WriteTag, "FxPLC");//RFID写入
-            TagList.GetTag("graphic_carton_sn", out Barcode1Tag, "FxPLC");//彩箱SN检测
-            TagList.GetTag("product_sn", out Barcode2Tag, "FxPLC");//产品SN检测
             if (RFID_SigTag != null)
             {
                 RFID_SigTag.PropertyChanged += RFIDWriteTag_PropertyChanged;
             }
+
+            TagList.GetTag("graphic_carton_sn_sig", out SnSig1Tag, "FxPLC");//彩箱SN检测
+            TagList.GetTag("product_sn_sig", out SnSig2Tag, "FxPLC");//产品SN检测
+            TagList.GetTag("graphic_carton_sn_deal", out SnDeal1Tag, "FxPLC");//彩箱SN处理
+            TagList.GetTag("product_sn_deal", out SnDeal2Tag, "FxPLC");//产品SN处理
+
+            if (SnSig1Tag != null)
+            {
+                SnSig1Tag.PropertyChanged += SnSig1Tag_PropertyChanged; ;
+            }
+            if (SnSig2Tag != null)
+            {
+                SnSig2Tag.PropertyChanged += SnSig2Tag_PropertyChanged; ; ;
+            }
         }
+
+       
+
         /// <summary>
         /// 周期刷新
         /// </summary>
@@ -144,7 +157,49 @@ namespace iFactoryApp.Service
         }
         #endregion
 
-        #region 产品与彩箱sn比对
+        #region 1#产品与2#彩箱sn比对
+        private bool Snsig1 = false, Snsig2 = false;
+        private void SnSig1Tag_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            Tag<short> tag = sender as Tag<short>;
+            if (e.PropertyName == "TagValue" && _taskOrderViewModel.SelectedModel != null && _taskOrderViewModel.SelectedModel.enable_check)
+            {
+                if (tag.TagValue == 1)
+                {
+                    Snsig1 = true;
+                }
+                else
+                {
+                    if(Snsig1)//信号未复位
+                    {
+                        _systemLogViewModel.AddMewStatus($"产品条码未接收到信号，开始写入失败标识");
+                        flagWrite(2);//未查找到条码
+                        Snsig1 = false;
+                    }
+                }
+            }
+        }
+        private void SnSig2Tag_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            Tag<short> tag = sender as Tag<short>;
+            if(e.PropertyName == "TagValue" && _taskOrderViewModel.SelectedModel != null && _taskOrderViewModel.SelectedModel.enable_check)
+            {
+                if (tag.TagValue == 1)
+                {
+                    Snsig2 = true;
+                }
+                else
+                {
+                    if (Snsig2)//信号未复位
+                    {
+                        _systemLogViewModel.AddMewStatus($"彩箱条码未接收到信号，开始写入失败标识");
+                        flagWrite(2);//未查找到条码
+                        Snsig2 = false;
+                    }
+                }
+            }
+        }
+
         /// <summary>
         /// 初始化相机
         /// </summary>
@@ -168,24 +223,38 @@ namespace iFactoryApp.Service
             }
             cameraList.Add(keyenceCameraHelper);
         }
-        //产品条码
+        //1#产品条码
         private void KeyenceCamera1_NewReaderDataEvent(string receivedData, int index)
         {
             _systemLogViewModel.AddMewStatus($"{index}相机接收到产品sn为{receivedData}");
             if(!string.IsNullOrEmpty(receivedData.Trim()) && !receivedData.ToLower().Contains("error"))
             {
-                _taskOrderViewModel.cameraBarcode.product_barcode = receivedData.Trim();
-                StartToCheck();
+                Snsig1 = false;
+                if (_taskOrderViewModel.SelectedModel != null && _taskOrderViewModel.SelectedModel.enable_check)//允许条码比对
+                {
+                    if (SnSig1Tag.TagValue == 1)
+                    {
+                        _taskOrderViewModel.cameraBarcode.product_barcode = receivedData.Trim();
+                        StartToCheck();
+                    }
+                }
             }
         }
-        //彩箱sn
+        //2#彩箱sn
         private void KeyenceCamera2_NewReaderDataEvent(string receivedData, int index)
         {
             _systemLogViewModel.AddMewStatus($"{index}相机接收到彩箱sn为{receivedData}");
             if (!string.IsNullOrEmpty(receivedData.Trim()) && !receivedData.ToLower().Contains("error"))
             {
-                _taskOrderViewModel.cameraBarcode.graphic_barcode = receivedData.Trim();
-                StartToCheck();
+                Snsig2 = false;
+                if (_taskOrderViewModel.SelectedModel != null && _taskOrderViewModel.SelectedModel.enable_check)//允许条码比对
+                {
+                    if (SnSig2Tag.TagValue == 1)
+                    {
+                        _taskOrderViewModel.cameraBarcode.graphic_barcode = receivedData.Trim();
+                        StartToCheck();
+                    }
+                }
             }
         }
         /// <summary>
@@ -196,49 +265,31 @@ namespace iFactoryApp.Service
         {
             if (_taskOrderViewModel.cameraBarcode.product_barcode == _taskOrderViewModel.cameraBarcode.graphic_barcode)//条码一致
             {
-                if (barcodeCheckTimer.IsEnabled)
-                {
-                    barcodeCheckTimer.Stop();//已比对成功，计时停止
-                }
-                flagWrite(0);
+                flagWrite(1);//比对成功1
                 _systemLogViewModel.AddMewStatus("标签核对成功，开始复位PLC标识");
             }
-            else
+            else if(Snsig1 && !Snsig2)//1先到，2还未到，继续等待
             {
-                if (!barcodeCheckTimer.IsEnabled)//未比对成功，开启计时
-                {
-                    barcodeCheckTimer.Start();
-                }
+                //继续等待
+            }
+            else if (Snsig2 && !Snsig1)//2先到，1还未到，继续
+            {
+                //继续等待
             }
         }
         /// <summary>
-        /// 计时周期到达，仍然比对不成功则写入错误
+        /// 反馈标识写入。=1处理成功，条码查找失败=2，比对失败=3
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void barcodeCheckTimer_Tick(object sender, EventArgs e)//时间到达
-        {
-            barcodeCheckTimer.Stop();
-            if (_taskOrderViewModel.cameraBarcode.product_barcode == _taskOrderViewModel.cameraBarcode.graphic_barcode)//条码一致
-            {
-                flagWrite(0);
-                _systemLogViewModel.AddMewStatus("计时周期到达，标签核对成功，开始复位PLC标识");
-            }
-            else
-            {
-                flagWrite(2);
-                _systemLogViewModel.AddMewStatus("标签核对在规定时间内仍未匹配通过，写入PLC错误信息", LogTypeEnum.Error);
-            }
-        }
+        /// <param name="value"></param>
         private void flagWrite(int value)
         {
-            if (Barcode1Tag != null)
+            if (SnDeal1Tag != null)
             {
-                Barcode1Tag.Write((short)value);
+                SnDeal1Tag.Write((short)value);
             }
-            if (Barcode2Tag != null)
+            if (SnDeal2Tag != null)
             {
-                Barcode2Tag.Write((short)value);
+                SnDeal2Tag.Write((short)value);
             }
         }
         #endregion
