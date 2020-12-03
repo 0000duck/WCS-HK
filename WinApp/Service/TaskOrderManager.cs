@@ -157,12 +157,17 @@ namespace iFactoryApp.Service
         }
         #endregion
 
-        #region 1#产品与2#彩箱sn比对
+        #region 1#产品与2#彩箱sn检测与比对
         private bool Snsig1 = false, Snsig2 = false;
         private void SnSig1Tag_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             Tag<short> tag = sender as Tag<short>;
-            if (e.PropertyName == "TagValue" && _taskOrderViewModel.SelectedModel != null && _taskOrderViewModel.SelectedModel.enable_check)
+            bool enable = false;
+            if (_taskOrderViewModel.SelectedModel != null)
+            {
+                enable = _taskOrderViewModel.SelectedModel.enable_check || _taskOrderViewModel.SelectedModel.sn_barcode_enable;
+            }
+            if (e.PropertyName == "TagValue" && enable)
             {
                 if (tag.TagValue == 1)
                 {
@@ -182,7 +187,12 @@ namespace iFactoryApp.Service
         private void SnSig2Tag_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             Tag<short> tag = sender as Tag<short>;
-            if(e.PropertyName == "TagValue" && _taskOrderViewModel.SelectedModel != null && _taskOrderViewModel.SelectedModel.enable_check)
+            bool enable = false;
+            if (_taskOrderViewModel.SelectedModel != null)
+            {
+                enable = _taskOrderViewModel.SelectedModel.enable_check || _taskOrderViewModel.SelectedModel.sn_barcode_enable;
+            }
+            if (e.PropertyName == "TagValue" && enable)
             {
                 if (tag.TagValue == 1)
                 {
@@ -229,12 +239,12 @@ namespace iFactoryApp.Service
             _systemLogViewModel.AddMewStatus($"{index}相机接收到产品sn为{receivedData}");
             if(!string.IsNullOrEmpty(receivedData.Trim()) && !receivedData.ToLower().Contains("error"))
             {
+                _taskOrderViewModel.cameraBarcode.product_barcode = receivedData.Trim();
                 Snsig1 = false;
                 if (_taskOrderViewModel.SelectedModel != null && _taskOrderViewModel.SelectedModel.enable_check)//允许条码比对
                 {
                     if (SnSig1Tag.TagValue == 1)
                     {
-                        _taskOrderViewModel.cameraBarcode.product_barcode = receivedData.Trim();
                         StartToCheck();
                     }
                 }
@@ -246,12 +256,12 @@ namespace iFactoryApp.Service
             _systemLogViewModel.AddMewStatus($"{index}相机接收到彩箱sn为{receivedData}");
             if (!string.IsNullOrEmpty(receivedData.Trim()) && !receivedData.ToLower().Contains("error"))
             {
+                _taskOrderViewModel.cameraBarcode.graphic_barcode = receivedData.Trim();
                 Snsig2 = false;
                 if (_taskOrderViewModel.SelectedModel != null && _taskOrderViewModel.SelectedModel.enable_check)//允许条码比对
                 {
                     if (SnSig2Tag.TagValue == 1)
                     {
-                        _taskOrderViewModel.cameraBarcode.graphic_barcode = receivedData.Trim();
                         StartToCheck();
                     }
                 }
@@ -313,6 +323,7 @@ namespace iFactoryApp.Service
                 WritePlcValue("FxPLC", "sn_barcode_enable", -1, taskOrder.sn_barcode_enable);
                 WritePlcValue("FxPLC", "bubble_cover_enable", -1, taskOrder.bubble_cover_enable);
                 WritePlcValue("FxPLC", "card_machine_enable", -1, taskOrder.card_machine_enable);
+                WritePlcValue("FxPLC", "sn_barcode_compare", -1, taskOrder.enable_check);//条码比对
             }
             else
             {
