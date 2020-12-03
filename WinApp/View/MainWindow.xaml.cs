@@ -19,7 +19,7 @@ namespace iFactoryApp.View
     {
         private readonly MainViewModel viewModel;
         private readonly RFIDView rfidView = new RFIDView();
-        private readonly TaskOrderView taskOrderView = new TaskOrderView();
+        private readonly TaskOrderView taskOrderView;
         private readonly ReportView reportView = new ReportView();
         private readonly ISystemLogViewModel _systemLogViewModel;
         private IContextMenuView lastView;
@@ -30,6 +30,8 @@ namespace iFactoryApp.View
             viewModel = IoC.GetViewModel<MainViewModel>(this);
             _systemLogViewModel = IoC.GetViewModel<ISystemLogViewModel>(this);
             this.DataContext = viewModel;
+            taskOrderView = new TaskOrderView();
+            frame1.NavigateToPage(taskOrderView, false);
             lastView = taskOrderView;
             GlobalData.ErrMsgObject.ErrorMessageEvent += ErrorMessageEvent;//错误信息弹窗
             if (TagList.PLCGroups != null && TagList.PLCGroups.Count > 0)
@@ -88,7 +90,6 @@ namespace iFactoryApp.View
             switch (control.Tag.ToString())
             {
                 case "RFID":
-                    //taskOrderView.CameraExecComand();
                     if (rfidView.Visibility !=Visibility.Visible)
                     {
                         rfidView.Show();

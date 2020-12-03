@@ -169,6 +169,6 @@
             <Button Content="" pu:ButtonHelper.Icon="&#xf14b;"  Tag="Edit" pu:ButtonHelper.ButtonStyle="Hollow" BorderThickness="0" ToolTip="编辑" Margin="2,0"  Click="MenuItem_Click" />
             <Button Content="" pu:ButtonHelper.Icon="&#xf1f8;"  Tag="Delete" pu:ButtonHelper.ButtonStyle="Hollow" BorderThickness="0" ToolTip="删除。如果有勾选框，需要勾选之后再点击进行删除" Margin="2,0"  Click="MenuItem_Click" />
         </StackPanel>
-        <Frame Grid.Row="2" x:Name="frame1" Source="/View/TaskOrderView.xaml" NavigationUIVisibility="Hidden"/>
+        <Frame Grid.Row="2" x:Name="frame1" NavigationUIVisibility="Hidden"/>
     </Grid>
 </pu:WindowX>

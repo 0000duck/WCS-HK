@@ -23,14 +23,14 @@ namespace iFactoryApp.View
             viewModel = IoC.GetViewModel<TaskOrderViewModel>(this);
             systemLogViewModel = IoC.Get<ISystemLogViewModel>();
             _taskOrderManager= IoC.Get<TaskOrderManager>();
+            _taskOrderManager.InitialCamera(liveviewForm1, 1);
+            _taskOrderManager.InitialCamera(liveviewForm2, 2);
             this.DataContext = viewModel;
             viewModel.LoadAllInfos();
         }
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            _taskOrderManager.InitialCamera(liveviewForm1, 1);
-            _taskOrderManager.InitialCamera(liveviewForm2, 2);
             CameraExecComand();
         }
         public void CameraExecComand()

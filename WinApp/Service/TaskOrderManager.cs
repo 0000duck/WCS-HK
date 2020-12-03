@@ -12,7 +12,7 @@ using System.Windows.Threading;
 
 namespace iFactoryApp.Service
 {
-    public class TaskOrderManager: ErrorMessageEventClass
+    public class TaskOrderManager: ErrorMessageEventClass,IDisposable
     {
         private readonly ISystemLogViewModel _systemLogViewModel;
         private readonly TaskOrderViewModel _taskOrderViewModel;
@@ -477,8 +477,19 @@ namespace iFactoryApp.Service
 
             return false;
         }
+
+        public void Dispose()
+        {
+            if(cameraList !=null)
+            {
+                foreach (var item in cameraList)
+                {
+                    item.Dispose();
+                }
+            }
+        }
         #endregion
 
-        
+
     }
 }
