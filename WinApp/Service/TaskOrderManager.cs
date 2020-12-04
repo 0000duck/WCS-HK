@@ -241,6 +241,7 @@ namespace iFactoryApp.Service
             {
                 _taskOrderViewModel.cameraBarcode.product_barcode = receivedData.Trim();
                 Snsig1 = false;
+                flagWrite(1, sn1: true, sn2: false);//查找到条码
                 if (_taskOrderViewModel.SelectedModel != null && _taskOrderViewModel.SelectedModel.enable_check)//允许条码比对
                 {
                     if (SnSig1Tag.TagValue == 1)
@@ -258,6 +259,7 @@ namespace iFactoryApp.Service
             {
                 _taskOrderViewModel.cameraBarcode.graphic_barcode = receivedData.Trim();
                 Snsig2 = false;
+                flagWrite(1, sn1: false, sn2: true);//查找到条码
                 if (_taskOrderViewModel.SelectedModel != null && _taskOrderViewModel.SelectedModel.enable_check)//允许条码比对
                 {
                     if (SnSig2Tag.TagValue == 1)
@@ -275,20 +277,17 @@ namespace iFactoryApp.Service
         {
             if (_taskOrderViewModel.cameraBarcode.product_barcode == _taskOrderViewModel.cameraBarcode.graphic_barcode)//条码一致
             {
-                flagWrite(1);//比对成功1
-                _systemLogViewModel.AddMewStatus("标签核对成功，开始复位PLC标识");
+                flagWrite(3);//比对成功3
+                _systemLogViewModel.AddMewStatus("标签核对成功，写入3，开始复位PLC标识");
             }
-            else if(Snsig1 && !Snsig2)//1先到，2还未到，继续等待
+            else if(!Snsig1 && !Snsig2)//1-2均已到了，对比失败写入4
             {
-                //继续等待
-            }
-            else if (Snsig2 && !Snsig1)//2先到，1还未到，继续
-            {
-                //继续等待
+                flagWrite(4);
+                _systemLogViewModel.AddMewStatus("标签核对失败，写入4，开始复位PLC标识");
             }
         }
         /// <summary>
-        /// 反馈标识写入。=1处理成功，条码查找失败=2，比对失败=3
+        /// 反馈标识写入。=1条码检测成功，条码检测失败=2，条码比对成功=3，对比失败写4
         /// </summary>
         /// <param name="value"></param>
         private void flagWrite(int value,bool sn1 = true, bool sn2 = true)
