@@ -178,7 +178,7 @@ namespace iFactoryApp.Service
                     if(Snsig1)//信号未复位
                     {
                         _systemLogViewModel.AddMewStatus($"产品条码未接收到信号，开始写入失败标识");
-                        flagWrite(2);//未查找到条码
+                        flagWrite(2,sn1:true,sn2:false);//未查找到条码
                         Snsig1 = false;
                     }
                 }
@@ -203,7 +203,7 @@ namespace iFactoryApp.Service
                     if (Snsig2)//信号未复位
                     {
                         _systemLogViewModel.AddMewStatus($"彩箱条码未接收到信号，开始写入失败标识");
-                        flagWrite(2);//未查找到条码
+                        flagWrite(2,sn1: false, sn2: true);//未查找到条码
                         Snsig2 = false;
                     }
                 }
@@ -291,13 +291,13 @@ namespace iFactoryApp.Service
         /// 反馈标识写入。=1处理成功，条码查找失败=2，比对失败=3
         /// </summary>
         /// <param name="value"></param>
-        private void flagWrite(int value)
+        private void flagWrite(int value,bool sn1 = true, bool sn2 = true)
         {
-            if (SnDeal1Tag != null)
+            if (SnDeal1Tag != null && sn1)
             {
                 SnDeal1Tag.Write((short)value);
             }
-            if (SnDeal2Tag != null)
+            if (SnDeal2Tag != null && sn2)
             {
                 SnDeal2Tag.Write((short)value);
             }
