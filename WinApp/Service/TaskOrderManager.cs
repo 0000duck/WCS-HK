@@ -8,6 +8,7 @@ using RFIDLib;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Windows.Threading;
 
 namespace iFactoryApp.Service
@@ -48,10 +49,10 @@ namespace iFactoryApp.Service
                 RFID_SigTag.PropertyChanged += RFIDWriteTag_PropertyChanged;
             }
 
-            TagList.GetTag("graphic_carton_sn_sig", out SnSig1Tag, "FxPLC");//彩箱SN检测
-            TagList.GetTag("product_sn_sig", out SnSig2Tag, "FxPLC");//产品SN检测
-            TagList.GetTag("graphic_carton_sn_deal", out SnDeal1Tag, "FxPLC");//彩箱SN处理
-            TagList.GetTag("product_sn_deal", out SnDeal2Tag, "FxPLC");//产品SN处理
+            TagList.GetTag("product_sn_sig", out SnSig1Tag, "FxPLC");//产品SN检测
+            TagList.GetTag("graphic_carton_sn_sig", out SnSig2Tag, "FxPLC");//彩箱SN检测
+            TagList.GetTag("product_sn_deal", out SnDeal1Tag, "FxPLC");//产品SN处理
+            TagList.GetTag("graphic_carton_sn_deal", out SnDeal2Tag, "FxPLC");//彩箱SN处理
 
             if (SnSig1Tag != null)
             {
@@ -62,9 +63,6 @@ namespace iFactoryApp.Service
                 SnSig2Tag.PropertyChanged += SnSig2Tag_PropertyChanged; ; ;
             }
         }
-
-       
-
         /// <summary>
         /// 周期刷新
         /// </summary>
@@ -91,9 +89,15 @@ namespace iFactoryApp.Service
             if (tag.TagValue == 1 && e.PropertyName== "TagValue")
             {
                 _systemLogViewModel.AddMewStatus($"识别到PLC信号{tag.TagAddr}=1，开始写入RFID信息");
+                //Thread.Sleep(5000);
                 _RFIDViewModel.WriteRFIDWindow.Dispatcher.Invoke(() =>
                 {
-                    _RFIDViewModel.WriteRFIDWindow.button_reburn_Click(null, null);//调用写入
+                    _RFIDViewModel.WriteRFIDWindow.button_burn_Click(null, null);
+                    if (!_RFIDViewModel.WriteRFIDWindow.IsBurnSuccess)//烧写未成功，调用重新烧录
+                    {
+                        _systemLogViewModel.AddMewStatus($"RFID写入未成功，开始调用重新烧录RFID信息");
+                        _RFIDViewModel.WriteRFIDWindow.button_reburn_Click(null, null);//调用写入
+                    }
                 });
             }
         }
@@ -177,8 +181,8 @@ namespace iFactoryApp.Service
                 {
                     if(Snsig1)//信号未复位
                     {
-                        _systemLogViewModel.AddMewStatus($"产品条码未接收到信号，开始写入失败标识");
-                        flagWrite(2,sn1:true,sn2:false);//未查找到条码
+                        _systemLogViewModel.AddMewStatus($"产品条码未接收到信号，当前标签值={tag.TagValue},开始写入失败标识3");
+                        flagWrite(3,sn1:true,sn2:false);//未查找到条码
                         Snsig1 = false;
                     }
                 }
@@ -202,8 +206,8 @@ namespace iFactoryApp.Service
                 {
                     if (Snsig2)//信号未复位
                     {
-                        _systemLogViewModel.AddMewStatus($"彩箱条码未接收到信号，开始写入失败标识");
-                        flagWrite(2,sn1: false, sn2: true);//未查找到条码
+                        _systemLogViewModel.AddMewStatus($"彩箱条码未接收到信号，当前标签值={tag.TagValue},开始写入失败标识3");
+                        flagWrite(3,sn1: false, sn2: true);//未查找到条码
                         Snsig2 = false;
                     }
                 }
@@ -277,8 +281,8 @@ namespace iFactoryApp.Service
         {
             if (_taskOrderViewModel.cameraBarcode.product_barcode == _taskOrderViewModel.cameraBarcode.graphic_barcode)//条码一致
             {
-                flagWrite(3);//比对成功3
-                _systemLogViewModel.AddMewStatus("标签核对成功，写入3，开始复位PLC标识");
+                flagWrite(2);//比对成功2
+                _systemLogViewModel.AddMewStatus("标签核对成功，写入2，开始复位PLC标识");
             }
             else if(!Snsig1 && !Snsig2)//1-2均已到了，对比失败写入4
             {
@@ -287,7 +291,7 @@ namespace iFactoryApp.Service
             }
         }
         /// <summary>
-        /// 反馈标识写入。=1条码检测成功，条码检测失败=2，条码比对成功=3，对比失败写4
+        /// 反馈标识写入。=1条码检测成功，条码检测失败=3，条码比对成功=2，对比失败写4
         /// </summary>
         /// <param name="value"></param>
         private void flagWrite(int value,bool sn1 = true, bool sn2 = true)

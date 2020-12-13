@@ -130,6 +130,7 @@ namespace iFactoryApp.View
                     runTag.Write(0);
                     break;
                 case "New":
+                case "Load":
                 case "Edit":
                 case "Delete":
                 case "Finish":

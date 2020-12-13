@@ -62,14 +62,21 @@ namespace iFactoryApp.View
         }
         public void ContextMenu_Click(string click_name)
         {
-            if (click_name == "New")//新建
+            if (click_name == "Load")//加载选择
             {
                 viewModel.EditModel = new TaskOrder();
+                if(viewModel.SelectedModel !=null)//复制上一次的参数
+                {
+                    viewModel.EditModel.product_name = viewModel.SelectedModel.product_name;
+                    viewModel.EditModel.pack_mode = viewModel.SelectedModel.pack_mode;
+                    viewModel.EditModel.enable_check = viewModel.SelectedModel.enable_check;
+                }
                 TaskOrderEditView editView = new TaskOrderEditView();
                 editView.Topmost = true;
                 editView.Show();
                 editView.Closed += EditView_Closed;
             }
+            
             else if (click_name == "Edit")//编辑
             {
                 if (viewModel.SelectedModel != null)
