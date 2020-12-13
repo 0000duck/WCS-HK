@@ -148,6 +148,7 @@ namespace iFactoryApp.View
                 }
             }
         }
+
         //编辑窗体关闭刷新
         private void EditView_Closed(object sender, EventArgs e)
         {
@@ -156,5 +157,21 @@ namespace iFactoryApp.View
             this.DataContext = viewModel;
         }
 
+        private void btnRemove1_Click(object sender, RoutedEventArgs e)
+        {
+            MessageBoxResult result = MessageBoxX.Show($"确定清除产品SN信息吗？", "确认", Application.Current.MainWindow, MessageBoxButton.YesNo);
+            if (result == MessageBoxResult.Yes)
+            {
+                _taskOrderManager.RstSnSig1();
+            }
+        }
+        private void btnRemove2_Click(object sender, RoutedEventArgs e)
+        {
+            MessageBoxResult result = MessageBoxX.Show($"确定清除彩箱SN信息吗？", "确认", Application.Current.MainWindow, MessageBoxButton.YesNo);
+            if (result == MessageBoxResult.Yes)
+            {
+                _taskOrderManager.RstSnSig2();
+            }
+        }
     }
 }

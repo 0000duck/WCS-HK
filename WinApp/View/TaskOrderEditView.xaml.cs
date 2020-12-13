@@ -57,7 +57,9 @@ namespace iFactoryApp.View
                 MessageBoxX.Show("产品名称不能为空", "错误", Application.Current.MainWindow);
                 return;
             }
-            if(_viewModel.SelectedModel !=null)
+            _taskOrderManager.RstSnSig1();//信号复位
+            _taskOrderManager.RstSnSig2();//信号复位
+            if (_viewModel.SelectedModel !=null)
             {
                 _viewModel.Finish(_viewModel.SelectedModel);//完成
             }
@@ -81,6 +83,7 @@ namespace iFactoryApp.View
             _viewModel.EditModel.order_status =(int) OrderStatusEnum.Running;
             _viewModel.EditModel.start_time = DateTime.Now;
             _viewModel.EditModel.pack_mode = (int)PackMode.None;
+
             if (radioButton1.IsChecked==true)//装箱模式
             {
                 _viewModel.EditModel.pack_mode = (int)PackMode.Pack;

@@ -162,7 +162,40 @@ namespace iFactoryApp.Service
         #endregion
 
         #region 1#产品与2#彩箱sn检测与比对
+        /// <summary>
+        /// 信号1复位
+        /// </summary>
+        public void RstSnSig1()
+        {
+            _systemLogViewModel.AddMewStatus($"开始复位产品相机的信号");
+            Snsig1 = false;
+            PreSn1Barcode = "";
+            _taskOrderViewModel.cameraBarcode.product_barcode = "";
+            flagWrite(0, sn1: true, sn2: false);//信号复位
+            if (SnDeal2Tag.TagValue == 4)//对比失败
+            {
+                _systemLogViewModel.AddMewStatus($"当前彩箱信号为对比失败，将彩箱信号=1");
+                flagWrite(1, sn1: false, sn2: true);//信号2复位
+            }
+        }
+        /// <summary>
+        /// 信号2复位
+        /// </summary>
+        public void RstSnSig2()
+        {
+            _systemLogViewModel.AddMewStatus($"开始复位彩箱相机的信号");
+            Snsig2 = false;
+            PreSn2Barcode = "";
+            _taskOrderViewModel.cameraBarcode.graphic_barcode = "";
+            flagWrite(0, sn1: false, sn2: true);//信号2复位
+            if (SnDeal1Tag.TagValue == 4)//对比失败
+            {
+                _systemLogViewModel.AddMewStatus($"当前产品信号为对比失败，将产品信号=1");
+                flagWrite(1, sn1: true, sn2: false);//信号1复位
+            }
+        }
         private bool Snsig1 = false, Snsig2 = false;
+        private string PreSn1Barcode = string.Empty, PreSn2Barcode = string.Empty;//当前条码
         private void SnSig1Tag_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             Tag<short> tag = sender as Tag<short>;
@@ -175,13 +208,15 @@ namespace iFactoryApp.Service
             {
                 if (tag.TagValue == 1)
                 {
+                    _systemLogViewModel.AddMewStatus($"检测到产品相机的PLC信号=1");
+                    PreSn1Barcode = "";
                     Snsig1 = true;
                 }
                 else
                 {
                     if(Snsig1)//信号未复位
                     {
-                        _systemLogViewModel.AddMewStatus($"产品条码未接收到信号，当前标签值={tag.TagValue},开始写入失败标识3");
+                        _systemLogViewModel.AddMewStatus($"产品相机未检测到条码，当前标签值={tag.TagValue},开始写入PLC失败信号值=3");
                         flagWrite(3,sn1:true,sn2:false);//未查找到条码
                         Snsig1 = false;
                     }
@@ -200,13 +235,15 @@ namespace iFactoryApp.Service
             {
                 if (tag.TagValue == 1)
                 {
+                    _systemLogViewModel.AddMewStatus($"检测到彩箱相机的PLC信号=1");
+                    PreSn2Barcode = "";
                     Snsig2 = true;
                 }
                 else
                 {
                     if (Snsig2)//信号未复位
                     {
-                        _systemLogViewModel.AddMewStatus($"彩箱条码未接收到信号，当前标签值={tag.TagValue},开始写入失败标识3");
+                        _systemLogViewModel.AddMewStatus($"彩箱相机未检测到条码，当前标签值={tag.TagValue},开始写入PLC失败信号值=3");
                         flagWrite(3,sn1: false, sn2: true);//未查找到条码
                         Snsig2 = false;
                     }
@@ -240,16 +277,18 @@ namespace iFactoryApp.Service
         //1#产品条码
         private void KeyenceCamera1_NewReaderDataEvent(string receivedData, int index)
         {
-            _systemLogViewModel.AddMewStatus($"{index}相机接收到产品sn为{receivedData}");
+            _systemLogViewModel.AddMewStatus($"产品相机检测到条码信息为：{receivedData}");
             if(!string.IsNullOrEmpty(receivedData.Trim()) && !receivedData.ToLower().Contains("error"))
             {
-                _taskOrderViewModel.cameraBarcode.product_barcode = receivedData.Trim();
-                Snsig1 = false;
+                PreSn1Barcode= receivedData.Trim();
+                _taskOrderViewModel.cameraBarcode.product_barcode = PreSn1Barcode;
+                Snsig1 = false;//复位存在标识
                 flagWrite(1, sn1: true, sn2: false);//查找到条码
                 if (_taskOrderViewModel.SelectedModel != null && _taskOrderViewModel.SelectedModel.enable_check)//允许条码比对
                 {
                     if (SnSig1Tag.TagValue == 1)
                     {
+                        _systemLogViewModel.AddMewStatus($"产品相机触发信号值=1，开始进行条码对比");
                         StartToCheck();
                     }
                 }
@@ -258,16 +297,18 @@ namespace iFactoryApp.Service
         //2#彩箱sn
         private void KeyenceCamera2_NewReaderDataEvent(string receivedData, int index)
         {
-            _systemLogViewModel.AddMewStatus($"{index}相机接收到彩箱sn为{receivedData}");
+            _systemLogViewModel.AddMewStatus($"彩箱相机检测到条码为：{receivedData}");
             if (!string.IsNullOrEmpty(receivedData.Trim()) && !receivedData.ToLower().Contains("error"))
             {
-                _taskOrderViewModel.cameraBarcode.graphic_barcode = receivedData.Trim();
-                Snsig2 = false;
+                PreSn2Barcode = receivedData.Trim();
+                _taskOrderViewModel.cameraBarcode.graphic_barcode = PreSn2Barcode;
+                Snsig2 = false;//复位存在标识
                 flagWrite(1, sn1: false, sn2: true);//查找到条码
                 if (_taskOrderViewModel.SelectedModel != null && _taskOrderViewModel.SelectedModel.enable_check)//允许条码比对
                 {
                     if (SnSig2Tag.TagValue == 1)
                     {
+                        _systemLogViewModel.AddMewStatus($"彩箱相机触发信号值=1，开始进行条码对比");
                         StartToCheck();
                     }
                 }
@@ -279,15 +320,31 @@ namespace iFactoryApp.Service
         /// </summary>
         private void StartToCheck()
         {
-            if (_taskOrderViewModel.cameraBarcode.product_barcode == _taskOrderViewModel.cameraBarcode.graphic_barcode)//条码一致
+            if(PreSn1Barcode.Length>0 && PreSn2Barcode.Length>0)
             {
-                flagWrite(2);//比对成功2
-                _systemLogViewModel.AddMewStatus("标签核对成功，写入2，开始复位PLC标识");
+                if (_taskOrderViewModel.cameraBarcode.product_barcode == _taskOrderViewModel.cameraBarcode.graphic_barcode)//条码一致
+                {
+                    flagWrite(2);//比对成功2
+                    _systemLogViewModel.AddMewStatus("标签对比成功，写入PLC值=2，开始复位PLC标识");
+                    PreSn1Barcode = "";
+                    PreSn2Barcode = "";
+                }
+                else
+                {
+                    flagWrite(4);
+                    _systemLogViewModel.AddMewStatus("标签对比失败，写入PLC值=4，开始复位PLC标识");
+                }
             }
-            else if(!Snsig1 && !Snsig2)//1-2均已到了，对比失败写入4
+            else
             {
-                flagWrite(4);
-                _systemLogViewModel.AddMewStatus("标签核对失败，写入4，开始复位PLC标识");
+                if(PreSn1Barcode.Length==0)
+                {
+                    _systemLogViewModel.AddMewStatus("当前不满足对比条件，因为产品的条码信息不具备");
+                }
+                else
+                {
+                    _systemLogViewModel.AddMewStatus("当前不满足对比条件，因为彩箱条码信息不具备");
+                }
             }
         }
         /// <summary>
