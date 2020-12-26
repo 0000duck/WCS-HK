@@ -203,6 +203,7 @@ namespace RFIDLib
             work_command_num = textBox_work_command_NO.Text;
         }
 
+        public bool IsBurnSuccess = false;//是否烧写成功
         /// <summary>
         /// 烧录
         /// </summary>
@@ -210,6 +211,7 @@ namespace RFIDLib
         /// <param name="e"></param>
         public void button_burn_Click(object sender, RoutedEventArgs e)
         {
+            IsBurnSuccess = false;
             textBox_info_box.Background = new SolidColorBrush(Constans.whtieColor);
             recieveData = "";
             if (serialPort != null && serialPort.IsOpen)
@@ -243,6 +245,7 @@ namespace RFIDLib
                         textBox_serial_NO.Text = serial_num_int.ToString();
                         string config = factory_num + "-" + product_num + "-" + textBox_serial_NO.Text + "-" + Check_WorkCommand.IsChecked.ToString() + "-" + work_command_num + "-";
                         configHandleUtils.writeConfig(config);
+                        IsBurnSuccess = true;
                         RfidInfo info = new RfidInfo() { InfoType = RFIDInfoEnum.WriteSuccess,Sn= sn[0], Content = $"写入RFID成功{factory_num},{ product_num },{textBox_serial_NO.Text},{product_date},{sn[0]}" };
                         SendRfidOperateEvent(info);
                     }
