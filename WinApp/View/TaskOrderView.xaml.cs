@@ -23,28 +23,22 @@ namespace iFactoryApp.View
             viewModel = IoC.GetViewModel<TaskOrderViewModel>(this);
             systemLogViewModel = IoC.Get<ISystemLogViewModel>();
             _taskOrderManager= IoC.Get<TaskOrderManager>();
-            this.DataContext = viewModel;
-            viewModel.LoadAllInfos();
             _taskOrderManager.InitialCamera(liveviewForm1, 1);
             _taskOrderManager.InitialCamera(liveviewForm2, 2);
+            this.DataContext = viewModel;
+            viewModel.LoadAllInfos();
         }
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
+        {
+            CameraExecComand();
+        }
+        public void CameraExecComand()
         {
             for (int i = 0; i < _taskOrderManager.cameraList.Count; i++)
             {
                 _taskOrderManager.cameraList[i].ExecCommandLon();//触发相机
             }
-        }
-        private void Datagrid1_PreviewMouseDoubleClick(object sender, MouseButtonEventArgs e)
-        {
-            e.Handled = true;
-        }
-
-        private void datagrid1_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            viewModel.SelectedModel = null;
-          
         }
         private void ContextMenu_Click(object sender, RoutedEventArgs e)
         {
@@ -68,14 +62,21 @@ namespace iFactoryApp.View
         }
         public void ContextMenu_Click(string click_name)
         {
-            if (click_name == "New")//新建
+            if (click_name == "Load")//加载选择
             {
                 viewModel.EditModel = new TaskOrder();
+                if(viewModel.SelectedModel !=null)//复制上一次的参数
+                {
+                    viewModel.EditModel.product_name = viewModel.SelectedModel.product_name;
+                    viewModel.EditModel.pack_mode = viewModel.SelectedModel.pack_mode;
+                    viewModel.EditModel.enable_check = viewModel.SelectedModel.enable_check;
+                }
                 TaskOrderEditView editView = new TaskOrderEditView();
                 editView.Topmost = true;
                 editView.Show();
                 editView.Closed += EditView_Closed;
             }
+            
             else if (click_name == "Edit")//编辑
             {
                 if (viewModel.SelectedModel != null)
@@ -147,6 +148,7 @@ namespace iFactoryApp.View
                 }
             }
         }
+
         //编辑窗体关闭刷新
         private void EditView_Closed(object sender, EventArgs e)
         {
@@ -155,9 +157,21 @@ namespace iFactoryApp.View
             this.DataContext = viewModel;
         }
 
-        private void led3_MouseUp(object sender, MouseButtonEventArgs e)
+        private void btnRemove1_Click(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show(this.Width.ToString());
+            MessageBoxResult result = MessageBoxX.Show($"确定清除产品SN信息吗？", "确认", Application.Current.MainWindow, MessageBoxButton.YesNo);
+            if (result == MessageBoxResult.Yes)
+            {
+                _taskOrderManager.RstSnSig1();
+            }
+        }
+        private void btnRemove2_Click(object sender, RoutedEventArgs e)
+        {
+            MessageBoxResult result = MessageBoxX.Show($"确定清除彩箱SN信息吗？", "确认", Application.Current.MainWindow, MessageBoxButton.YesNo);
+            if (result == MessageBoxResult.Yes)
+            {
+                _taskOrderManager.RstSnSig2();
+            }
         }
     }
 }

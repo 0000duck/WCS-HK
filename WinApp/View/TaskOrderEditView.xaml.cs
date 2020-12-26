@@ -19,20 +19,36 @@ namespace iFactoryApp.View
 
         public TaskOrderEditView()
         {
+            int index = 0;
             InitializeComponent();
             _viewModel = IoC.GetViewModel<TaskOrderViewModel>(this);
             _productParameterService = IoC.Get<IProductParameterService>();
             _taskOrderManager= IoC.Get<TaskOrderManager>();
             _viewModel.LoadParameters();
             this.DataContext = _viewModel;
-            if (_viewModel.EditModel.pack_mode == (int)PackMode.Pack)//装箱模式
+            radioButton1.IsChecked = true;
+
+            if (_viewModel.EditModel != null)
             {
-                radioButton1.IsChecked = true;
+                if (_viewModel.EditModel.pack_mode == (int)PackMode.Pack)//装箱模式
+                {
+                    radioButton1.IsChecked = true;
+                }
+                else
+                {
+                    radioButton2.IsChecked = true;
+                }
+                
+                foreach (var Item in _viewModel.ParameterList)
+                {
+                    if (Item.product_name == _viewModel.EditModel.product_name)
+                    {
+                        break;
+                    }
+                    ++index;
+                }
             }
-            else
-            {
-                radioButton2.IsChecked = true;
-            }
+            cmbProduct.SelectedIndex = index;
         }
         private void Button_Click(object sender, RoutedEventArgs e)
         {
@@ -41,7 +57,9 @@ namespace iFactoryApp.View
                 MessageBoxX.Show("产品名称不能为空", "错误", Application.Current.MainWindow);
                 return;
             }
-            if(_viewModel.SelectedModel !=null)
+            _taskOrderManager.RstSnSig1();//信号复位
+            _taskOrderManager.RstSnSig2();//信号复位
+            if (_viewModel.SelectedModel !=null)
             {
                 _viewModel.Finish(_viewModel.SelectedModel);//完成
             }
@@ -57,7 +75,7 @@ namespace iFactoryApp.View
                 _viewModel.EditModel.pallet_num = parameter.pallet_num;
                 _viewModel.EditModel.pallet_size = parameter.pallet_size;
                 _viewModel.EditModel.plate_enable = parameter.plate_enable;
-                _viewModel.EditModel.product_name = parameter.product_name;
+                //_viewModel.EditModel.product_name = parameter.product_name;
                 _viewModel.EditModel.product_size = parameter.product_size;
                 _viewModel.EditModel.robot_pg_no = parameter.robot_pg_no;
                 _viewModel.EditModel.sn_barcode_enable = parameter.sn_barcode_enable;
@@ -65,6 +83,7 @@ namespace iFactoryApp.View
             _viewModel.EditModel.order_status =(int) OrderStatusEnum.Running;
             _viewModel.EditModel.start_time = DateTime.Now;
             _viewModel.EditModel.pack_mode = (int)PackMode.None;
+
             if (radioButton1.IsChecked==true)//装箱模式
             {
                 _viewModel.EditModel.pack_mode = (int)PackMode.Pack;
@@ -73,7 +92,7 @@ namespace iFactoryApp.View
             {
                 if(!_viewModel.Update(_viewModel.EditModel))
                 {
-                    MessageBoxX.Show("任务单信息保存失败", "错误", Application.Current.MainWindow);
+                    MessageBoxX.Show("当前产品信息选择时，信息保存失败", "错误", Application.Current.MainWindow);
                 }
                 else
                 {
@@ -88,7 +107,7 @@ namespace iFactoryApp.View
             {
                 if(!_viewModel.Insert(_viewModel.EditModel))
                 {
-                    MessageBoxX.Show("任务单信息保存失败", "错误", Application.Current.MainWindow);
+                    MessageBoxX.Show("当前产品信息选择时，信息保存失败", "错误", Application.Current.MainWindow);
                 }
                 else
                 {

@@ -8,6 +8,7 @@ using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
 
 namespace iFactoryApp.View
 {
@@ -18,17 +19,19 @@ namespace iFactoryApp.View
     {
         private readonly MainViewModel viewModel;
         private readonly RFIDView rfidView = new RFIDView();
-        private readonly TaskOrderView taskOrderView = new TaskOrderView();
+        private readonly TaskOrderView taskOrderView;
         private readonly ReportView reportView = new ReportView();
         private readonly ISystemLogViewModel _systemLogViewModel;
         private IContextMenuView lastView;
-
+        private Tag<short> runTag;
         public MainWindow()
         {
             InitializeComponent();
             viewModel = IoC.GetViewModel<MainViewModel>(this);
             _systemLogViewModel = IoC.GetViewModel<ISystemLogViewModel>(this);
             this.DataContext = viewModel;
+            taskOrderView = new TaskOrderView();
+            frame1.NavigateToPage(taskOrderView, false);
             lastView = taskOrderView;
             GlobalData.ErrMsgObject.ErrorMessageEvent += ErrorMessageEvent;//错误信息弹窗
             if (TagList.PLCGroups != null && TagList.PLCGroups.Count > 0)
@@ -38,6 +41,46 @@ namespace iFactoryApp.View
                     _systemLogViewModel.AddMewStatus("PLC连接失败，请检查设置！",LogTypeEnum.Error);
                 }
             }
+            TagList.GetTag("system_run", out runTag, "FxPLC");
+            if(runTag !=null)
+            {
+                runTag.PropertyChanged += RunTag_PropertyChanged;
+                RunTag_PropertyChanged(runTag,null);
+            }
+        }
+
+        private void RunTag_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            Tag<short> tag = sender as Tag<short>;
+            this.Dispatcher.Invoke(() =>
+            {
+                if (tag.TagValue == 1)
+                {
+                    Menustart.Header = "启动中";
+                    Menustop.Header = "停止";
+                    //Menustart.IsEnabled = false;
+                    //Menustop.IsEnabled = true;
+                    Menustart.Foreground = Brushes.LimeGreen;
+                    Menustart.FontWeight = FontWeights.Bold;
+                    Menustart.FontStyle = FontStyles.Italic;
+                    Menustop.Foreground = Brushes.Black;
+                    Menustop.FontWeight = FontWeights.Normal;
+                    Menustop.FontStyle = FontStyles.Normal;
+                }
+                else
+                {
+                    Menustart.Header = "启动";
+                    Menustop.Header = "停止中";
+                    //Menustart.IsEnabled = true;
+                    //Menustop.IsEnabled = false;
+                    Menustop.Foreground = Brushes.Red;
+                    Menustop.FontWeight = FontWeights.Bold;
+                    Menustop.FontStyle = FontStyles.Italic;
+                    Menustart.Foreground = Brushes.Black;
+                    Menustart.FontWeight = FontWeights.Normal;
+                    Menustart.FontStyle = FontStyles.Normal;
+                }
+            });
         }
 
         private void MenuItem_Click(object sender, RoutedEventArgs e)
@@ -47,7 +90,7 @@ namespace iFactoryApp.View
             switch (control.Tag.ToString())
             {
                 case "RFID":
-                    if(rfidView.Visibility !=Visibility.Visible)
+                    if (rfidView.Visibility !=Visibility.Visible)
                     {
                         rfidView.Show();
                     }
@@ -80,7 +123,14 @@ namespace iFactoryApp.View
                     TagsView tagsView = new TagsView();
                     tagsView.ShowDialog();
                     break;
+                case "Start":
+                    runTag.Write(1);
+                    break;
+                case "Stop":
+                    runTag.Write(0);
+                    break;
                 case "New":
+                case "Load":
                 case "Edit":
                 case "Delete":
                 case "Finish":

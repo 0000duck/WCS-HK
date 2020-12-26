@@ -7,7 +7,16 @@
         xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
         xmlns:local="clr-namespace:iFactoryApp.View"
         mc:Ignorable="d"
-        Title="系统运行日志" Height="433.5" Width="561.5" WindowStartupLocation="CenterOwner" ResizeMode="NoResize">
+        Title="系统运行日志" Height="450" Width="650" WindowStartupLocation="CenterOwner" ResizeMode="NoResize">
+    <Window.Resources>
+        <!--<ResourceDictionary>
+            <Style x:Key="CellLeftAlignment" TargetType="DataGridCell">
+                <Style.Setters>
+                    <Setter Property="TextAlignment" Value="Center" />
+                </Style.Setters>
+            </Style>
+        </ResourceDictionary>-->
+    </Window.Resources>
     <Grid>
         <DataGrid x:Name="datagrid1" VerticalContentAlignment="Center" AutoGenerateColumns="False" ItemsSource="{Binding OperatesCollection}" ToolTip="右键双击清除" IsReadOnly="True" AlternatingRowBackground="#FFE8E5E5" FontSize="12"
                   pu:DataGridHelper.SelectedBackground="#1C86EE"
@@ -22,9 +31,9 @@
                 </i:EventTrigger>
             </i:Interaction.Triggers>
             <DataGrid.Columns>
-                <DataGridTextColumn Header="时间" Binding="{Binding Dt,StringFormat=yyyy/MM/dd HH:mm:ss}" Width="3*"/>
+                <DataGridTextColumn Header="时间" Binding="{Binding Dt,StringFormat=yyyy/MM/dd HH:mm:ss}" Width="4*"/>
                 <DataGridTextColumn Header="类别" Binding="{Binding Type,Converter={StaticResource logTypeConverter}}" Width="2*"/>
-                <DataGridTextColumn Header="内容" Binding="{Binding Content}" Width="7*" />
+                <DataGridTextColumn Header="内容" Binding="{Binding Content}" Width="9*" />
             </DataGrid.Columns>
         </DataGrid>
     </Grid>

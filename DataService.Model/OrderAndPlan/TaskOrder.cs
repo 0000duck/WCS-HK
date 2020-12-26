@@ -95,5 +95,9 @@ namespace iFactory.DataService.Model
             }
             get { return _defective_count; }
         }
+        /// <summary>
+        /// 启用条码比对
+        /// </summary>
+        public bool enable_check { set; get; } = false;
     }
 }

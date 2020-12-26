@@ -40,8 +40,20 @@
                 <ky:LiveviewForm x:Name="liveviewForm2" />
             </WindowsFormsHost>
 
-            <GroupBox x:Name="group1" Grid.Column="2" Grid.Row="0" Header="当前执行任务信息" Background="WhiteSmoke" pu:GroupBoxHelper.HeaderPadding="2,5" pu:GroupBoxHelper.HeaderBackground="DarkGray" 
+            <GroupBox x:Name="group1" Grid.Column="2" Grid.Row="0" Background="WhiteSmoke" pu:GroupBoxHelper.HeaderPadding="2,5" pu:GroupBoxHelper.HeaderBackground="DarkGray" 
                     pu:GroupBoxHelper.CornerRadius="5" Margin="0">
+                <GroupBox.Header>
+                    <Grid Width="{Binding ElementName=group1,Path=Width}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="120"/>
+                            <ColumnDefinition Width="120"/>
+                        </Grid.ColumnDefinitions>
+                        <Label Grid.Column="0" Content="当前执行任务信息" Margin="0"/>
+                        <Button x:Name="btnRemove1" Grid.Column="1" Content="产品条码清除" ToolTip="清除产品的条码与信号" Margin="5,0" Click="btnRemove1_Click"/>
+                        <Button x:Name="btnRemove2" Grid.Column="2" Content="彩箱条码清除" ToolTip="清除彩箱的条码与信号" Margin="5,0" Click="btnRemove2_Click"/>
+                    </Grid>
+                </GroupBox.Header>
                 <Grid Margin="5,0">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition/>
@@ -73,6 +85,6 @@
         <Image  Grid.Row="1" Source="/WinApp;component/Resources/flow.jpg" Stretch="Fill"/>
         <iFactoryApp:StatusControl x:Name="led1" HorizontalAlignment="Left" Height="16" Margin="532,309,0,0" Grid.Row="1" VerticalAlignment="Top" Width="16" PlcName="FxPLC" TagName="RFID" RenderTransformOrigin="0.417,-2.337" />
         <iFactoryApp:StatusControl x:Name="led2" HorizontalAlignment="Left" Height="16" Margin="796,93,0,0" Grid.Row="1" VerticalAlignment="Top" Width="16" PlcName="FxPLC" TagName="RFID" RenderTransformOrigin="0.417,-2.337" />
-        <iFactoryApp:StatusControl x:Name="led3" HorizontalAlignment="Left" Height="16" Margin="180,172,0,0" Grid.Row="1" VerticalAlignment="Top" Width="16" PlcName="FxPLC" TagName="RFID" RenderTransformOrigin="0.417,-2.337" MouseUp="led3_MouseUp" />
+        <iFactoryApp:StatusControl x:Name="led3" HorizontalAlignment="Left" Height="16" Margin="180,172,0,0" Grid.Row="1" VerticalAlignment="Top" Width="16" PlcName="FxPLC" TagName="RFID" RenderTransformOrigin="0.417,-2.337" />
     </Grid>
 </Page>

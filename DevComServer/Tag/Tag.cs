@@ -127,7 +127,7 @@ namespace iFactory.DevComServer
             }
             set => dataType=value;
         }
-        private DateTime _LastTime;
+        private DateTime _LastTime=DateTime.Now;
         /// <summary>
         /// 最近一次刷新时间
         /// </summary>
@@ -177,7 +177,10 @@ namespace iFactory.DevComServer
         {
             SendWriteValueEvent(this.TagAddr,Value);
         }
-       
+        /// <summary>
+        /// 描述信息
+        /// </summary>
+       public string description { set; get; }
     }
 
 }

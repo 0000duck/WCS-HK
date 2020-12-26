@@ -15,7 +15,7 @@ namespace iFactoryApp.Common
         private ReaderAccessor m_reader = new ReaderAccessor();
         private ReaderSearcher m_searcher = new ReaderSearcher();
         private LiveviewForm liveviewForm;
-        private readonly int m_index = 0;
+        public int m_index { set; get; }
 
         public KeyenceCameraHelper(LiveviewForm liveviewForm, int index = 0)
         {

@@ -142,7 +142,7 @@
         <Menu Grid.Row="0" Width="Auto" pu:MenuHelper.MenuStyle="Modern" pu:MenuHelper.SubmenuCornerRadius="10">
             <MenuItem Header="监控主页" Icon="&#xf015;" Tag="TaskOrder"  Click="MenuItem_Click" Padding="5,0" ToolTip=""/>
             <MenuItem Header="产品参数管理  " Icon="&#xf036;" Tag="Product"  Click="MenuItem_Click"  Padding="5,0" />
-            <MenuItem Header="加载产品任务" Tag="New" Icon="&#xf152;"  Padding="5,0" Click="MenuItem_Click" />
+            <MenuItem Header="加载产品任务" Tag="Load" Icon="&#xf152;"  Padding="5,0" Click="MenuItem_Click" />
             <MenuItem Header="参数重下载" Tag="Download" Icon="&#xf019;"  Padding="5,0" Click="MenuItem_Click" />
             <MenuItem Header="完成当前任务" Tag="Finish" Icon="&#xf14a;"  Padding="5,0" Click="MenuItem_Click"  >
                 <!--<MenuItem Header="完成当前任务" Tag="TaskOrder"  Click="MenuItem_Click"  ToolTip="创建新的任务并执行"/>
@@ -151,7 +151,8 @@
                 <MenuItem Header="删除任务" Tag="Delete"  Click="MenuItem_Click" ToolTip="删除当前选择的任务"/>
                 <MenuItem Header="完成任务" Tag="Finish"  Click="MenuItem_Click" ToolTip="完成正在进行的任务"/>-->
             </MenuItem>
-            <MenuItem Header="数据记录查询  " Icon="&#xf009;" Tag="Report" Padding="5,0" ToolTip=""  Click="MenuItem_Click" />
+            <MenuItem x:Name="Menustart" IsEnabled="True" Header="启动" Icon="&#xf04b;" Tag="Start" Padding="5,0" ToolTip=""  Click="MenuItem_Click" />
+            <MenuItem x:Name="Menustop" IsEnabled="True" Header="停止" Icon="&#xf04d;" Tag="Stop" Padding="5,0" ToolTip=""  Click="MenuItem_Click" />
             <MenuItem Header="RFID监控  " Icon="&#xf2c3;" Tag="RFID" Padding="5,0" ToolTip=""  Click="MenuItem_Click" />
             <MenuItem Header="系统信息" Icon="&#xf15c;"  Padding="5,0">
                 <MenuItem Header="系统运行日志" Tag="SystemLog"  Click="MenuItem_Click"  ToolTip="系统操作过程中的一些日志记录信息，可在运行目录下log做进一步查询"/>
@@ -168,6 +169,6 @@
             <Button Content="" pu:ButtonHelper.Icon="&#xf14b;"  Tag="Edit" pu:ButtonHelper.ButtonStyle="Hollow" BorderThickness="0" ToolTip="编辑" Margin="2,0"  Click="MenuItem_Click" />
             <Button Content="" pu:ButtonHelper.Icon="&#xf1f8;"  Tag="Delete" pu:ButtonHelper.ButtonStyle="Hollow" BorderThickness="0" ToolTip="删除。如果有勾选框，需要勾选之后再点击进行删除" Margin="2,0"  Click="MenuItem_Click" />
         </StackPanel>
-        <Frame Grid.Row="2" x:Name="frame1" Source="/View/TaskOrderView.xaml" NavigationUIVisibility="Hidden"/>
+        <Frame Grid.Row="2" x:Name="frame1" NavigationUIVisibility="Hidden"/>
     </Grid>
 </pu:WindowX>

@@ -7,7 +7,7 @@
       xmlns:pu="clr-namespace:Panuon.UI.Silver;assembly=Panuon.UI.Silver"
       xmlns:comLib="clr-namespace:iFactory.CommonLibrary;assembly=CommonLibrary"
       xmlns:local="clr-namespace:iFactoryApp.View"
-      mc:Ignorable="d" Title="包装任务计划加载" Background="LightGray" Width="424.024" Height="216.216" ResizeMode="NoResize" WindowStartupLocation="CenterScreen">
+      mc:Ignorable="d" Title="包装任务计划加载" Background="LightGray" Width="424.024" Height="243.216" ResizeMode="NoResize" WindowStartupLocation="CenterScreen">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition/>
@@ -19,9 +19,11 @@
                 <Grid.RowDefinitions>
                     <RowDefinition/>
                     <RowDefinition/>
+                    <RowDefinition/>
                 </Grid.RowDefinitions>
-                <ComboBox Grid.Row="0" SelectedValue="{Binding EditModel.product_name}" ItemsSource="{Binding  ParameterList}" DisplayMemberPath="product_name"  SelectedValuePath="product_name"  pu:ComboBoxHelper.Header="产品型号选择"  pu:ComboBoxHelper.HeaderWidth="120" pu:ComboBoxHelper.CornerRadius="5" VerticalAlignment="Center" Height="32" Margin="5,0" Padding="0"/>
-                <StackPanel Grid.Row="1" Orientation="Horizontal">
+                <ComboBox Grid.Row="0" x:Name="cmbProduct" SelectedValue="{Binding EditModel.product_name}" ItemsSource="{Binding  ParameterList}" DisplayMemberPath="product_name"  SelectedValuePath="product_name"  pu:ComboBoxHelper.Header="产品型号选择"  pu:ComboBoxHelper.HeaderWidth="120" pu:ComboBoxHelper.CornerRadius="5" VerticalAlignment="Center" Height="32" Margin="5,0" Padding="0"/>
+                <CheckBox Grid.Row="1" x:Name="checkBox1" Content="条码比对功能开启" IsChecked="{Binding EditModel.enable_check}"/>
+                <StackPanel Grid.Row="2" Orientation="Horizontal">
                     <Label Content="当前模式" VerticalContentAlignment="Center" Margin="0,0,0,0" Width="125"/>
                     <RadioButton x:Name="radioButton1" VerticalAlignment="Center" Height="32" Margin="5,0,10,0" Padding="0" Content="装箱模式" IsChecked="True"  pu:RadioButtonHelper.CheckedBackground="LimeGreen" />
                     <RadioButton x:Name="radioButton2" VerticalAlignment="Center" Height="32" Margin="15,0" Padding="0" Content="不装箱模式" pu:RadioButtonHelper.CheckedBackground="LimeGreen" />

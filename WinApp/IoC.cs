@@ -63,7 +63,7 @@ namespace iFactoryApp
             //公共操作
             Container.RegisterSingleton<PLCScanTask>();//注入PLC扫描
             Container.RegisterType<ILogWrite, LogHelper>();
-            Container.RegisterType<TaskOrderManager>();//任务处理
+            Container.RegisterSingleton<TaskOrderManager>();//任务处理
             //--------------------------------------------------------------------------
             //数据库访问
             Container.RegisterType<IUserService, UserService>();

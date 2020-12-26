@@ -6,15 +6,16 @@
         xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
         xmlns:local="clr-namespace:iFactoryApp.View"
         mc:Ignorable="d"
-        Title="标签值监控" Height="600.134" Width="743.169" WindowStartupLocation="CenterOwner" ResizeMode="NoResize">
+        Title="标签值监控" Height="600.134" Width="800" WindowStartupLocation="CenterOwner" ResizeMode="NoResize">
     <Grid>
         <DataGrid x:Name="datagrid1" VerticalContentAlignment="Center" ItemsSource="{Binding TagsCollection}" AutoGenerateColumns="False"  IsReadOnly="True" AlternatingRowBackground="#FFE8E5E5" FontSize="12">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="标签名称" Binding="{Binding TagName}" Width="4*"/>
-                <DataGridTextColumn Header="标签地址" Binding="{Binding TagAddr}" Width="3*" />
+                <DataGridTextColumn Header="标签地址" Binding="{Binding TagAddr}" Width="2*" />
                 <DataGridTextColumn Header="标签值" Binding="{Binding TagValue}" Width="2*" />
                 <DataGridTextColumn Header="标签类型" Binding="{Binding DataType}" Width="2*" />
-                <DataGridTextColumn Header="最近一次刷新时间" Binding="{Binding LastTime,StringFormat=yyyy/MM/dd HH:mm:ss}" Width="5*" />
+                <DataGridTextColumn Header="标签描述" Binding="{Binding description}" Width="5*" />
+                <DataGridTextColumn Header="最近一次刷新时间" Binding="{Binding LastTime,StringFormat=yyyy/MM/dd HH:mm:ss}" Width="4*" />
             </DataGrid.Columns>
         </DataGrid>
     </Grid>
