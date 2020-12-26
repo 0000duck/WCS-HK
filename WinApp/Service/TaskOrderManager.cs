@@ -18,7 +18,8 @@ namespace iFactoryApp.Service
         private readonly TaskOrderViewModel _taskOrderViewModel;
         private readonly RFIDViewModel _RFIDViewModel;
         public List<KeyenceCameraHelper> cameraList = new List<KeyenceCameraHelper>();
-        private Tag<short> RFID_SigTag, RFID_WriteTag;
+        private Tag<short> RFID_WriteSigTag, RFID_WriteFeedbackTag;
+        private Tag<short> RFID_ReadSigTag, RFID_ReadFeedbackTag;
         private Tag<short> SnSig1Tag, SnSig2Tag, SnDeal1Tag, SnDeal2Tag;
         private readonly DispatcherTimer timer;
 
@@ -39,11 +40,14 @@ namespace iFactoryApp.Service
         /// </summary>
         private void TagInitial()
         {
-            TagList.GetTag("rfid_sig", out RFID_SigTag, "FxPLC");//RFID触发信号
-            TagList.GetTag("rfid_write", out RFID_WriteTag, "FxPLC");//RFID写入
-            if (RFID_SigTag != null)
+            TagList.GetTag("rfid_write_sig", out RFID_WriteSigTag, "FxPLC");//RFID触发信号
+            TagList.GetTag("rfid_write_feedback", out RFID_WriteFeedbackTag, "FxPLC");//RFID写入
+            TagList.GetTag("rfid_read_sig", out RFID_ReadSigTag, "FxPLC");//RFID触发信号
+            TagList.GetTag("rfid_read_feedback", out RFID_ReadFeedbackTag, "FxPLC");//RFID写入
+
+            if (RFID_WriteSigTag != null)
             {
-                RFID_SigTag.PropertyChanged += RFIDWriteTag_PropertyChanged;
+                RFID_WriteSigTag.PropertyChanged += RFIDWriteTag_PropertyChanged;
             }
 
             TagList.GetTag("graphic_carton_sn_sig", out SnSig1Tag, "FxPLC");//彩箱SN检测
@@ -114,9 +118,9 @@ namespace iFactoryApp.Service
             else if (info.InfoType == RFIDInfoEnum.WriteError)//写入失败
             {
                 _systemLogViewModel.AddMewStatus(info.Content, LogTypeEnum.Error);
-                if (RFID_WriteTag != null && RFID_SigTag.TagValue == 1)
+                if (RFID_WriteFeedbackTag != null && RFID_WriteSigTag.TagValue == 1)
                 {
-                    RFID_WriteTag.Write(2);//失败写入
+                    RFID_WriteFeedbackTag.Write(2);//失败写入
                 }
                 if (_taskOrderViewModel.SelectedModel != null)
                 {
@@ -132,9 +136,9 @@ namespace iFactoryApp.Service
             else if (info.InfoType == RFIDInfoEnum.ReadError)//读取失败
             {
                 _systemLogViewModel.AddMewStatus(info.Content, LogTypeEnum.Error);
-                if(RFID_WriteTag !=null && RFID_SigTag.TagValue == 1)
+                if(RFID_ReadFeedbackTag !=null && RFID_ReadSigTag.TagValue == 1)
                 {
-                    RFID_WriteTag.Write(2);
+                    RFID_ReadFeedbackTag.Write(2);
                 }
                 if (_taskOrderViewModel.SelectedModel != null)
                 {
@@ -150,17 +154,18 @@ namespace iFactoryApp.Service
                 _systemLogViewModel.AddMewStatus(info.Content);
                 if (info.Sn== lastWriteInfo)
                 {
-                    _systemLogViewModel.AddMewStatus("RFID比对成功！开始复位PLC标识");
-                    if (RFID_WriteTag != null)
+                    _systemLogViewModel.AddMewStatus("RFID比对成功！开始写入PLC=1");
+                    if (RFID_ReadFeedbackTag != null && RFID_ReadSigTag.TagValue == 1)
                     {
-                        RFID_WriteTag.Write(2);//标识复位
+                        RFID_ReadFeedbackTag.Write(1);//
                     }
                 }
                 else
                 {
-                    if (RFID_WriteTag != null)
+                    _systemLogViewModel.AddMewStatus("RFID比对失败！开始写入PLC=2");
+                    if (RFID_ReadFeedbackTag != null && RFID_ReadSigTag.TagValue == 1)
                     {
-                        RFID_WriteTag.Write(0);//标识复位
+                        RFID_ReadFeedbackTag.Write(2);
                     }
                 }
             }

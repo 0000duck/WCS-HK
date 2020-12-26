@@ -44,16 +44,6 @@ namespace RFIDLib
         public RFIDWindow(string ComPortName,bool Readmode=true)
         {
             InitializeComponent();
-            if(Readmode)
-            {
-                labelMode.Content = "当前模式为连续读取";
-                button_read_successive_Click(null,null);
-            }
-            else
-            {
-                labelMode.Content = "当前模式为写入";
-            }
-            
             logHandleUtils.createLogPath();
             dataHandleUtils.createDataPath();
             configHandleUtils.createConfigPath();
@@ -105,6 +95,16 @@ namespace RFIDLib
             readTimer.Interval = 200;
             readTimer.Enabled = false;
             readTimer.Tick += new EventHandler(Timer_TimesUp);
+
+            if (Readmode)
+            {
+                labelMode.Content = "当前模式为连续读取";
+                button_read_successive_Click(null, null);
+            }
+            else
+            {
+                labelMode.Content = "当前模式为写入";
+            }
         }
 
         //连续读取的定时器

@@ -6,7 +6,7 @@
         xmlns:pu="clr-namespace:Panuon.UI.Silver;assembly=Panuon.UI.Silver"
         xmlns:local="clr-namespace:iFactoryApp.View"
         mc:Ignorable="d"
-        Title="RFID操作界面" Height="508" Width="906" Background="WhiteSmoke" ResizeMode="NoResize" ShowInTaskbar="False">
+        Title="RFID操作界面" Height="400" Width="800" Background="WhiteSmoke" ResizeMode="NoResize" ShowInTaskbar="False">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition/>

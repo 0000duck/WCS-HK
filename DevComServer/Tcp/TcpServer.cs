@@ -45,15 +45,20 @@ namespace iFactory.DevComServer
                 tcpListener.Stop();
                 tcpListener = null;
             }
-
-            this.tcpListener = new TcpListener(serverAddress, serverPort);
-            tcpListener.Start();
-            tokenSource = new CancellationTokenSource();
-            if (this.listenTask == null || this.listenTask.Status != TaskStatus.Running)
+            try
             {
-                this.listenTask = Task.Factory.StartNew(() => ListenForClients(), tokenSource.Token);//TaskCreationOptions.LongRunning,
+                this.tcpListener = new TcpListener(serverAddress, serverPort);
+                tcpListener.Start();
+                tokenSource = new CancellationTokenSource();
+                if (this.listenTask == null || this.listenTask.Status != TaskStatus.Running)
+                {
+                    this.listenTask = Task.Factory.StartNew(() => ListenForClients(), tokenSource.Token);//TaskCreationOptions.LongRunning,
+                }
             }
-           
+            catch(Exception ex)
+            {
+                _log.WriteLog("TcpServer启动错误",ex);
+            }
         }
         /// <summary>
         /// 停止
