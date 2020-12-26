@@ -19,6 +19,7 @@ namespace iFactoryApp.View
             this.DataContext = viewModel;
 
             fram1.NavigateToPage(viewModel.WriteRFIDWindow, false);
+            fram2.NavigateToPage(viewModel.ReadRFIDWindow, false);
         }
 
         protected override void OnClosing(CancelEventArgs e)

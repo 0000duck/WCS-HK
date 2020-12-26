@@ -18,8 +18,6 @@ namespace RFIDLib
     /// </summary>
     public partial class RFIDWindow : Page
     {
-        string lastWriteInfo = string.Empty;//上一次写入
-
         SerialPortUtils serialPortUtils = new SerialPortUtils();
         SerialPort serialPort = new SerialPort();//当前选择的串口
         string recieveData = "";
@@ -49,6 +47,7 @@ namespace RFIDLib
             if(Readmode)
             {
                 labelMode.Content = "当前模式为连续读取";
+                button_read_successive_Click(null,null);
             }
             else
             {
@@ -141,17 +140,8 @@ namespace RFIDLib
 
                 try
                 {
-                    if(lastWriteInfo != sn[0])
-                    {
-                        logHandleUtils.writeLog($"读取到的为：{sn[0]}，上一个为：{lastWriteInfo}，比对失败");
-                        RfidInfo info = new RfidInfo() { InfoType = RFIDInfoEnum.ReadError, Content = $"读取到的为：{sn[0]}，上一个为：{lastWriteInfo}，比对失败" };
-                        SendRfidOperateEvent(info);
-                    }
-                    else
-                    {
-                        RfidInfo info = new RfidInfo() { InfoType = RFIDInfoEnum.ReadSuccess, Content = $"读取到的为：{sn[0]}，上一个为：{lastWriteInfo}，比对成功" };
-                        SendRfidOperateEvent(info);
-                    }
+                    RfidInfo info = new RfidInfo() { InfoType = RFIDInfoEnum.ReadSuccess,Sn= sn[0], Content = $"RFID读取成功，信息为：{showResult}" };
+                    SendRfidOperateEvent(info);
                 }
                 catch(Exception ex)
                 {
@@ -220,7 +210,6 @@ namespace RFIDLib
         /// <param name="e"></param>
         public void button_burn_Click(object sender, RoutedEventArgs e)
         {
-            lastWriteInfo = string.Empty;
             textBox_info_box.Background = new SolidColorBrush(Constans.whtieColor);
             recieveData = "";
             if (serialPort != null && serialPort.IsOpen)
@@ -239,7 +228,7 @@ namespace RFIDLib
                         string[] sn = dataUtils.getRecieveSN(recieveData);
                         //textBox_info_box.Text = result + "\n" + "sn:" + sn[0] + "\n" + "滤芯使用时长(秒):" + sn[1];
                         textBox_info_box.Text = "烧写成功！\n" + "sn:" + sn[0] + "\n" + "滤芯使用时长(秒):" + sn[1];
-                        lastWriteInfo=sn[0];//烧写信息加入队列
+  
                         textBox_info_box.Background = new SolidColorBrush(Constans.successColor);
                         string data = factory_num + "\t" + product_num + "\t" + textBox_serial_NO.Text + "\t" + product_date + "\t" + sn[0];
                         if (Check_WorkCommand.IsChecked == true)
@@ -254,7 +243,7 @@ namespace RFIDLib
                         textBox_serial_NO.Text = serial_num_int.ToString();
                         string config = factory_num + "-" + product_num + "-" + textBox_serial_NO.Text + "-" + Check_WorkCommand.IsChecked.ToString() + "-" + work_command_num + "-";
                         configHandleUtils.writeConfig(config);
-                        RfidInfo info = new RfidInfo() { InfoType = RFIDInfoEnum.WriteSuccess, Content = $"写入RFID成功{factory_num},{ product_num },{textBox_serial_NO.Text},{product_date},{sn[0]}" };
+                        RfidInfo info = new RfidInfo() { InfoType = RFIDInfoEnum.WriteSuccess,Sn= sn[0], Content = $"写入RFID成功{factory_num},{ product_num },{textBox_serial_NO.Text},{product_date},{sn[0]}" };
                         SendRfidOperateEvent(info);
                     }
                     else
@@ -547,10 +536,8 @@ namespace RFIDLib
             string showResult = "";
             string result = getFilterData();
 
-
             string[] data = dataUtils.getRecieveFilterData(recieveData);//data为结果.data[0]:工厂编号,data[1]:产品编号,data[2]:生产日期,data[3]:流水号
             int filterCode = dataUtils.getResultCode(recieveData);
-
 
             if (filterCode == 84)
             {
@@ -579,24 +566,16 @@ namespace RFIDLib
                 textBox_info_box.Background = new SolidColorBrush(Constans.successColor);
                 soundPlay.playSuccess();
 
-                if (lastWriteInfo != sn[0])
-                {
-                    logHandleUtils.writeLog($"读取到的为：{sn[0]}，上一个为：{lastWriteInfo}，比对失败");
-                    RfidInfo info = new RfidInfo() { InfoType = RFIDInfoEnum.ReadError, Content = $"读取到的为：{sn[0]}，上一个为：{lastWriteInfo}，比对失败" };
-                    SendRfidOperateEvent(info);
-                }
-                else
-                {
-                    RfidInfo info = new RfidInfo() { InfoType = RFIDInfoEnum.ReadSuccess, Content = $"读取到的为：{sn[0]}，上一个为：{lastWriteInfo}，比对成功" };
-                    SendRfidOperateEvent(info);
-                }
+                RfidInfo info = new RfidInfo() { InfoType = RFIDInfoEnum.ReadSuccess,Sn= sn[0], Content = $"RFID读取到信息：{showResult}" };
+                SendRfidOperateEvent(info);
+
             }
             else
             {
                 textBox_info_box.Background = new SolidColorBrush(Constans.errorColor);
                 soundPlay.playFail();
 
-                RfidInfo info = new RfidInfo() { InfoType = RFIDInfoEnum.ReadError, Content = $"读取到的为：{sn[0]}，上一个为：{lastWriteInfo}，比对失败" };
+                RfidInfo info = new RfidInfo() { InfoType = RFIDInfoEnum.ReadError, Content = $"RFID读取失败" };
                 SendRfidOperateEvent(info);
             }
 
@@ -848,7 +827,6 @@ namespace RFIDLib
         //重新烧录
         public void button_reburn_Click(object sender, RoutedEventArgs e)
         {
-            lastWriteInfo = string.Empty;
             recieveData = "";
             textBox_info_box.Background = new SolidColorBrush(Constans.whtieColor);
             if (serialPort != null && serialPort.IsOpen)
@@ -865,7 +843,7 @@ namespace RFIDLib
                         result = getFilterSN();
                         string[] sn = dataUtils.getRecieveSN(recieveData);
                         //textBox_info_box.Text = result + "\n" + "sn:" + sn[0] + "\n" + "滤芯使用时长(秒):" + sn[1];
-                        textBox_info_box.Text = "烧写成功！\n" + "sn:" + sn[0] + "\n" + "滤芯使用时长(秒):" + sn[1];
+                        textBox_info_box.Text = "重新烧写成功！\n" + "sn:" + sn[0] + "\n" + "滤芯使用时长(秒):" + sn[1];
 
                         textBox_info_box.Background = new SolidColorBrush(Constans.successColor);
                         string data = factory_num + "\t" + product_num + "\t" + textBox_serial_NO.Text + "\t" + product_date + "\t" + sn[0];
@@ -882,8 +860,8 @@ namespace RFIDLib
                         textBox_serial_NO.Text = serial_num_int.ToString();
                         string config = factory_num + "-" + product_num + "-" + textBox_serial_NO.Text + "-" + Check_WorkCommand.IsChecked.ToString() + "-" + work_command_num + "-";
                         configHandleUtils.writeConfig(config);
-                        lastWriteInfo = sn[0];
-                        button_read_filter_data_Click(null, null);//写入完毕后直接单次读取
+                        RfidInfo info = new RfidInfo() { InfoType = RFIDInfoEnum.WriteSuccess, Sn = sn[0], Content = $"重新写入RFID成功{factory_num},{ product_num },{textBox_serial_NO.Text},{product_date},{sn[0]}" };
+                        SendRfidOperateEvent(info);
                     }
                     else
                     {
@@ -908,7 +886,6 @@ namespace RFIDLib
             }
 
             logHandleUtils.writeLog(textBox_info_box.Text);
-            
         }
 
         private bool checkRfidExisted()
@@ -1027,6 +1004,10 @@ namespace RFIDLib
         /// 消息内容
         /// </summary>
         public string Content { set; get; }
+        /// <summary>
+        /// 本次的操作sn编号
+        /// </summary>
+        public string Sn { set; get; }
     }
     /// <summary>
     /// RFID消息类型枚举

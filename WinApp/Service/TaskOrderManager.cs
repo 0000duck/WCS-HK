@@ -65,6 +65,7 @@ namespace iFactoryApp.Service
         }
 
         #region RFID处理
+        private string lastWriteInfo = string.Empty;
         /// <summary>
         /// 写入rfid标签值变化
         /// </summary>
@@ -106,6 +107,7 @@ namespace iFactoryApp.Service
             }
             else if (info.InfoType == RFIDInfoEnum.WriteSuccess)//写入成功,直接显示信息
             {
+                lastWriteInfo = info.Sn;
                 _systemLogViewModel.AddMewStatus(info.Content);
             }
             else if (info.InfoType == RFIDInfoEnum.ReadError)//读取失败
@@ -127,9 +129,20 @@ namespace iFactoryApp.Service
             else if (info.InfoType == RFIDInfoEnum.ReadSuccess)//读取成功
             {
                 _systemLogViewModel.AddMewStatus(info.Content);
-                if (RFID_WriteTag != null)
+                if (info.Sn== lastWriteInfo)
                 {
-                    RFID_WriteTag.Write(0);//标识复位
+                    _systemLogViewModel.AddMewStatus("RFID比对成功！开始复位PLC标识");
+                    if (RFID_ReadTag != null)
+                    {
+                        RFID_ReadTag.Write(2);//标识复位
+                    }
+                }
+                else
+                {
+                    if (RFID_ReadTag != null)
+                    {
+                        RFID_ReadTag.Write(0);//标识复位
+                    }
                 }
             }
         }
