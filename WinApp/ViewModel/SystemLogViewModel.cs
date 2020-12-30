@@ -20,6 +20,13 @@ namespace iFactoryApp.ViewModel
         /// <param name="RstTag"></param>
         /// <param name="RstValue"></param>
         void AddNewAutoAckWindowInfo(string Content, Tag<short>RstTag,short RstValue);
+        /// <summary>
+        /// 传递错误消息通知并传递复位标签
+        /// </summary>
+        /// <param name="Content"></param>
+        /// <param name="RstTag"></param>
+        /// <param name="RstValue"></param>
+        void AddNewAckWindowInfo(string Content, Tag<short> RstTag, short RstValue);
     }
     public class SystemLogViewModel : ViewModelBase, ISystemLogViewModel
     {
@@ -119,6 +126,11 @@ namespace iFactoryApp.ViewModel
 
             GlobalData.ErrMsgObject.SendErrorMessage(errMessageViewModel);//错误消息自动弹窗
 
+        }
+
+        public void AddNewAckWindowInfo(string Content, Tag<short> RstTag, short RstValue)
+        {
+            throw new NotImplementedException();
         }
         #endregion
     }

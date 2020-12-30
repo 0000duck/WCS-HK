@@ -22,6 +22,7 @@ namespace iFactoryApp.Service
         private Tag<short> RFID_ReadSigTag, RFID_ReadFeedbackTag;
         private Tag<short> SnSig1Tag, SnSig2Tag, SnDeal1Tag, SnDeal2Tag;
         private readonly DispatcherTimer timer;
+        private readonly DispatcherTimer rfidReadTimer;
 
         public TaskOrderManager(ISystemLogViewModel systemLogViewModel,
                                 TaskOrderViewModel taskOrderViewModel,
@@ -34,6 +35,12 @@ namespace iFactoryApp.Service
             TagInitial();
             timer = new DispatcherTimer() { IsEnabled=true,Interval = TimeSpan.FromSeconds(5) };//5秒周期读取产量数据
             timer.Tick += Timer_Tick;
+
+            rfidReadTimer = new DispatcherTimer() { IsEnabled = false, Interval = TimeSpan.FromSeconds(5) };//5秒检测是否写入成功
+            rfidReadTimer.Tick += RfidReadTimer_Tick; ;
+
+            _RFIDViewModel.WriteRFIDWindow.RFIDInfoEvent += ReadRFIDWindow_RFIDInfoEvent;
+            _RFIDViewModel.ReadRFIDWindow.RFIDInfoEvent += ReadRFIDWindow_RFIDInfoEvent;
         }
         /// <summary>
         /// 标签初始化
@@ -48,6 +55,11 @@ namespace iFactoryApp.Service
             if (RFID_WriteSigTag != null)
             {
                 RFID_WriteSigTag.PropertyChanged += RFIDWriteTag_PropertyChanged;
+            }
+
+            if (RFID_ReadSigTag != null)
+            {
+                RFID_ReadSigTag.PropertyChanged += RFID_ReadSigTag_PropertyChanged; ;
             }
 
             TagList.GetTag("graphic_carton_sn_sig", out SnSig1Tag, "FxPLC");//彩箱SN检测
@@ -77,9 +89,35 @@ namespace iFactoryApp.Service
                 //_taskOrderViewModel.Update(_taskOrderViewModel.SelectedModel);
             }
         }
-
+        //
         #region RFID处理
         private string lastWriteInfo = string.Empty;
+        private void RFID_ReadSigTag_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            Tag<short> tag = sender as Tag<short>;
+            if (tag.TagValue == 1 && e.PropertyName == "TagValue")
+            {
+                _systemLogViewModel.AddMewStatus($"识别到PLC信号{tag.TagAddr}=1，开始读取RFID信息");
+                _RFIDViewModel.ReadRFIDWindow.Dispatcher.Invoke(() =>
+                {
+                    _RFIDViewModel.ReadRFIDWindow.button_read_filter_data_Click(null, null);
+                    if (!_RFIDViewModel.WriteRFIDWindow.IsReadSuccess)//读取成功
+                    {
+                       
+                    }
+                });
+            }
+        }
+        private void RfidReadTimer_Tick(object sender, EventArgs e)
+        {
+            //////rfidReadTimer.IsEnabled = false;
+            //////rfidReadTimer.Stop();
+            //////if (RFID_ReadSigTag != null && RFID_ReadSigTag.TagValue==1)
+            //////{
+            //////    RFID_ReadFeedbackTag.Write(2);//超时，写入PLC失败=2
+            //////}
+            //////_systemLogViewModel.AddMewStatus($"RFID读取超时，开始写入PLC=2失败");
+        }
         /// <summary>
         /// 写入rfid标签值变化
         /// </summary>
@@ -100,6 +138,15 @@ namespace iFactoryApp.Service
                         _systemLogViewModel.AddMewStatus($"RFID写入未成功，开始调用重新烧录RFID信息");
                         _RFIDViewModel.WriteRFIDWindow.button_reburn_Click(null, null);//调用写入
                     }
+                    short value = 1;
+                    if (!_RFIDViewModel.WriteRFIDWindow.IsBurnSuccess)//写入失败
+                    {
+                        value = 2;
+                    }
+                    if (RFID_WriteFeedbackTag != null && RFID_WriteSigTag.TagValue == 1)
+                    {
+                        RFID_WriteFeedbackTag.Write(value);//写入PLC信号
+                    }
                 });
             }
         }
@@ -118,10 +165,7 @@ namespace iFactoryApp.Service
             else if (info.InfoType == RFIDInfoEnum.WriteError)//写入失败
             {
                 _systemLogViewModel.AddMewStatus(info.Content, LogTypeEnum.Error);
-                if (RFID_WriteFeedbackTag != null && RFID_WriteSigTag.TagValue == 1)
-                {
-                    RFID_WriteFeedbackTag.Write(2);//失败写入
-                }
+               
                 if (_taskOrderViewModel.SelectedModel != null)
                 {
                     _taskOrderViewModel.SelectedModel.defective_count += 1;//更新异常数量
@@ -135,6 +179,8 @@ namespace iFactoryApp.Service
             }
             else if (info.InfoType == RFIDInfoEnum.ReadError)//读取失败
             {
+                //rfidReadTimer.IsEnabled = false;
+                //rfidReadTimer.Stop();
                 _systemLogViewModel.AddMewStatus(info.Content, LogTypeEnum.Error);
                 if(RFID_ReadFeedbackTag !=null && RFID_ReadSigTag.TagValue == 1)
                 {
@@ -151,6 +197,8 @@ namespace iFactoryApp.Service
             }
             else if (info.InfoType == RFIDInfoEnum.ReadSuccess)//读取成功
             {
+                //rfidReadTimer.IsEnabled = false;
+                //rfidReadTimer.Stop();
                 _systemLogViewModel.AddMewStatus(info.Content);
                 if (info.Sn== lastWriteInfo)
                 {
@@ -184,7 +232,7 @@ namespace iFactoryApp.Service
             flagWrite(0, sn1: true, sn2: false);//信号复位
             if (SnDeal2Tag.TagValue == 4)//对比失败
             {
-                _systemLogViewModel.AddMewStatus($"当前彩箱信号为对比失败，将彩箱信号=1");
+                _systemLogViewModel.AddNewAutoAckWindowInfo($"当前彩箱信号为对比失败，将彩箱信号=1",null,0);
                 flagWrite(1, sn1: false, sn2: true);//信号2复位
             }
         }
@@ -200,7 +248,7 @@ namespace iFactoryApp.Service
             flagWrite(0, sn1: false, sn2: true);//信号2复位
             if (SnDeal1Tag.TagValue == 4)//对比失败
             {
-                _systemLogViewModel.AddMewStatus($"当前产品信号为对比失败，将产品信号=1");
+                _systemLogViewModel.AddNewAutoAckWindowInfo($"当前产品信号为对比失败，将产品信号=1",null,0);
                 flagWrite(1, sn1: true, sn2: false);//信号1复位
             }
         }
@@ -226,7 +274,7 @@ namespace iFactoryApp.Service
                 {
                     if (Snsig1)//信号未复位
                     {
-                        _systemLogViewModel.AddMewStatus($"产品相机未检测到条码，当前标签值={tag.TagValue},开始写入PLC失败信号值=3");
+                        _systemLogViewModel.AddNewAutoAckWindowInfo($"产品相机未检测到条码，当前标签值={tag.TagValue},开始写入PLC失败信号值=3",null,0);
                         flagWrite(3, sn1: true, sn2: false);//未查找到条码
                         Snsig1 = false;
                     }
@@ -253,7 +301,7 @@ namespace iFactoryApp.Service
                 {
                     if (Snsig2)//信号未复位
                     {
-                        _systemLogViewModel.AddMewStatus($"彩箱相机未检测到条码，当前标签值={tag.TagValue},开始写入PLC失败信号值=3");
+                        _systemLogViewModel.AddNewAutoAckWindowInfo($"彩箱相机未检测到条码，当前标签值={tag.TagValue},开始写入PLC失败信号值=3",null,0);
                         flagWrite(3, sn1: false, sn2: true);//未查找到条码
                         Snsig2 = false;
                     }
@@ -342,7 +390,7 @@ namespace iFactoryApp.Service
                 else
                 {
                     flagWrite(4);
-                    _systemLogViewModel.AddMewStatus("标签对比失败，写入PLC值=4，开始复位PLC标识");
+                    _systemLogViewModel.AddNewAutoAckWindowInfo("标签对比失败，写入PLC值=4，开始复位PLC标识",null,0);
                 }
             }
             else
@@ -429,41 +477,41 @@ namespace iFactoryApp.Service
                 _systemLogViewModel.AddMewStatus("装箱机械手参数写入失败，请检查网络连接后重新下载！", LogTypeEnum.Error);
                 return false;
             }
-            _systemLogViewModel.AddMewStatus($"开始写入{taskOrder.product_name}的码垛参数");
-            var robot3 = TagList.PLCGroups.FirstOrDefault(x => x.PlcDevice.Name == "Robot3");
-            if (robot3 != null && robot2.PlcDevice.IsConnected)
-            {
-                ValueList = new List<short>();
-                ValueList.Add(2);
-                //ValueList.Add(3);
-                //GetPropertyToList(taskOrder.graphic_carton_size, ValueList);
-                //GetPropertyToList(taskOrder.noraml_carton_size, ValueList);
-                //GetPropertyToList(taskOrder.outer_carton_size, ValueList);
-                //GetPropertyToList(taskOrder.pallet_size, ValueList);
-                WriteRobot("Robot3", "graphic_carton_size_x", ValueList);//首地址写入
-                ValueList = new List<short>();
-                ValueList.Add(33);
-                WriteRobot("Robot3", "graphic_carton_size_y", ValueList);//首地址写入
-                ValueList = new List<short>();
-                ValueList.Add((short)taskOrder.robot_pg_no);
-                ValueList.Add((short)taskOrder.pallet_num);
-                if (taskOrder.plate_enable)
-                {
-                    ValueList.Add(1);
-                }
-                else
-                {
-                    ValueList.Add(0);
-                }
-                ValueList.Add((short)taskOrder.pack_mode);
-                // WriteRobot("Robot3", "robot_pg_no", ValueList);//首地址写入
-            }
-            else
-            {
-                _systemLogViewModel.AddMewStatus("码垛机械手参数写入失败，请检查网络连接后重新下载！", LogTypeEnum.Error);
-                return false;
-            }
-            _systemLogViewModel.AddMewStatus($"{taskOrder.product_name}所有参数已下载完毕");
+            //_systemLogViewModel.AddMewStatus($"开始写入{taskOrder.product_name}的码垛参数");
+            //var robot3 = TagList.PLCGroups.FirstOrDefault(x => x.PlcDevice.Name == "Robot3");
+            //if (robot3 != null && robot2.PlcDevice.IsConnected)
+            //{
+            //    ValueList = new List<short>();
+            //    ValueList.Add(2);
+            //    //ValueList.Add(3);
+            //    //GetPropertyToList(taskOrder.graphic_carton_size, ValueList);
+            //    //GetPropertyToList(taskOrder.noraml_carton_size, ValueList);
+            //    //GetPropertyToList(taskOrder.outer_carton_size, ValueList);
+            //    //GetPropertyToList(taskOrder.pallet_size, ValueList);
+            //    WriteRobot("Robot3", "graphic_carton_size_x", ValueList);//首地址写入
+            //    ValueList = new List<short>();
+            //    ValueList.Add(33);
+            //    WriteRobot("Robot3", "graphic_carton_size_y", ValueList);//首地址写入
+            //    ValueList = new List<short>();
+            //    ValueList.Add((short)taskOrder.robot_pg_no);
+            //    ValueList.Add((short)taskOrder.pallet_num);
+            //    if (taskOrder.plate_enable)
+            //    {
+            //        ValueList.Add(1);
+            //    }
+            //    else
+            //    {
+            //        ValueList.Add(0);
+            //    }
+            //    ValueList.Add((short)taskOrder.pack_mode);
+            //    // WriteRobot("Robot3", "robot_pg_no", ValueList);//首地址写入
+            //}
+            //else
+            //{
+            //    _systemLogViewModel.AddMewStatus("码垛机械手参数写入失败，请检查网络连接后重新下载！", LogTypeEnum.Error);
+            //    return false;
+            //}
+            _systemLogViewModel.AddNewAutoAckWindowInfo($"{taskOrder.product_name}所有参数已下载完毕",null,0);
             return true;
         }
         private void WritePlcValue(string plcName, string TagName, int value = -1, bool boolValue = false)

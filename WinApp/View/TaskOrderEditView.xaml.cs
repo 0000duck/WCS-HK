@@ -75,7 +75,7 @@ namespace iFactoryApp.View
                 _viewModel.EditModel.pallet_num = parameter.pallet_num;
                 _viewModel.EditModel.pallet_size = parameter.pallet_size;
                 _viewModel.EditModel.plate_enable = parameter.plate_enable;
-                //_viewModel.EditModel.product_name = parameter.product_name;
+                _viewModel.EditModel.bubble_cover_enable = parameter.bubble_cover_enable;
                 _viewModel.EditModel.product_size = parameter.product_size;
                 _viewModel.EditModel.robot_pg_no = parameter.robot_pg_no;
                 _viewModel.EditModel.sn_barcode_enable = parameter.sn_barcode_enable;
